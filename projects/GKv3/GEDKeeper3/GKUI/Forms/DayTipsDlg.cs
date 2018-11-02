@@ -32,10 +32,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public partial class DayTipsDlg : CommonDialog, IDayTipsDlg
+    public partial class DayTipsDlg : CommonDialog<IDayTipsDlg, DayTipsDlgController>, IDayTipsDlg
     {
-        private readonly DayTipsDlgController fController;
-
         public bool ShowTipsChecked
         {
             get { return chkShow.Checked.GetValueOrDefault(); }

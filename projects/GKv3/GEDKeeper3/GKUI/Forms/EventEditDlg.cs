@@ -36,19 +36,11 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class EventEditDlg : EditorDialog, IEventEditDlg
+    public sealed partial class EventEditDlg : EditorDialog<GEDCOMCustomEvent, IEventEditDlg, EventEditDlgController>, IEventEditDlg
     {
-        private readonly EventEditDlgController fController;
-
         private readonly GKSheetList fNotesList;
         private readonly GKSheetList fMediaList;
         private readonly GKSheetList fSourcesList;
-
-        public GEDCOMCustomEvent Event
-        {
-            get { return fController.Event; }
-            set { fController.Event = value; }
-        }
 
         #region View Interface
 
@@ -138,6 +130,9 @@ namespace GKUI.Forms
         {
             InitializeComponent();
 
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
+
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");
             btnPlaceAdd.Image = UIHelper.LoadResourceImage("Resources.btn_rec_new.gif");
@@ -186,21 +181,6 @@ namespace GKUI.Forms
                 txtEventPlace.BackgroundColor = SystemColors.WindowBackground;
                 btnPlaceAdd.Enabled = true;
                 btnPlaceDelete.Enabled = false;
-            }
-        }
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.Ok : DialogResult.None;
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            try {
-                fController.Cancel();
-                CancelClickHandler(sender, e);
-            } catch (Exception ex) {
-                Logger.LogWrite("EventEditDlg.btnCancel_Click(): " + ex.Message);
             }
         }
 

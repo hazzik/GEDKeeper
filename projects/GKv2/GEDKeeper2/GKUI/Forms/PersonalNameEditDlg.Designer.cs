@@ -81,7 +81,6 @@
             this.btnAccept.TabIndex = 18;
             this.btnAccept.Text = "btnAccept";
             this.btnAccept.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
             // 
             // lblName
             // 

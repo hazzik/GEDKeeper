@@ -33,39 +33,25 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class MediaViewerController : DialogController<IMediaViewerWin>
+    public sealed class MediaViewerController : EditorController<GEDCOMFileReferenceWithTitle, IMediaViewerWin>
     {
-        private GEDCOMFileReferenceWithTitle fFileRef;
-
-        public GEDCOMFileReferenceWithTitle FileRef
-        {
-            get { return fFileRef; }
-            set {
-                if (fFileRef != value) {
-                    fFileRef = value;
-                    UpdateView();
-                }
-            }
-        }
-
         public MediaViewerController(IMediaViewerWin view) : base(view)
         {
-            
         }
 
         public override void UpdateView()
         {
-            fView.Caption = fFileRef.Title;
+            fView.Caption = fModel.Title;
 
-            MultimediaKind mmKind = GKUtils.GetMultimediaKind(fFileRef.MultimediaFormat);
+            MultimediaKind mmKind = GKUtils.GetMultimediaKind(fModel.MultimediaFormat);
 
             try {
                 switch (mmKind) {
                     case MultimediaKind.mkImage:
                         {
-                            IImage img = fBase.Context.LoadMediaImage(fFileRef, false);
+                            IImage img = fBase.Context.LoadMediaImage(fModel, false);
                             if (img != null) {
-                                fView.SetViewImage(img, fFileRef);
+                                fView.SetViewImage(img, fModel);
                             }
                             break;
                         }
@@ -73,17 +59,17 @@ namespace GKCore.Controllers
                     case MultimediaKind.mkAudio:
                     case MultimediaKind.mkVideo:
                         {
-                            string targetFile = fBase.Context.MediaLoad(fFileRef);
+                            string targetFile = fBase.Context.MediaLoad(fModel);
                             fView.SetViewMedia(targetFile);
                             break;
                         }
 
                     case MultimediaKind.mkText:
                         {
-                            Stream fs = fBase.Context.MediaLoad(fFileRef, false);
+                            Stream fs = fBase.Context.MediaLoad(fModel, false);
                             bool disposeStream = (fs != null);
 
-                            switch (fFileRef.MultimediaFormat) {
+                            switch (fModel.MultimediaFormat) {
                                 case GEDCOMMultimediaFormat.mfTXT:
                                     using (StreamReader strd = new StreamReader(fs)) {
                                         string text = strd.ReadToEnd();

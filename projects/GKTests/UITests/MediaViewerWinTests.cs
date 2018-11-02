@@ -71,9 +71,9 @@ namespace GKUI.Forms
         [Test]
         public void Test_Image()
         {
-            Assert.AreEqual(null, fDialog.FileRef);
-            fDialog.FileRef = fileRef;
-            Assert.AreEqual(fileRef, fDialog.FileRef);
+            Assert.AreEqual(null, fDialog.Model);
+            fDialog.Model = fileRef;
+            Assert.AreEqual(fileRef, fDialog.Model);
 
             Assembly assembly = typeof(CoreTests).Assembly;
             Bitmap img = new Bitmap(assembly.GetManifestResourceStream("GKTests.Resources.shaytan_plant.jpg"));
@@ -92,9 +92,9 @@ namespace GKUI.Forms
         [Test]
         public void Test_Text()
         {
-            Assert.AreEqual(null, fDialog.FileRef);
-            fDialog.FileRef = fileRef;
-            Assert.AreEqual(fileRef, fDialog.FileRef);
+            Assert.AreEqual(null, fDialog.Model);
+            fDialog.Model = fileRef;
+            Assert.AreEqual(fileRef, fDialog.Model);
 
             Assembly assembly = typeof(CoreTests).Assembly;
             Stream stm = assembly.GetManifestResourceStream("GKTests.Resources.lorem_ipsum.txt");
@@ -112,9 +112,9 @@ namespace GKUI.Forms
         [Test]
         public void Test_RTF()
         {
-            Assert.AreEqual(null, fDialog.FileRef);
-            fDialog.FileRef = fileRef;
-            Assert.AreEqual(fileRef, fDialog.FileRef);
+            Assert.AreEqual(null, fDialog.Model);
+            fDialog.Model = fileRef;
+            Assert.AreEqual(fileRef, fDialog.Model);
 
             Assembly assembly = typeof(CoreTests).Assembly;
             Stream stm = assembly.GetManifestResourceStream("GKTests.Resources.lorem_ipsum.txt");
@@ -132,9 +132,9 @@ namespace GKUI.Forms
         [Test]
         public void Test_HTML()
         {
-            Assert.AreEqual(null, fDialog.FileRef);
-            fDialog.FileRef = fileRef;
-            Assert.AreEqual(fileRef, fDialog.FileRef);
+            Assert.AreEqual(null, fDialog.Model);
+            fDialog.Model = fileRef;
+            Assert.AreEqual(fileRef, fDialog.Model);
 
             Assembly assembly = typeof(CoreTests).Assembly;
             Stream stm = assembly.GetManifestResourceStream("GKTests.Resources.lorem_ipsum.txt");
@@ -165,8 +165,8 @@ namespace GKUI.Forms
             fileRefV.MediaType = GEDCOMMediaType.mtVideo;
             fileRefV.MultimediaFormat = GEDCOMMultimediaFormat.mfMKV;
 
-            fDialog.FileRef = fileRefV;
-            Assert.AreEqual(fileRefV, fDialog.FileRef);
+            fDialog.Model = fileRefV;
+            Assert.AreEqual(fileRefV, fDialog.Model);
 
             fDialog.SetViewMedia(targetName);
             fDialog.Refresh();

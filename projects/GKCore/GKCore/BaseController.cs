@@ -55,7 +55,7 @@ namespace GKCore
                     try {
                         baseWin.Context.LockRecord(mediaRec);
 
-                        dlg.MediaRec = mediaRec;
+                        dlg.Model = mediaRec;
                         result = (AppHost.Instance.ShowModalX(dlg, false));
                     } finally {
                         baseWin.Context.UnlockRecord(mediaRec);
@@ -96,12 +96,12 @@ namespace GKCore
 
                     if (GlobalOptions.Instance.UseExtendedNotes) {
                         using (var dlg = AppHost.Container.Resolve<INoteEditDlgEx>(baseWin)) {
-                            dlg.NoteRecord = noteRec;
+                            dlg.Model = noteRec;
                             result = (AppHost.Instance.ShowModalX(dlg, false));
                         }
                     } else {
                         using (var dlg = AppHost.Container.Resolve<INoteEditDlg>(baseWin)) {
-                            dlg.NoteRecord = noteRec;
+                            dlg.Model = noteRec;
                             result = (AppHost.Instance.ShowModalX(dlg, false));
                         }
                     }
@@ -178,7 +178,7 @@ namespace GKCore
                         cit = new GEDCOMSourceCitation(tree, _struct as GEDCOMObject, "", "");
                     }
 
-                    dlg.SourceCitation = cit;
+                    dlg.Model = cit;
                     result = AppHost.Instance.ShowModalX(dlg, false);
 
                     if (!exists) {
@@ -214,7 +214,7 @@ namespace GKCore
                     try {
                         baseWin.Context.LockRecord(repRec);
 
-                        dlg.Repository = repRec;
+                        dlg.Model = repRec;
                         result = AppHost.Instance.ShowModalX(dlg, false);
                     } finally {
                         baseWin.Context.UnlockRecord(repRec);
@@ -254,7 +254,7 @@ namespace GKCore
                     try {
                         baseWin.Context.LockRecord(groupRec);
 
-                        dlg.Group = groupRec;
+                        dlg.Model = groupRec;
                         result = (AppHost.Instance.ShowModalX(dlg, false));
                     } finally {
                         baseWin.Context.UnlockRecord(groupRec);
@@ -294,7 +294,7 @@ namespace GKCore
                     try {
                         baseWin.Context.LockRecord(researchRec);
 
-                        dlg.Research = researchRec;
+                        dlg.Model = researchRec;
                         result = AppHost.Instance.ShowModalX(dlg, false);
                     } finally {
                         baseWin.Context.UnlockRecord(researchRec);
@@ -334,7 +334,7 @@ namespace GKCore
                     try {
                         baseWin.Context.LockRecord(taskRec);
 
-                        dlg.Task = taskRec;
+                        dlg.Model = taskRec;
                         result = AppHost.Instance.ShowModalX(dlg, false);
                     } finally {
                         baseWin.Context.UnlockRecord(taskRec);
@@ -374,7 +374,7 @@ namespace GKCore
                     try {
                         baseWin.Context.LockRecord(commRec);
 
-                        dlg.Communication = commRec;
+                        dlg.Model = commRec;
                         result = AppHost.Instance.ShowModalX(dlg, false);
                     } finally {
                         baseWin.Context.UnlockRecord(commRec);
@@ -414,7 +414,7 @@ namespace GKCore
                     try {
                         baseWin.Context.LockRecord(locRec);
 
-                        dlg.LocationRecord = locRec;
+                        dlg.Model = locRec;
                         result = AppHost.Instance.ShowModalX(dlg, false);
                     } finally {
                         baseWin.Context.UnlockRecord(locRec);
@@ -486,7 +486,7 @@ namespace GKCore
                     try {
                         baseWin.Context.LockRecord(indivRec);
 
-                        dlg.Person = indivRec;
+                        dlg.Model = indivRec;
 
                         if (targetMode != TargetMode.tmNone) {
                             if (needSex == GEDCOMSex.svMale || needSex == GEDCOMSex.svFemale) {
@@ -546,7 +546,7 @@ namespace GKCore
                     try {
                         baseWin.Context.LockRecord(familyRec);
 
-                        dlg.Family = familyRec;
+                        dlg.Model = familyRec;
 
                         if (targetType != TargetMode.tmNone && target != null) {
                             dlg.SetTarget(targetType, target);
@@ -582,7 +582,7 @@ namespace GKCore
                 baseWin.Context.BeginUpdate();
 
                 using (var dlg = AppHost.Container.Resolve<IAddressEditDlg>(baseWin)) {
-                    dlg.Address = address;
+                    dlg.Model = address;
                     result = (AppHost.Instance.ShowModalX(dlg, false));
                 }
             } finally {
@@ -601,7 +601,7 @@ namespace GKCore
 
                 using (var dlg = AppHost.Container.Resolve<INameEditDlg>())
                 {
-                    dlg.IName = nameEntry;
+                    dlg.Model = nameEntry;
                     result = AppHost.Instance.ShowModalX(dlg, false);
                 }
             } finally {
@@ -1005,7 +1005,7 @@ namespace GKCore
 
             // select portrait area
             using (var selectDlg = AppHost.Container.Resolve<IPortraitSelectDlg>(baseWin)) {
-                selectDlg.MultimediaLink = mmLink;
+                selectDlg.Model = mmLink;
                 result = AppHost.Instance.ShowModalX(selectDlg, false);
             }
 

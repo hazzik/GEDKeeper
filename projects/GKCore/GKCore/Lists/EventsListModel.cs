@@ -120,7 +120,7 @@ namespace GKCore.Lists
                                 }
                             }
 
-                            dlgEventEdit.Event = newEvent;
+                            dlgEventEdit.Model = newEvent;
                             result = AppHost.Instance.ShowModalX(dlgEventEdit, true);
 
                             if (!result) {
@@ -128,7 +128,7 @@ namespace GKCore.Lists
                                     newEvent.Dispose();
                                 }
                             } else {
-                                newEvent = dlgEventEdit.Event;
+                                newEvent = dlgEventEdit.Model;
 
                                 if (!exists) {
                                     result = fUndoman.DoOrdinaryOperation(OperationType.otRecordEventAdd, record, newEvent);

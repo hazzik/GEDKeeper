@@ -35,15 +35,14 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public partial class MediaViewerWin : CommonWindow, IMediaViewerWin
+    public partial class MediaViewerWin : CommonWindow<IMediaViewerWin, MediaViewerController>, IMediaViewerWin
     {
-        private readonly MediaViewerController fController;
         private Control fViewer;
 
-        public GEDCOMFileReferenceWithTitle FileRef
+        public GEDCOMFileReferenceWithTitle Model
         {
-            get { return fController.FileRef; }
-            set { fController.FileRef = value; }
+            get { return fController.Model; }
+            set { fController.Model = value; }
         }
 
         public void SetViewText(string text)

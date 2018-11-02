@@ -29,22 +29,8 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class NameEditDlgController : DialogController<INameEditDlg>
+    public sealed class NameEditDlgController : EditorController<NameEntry, INameEditDlg>
     {
-        private NameEntry fIName;
-
-        public NameEntry NameEntry
-        {
-            get { return fIName; }
-            set {
-                if (fIName != value) {
-                    fIName = value;
-                    UpdateView();
-                }
-            }
-        }
-
-
         public NameEditDlgController(INameEditDlg view) : base(view)
         {
             for (GEDCOMSex sx = GEDCOMSex.svNone; sx <= GEDCOMSex.svLast; sx++) {
@@ -55,10 +41,10 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                fIName.Name = fView.Name.Text;
-                fIName.Sex = (GEDCOMSex)fView.SexCombo.SelectedIndex;
-                fIName.F_Patronymic = fView.FPatr.Text;
-                fIName.M_Patronymic = fView.MPatr.Text;
+                fModel.Name = fView.Name.Text;
+                fModel.Sex = (GEDCOMSex)fView.SexCombo.SelectedIndex;
+                fModel.F_Patronymic = fView.FPatr.Text;
+                fModel.M_Patronymic = fView.MPatr.Text;
 
                 return true;
             } catch (Exception ex) {
@@ -69,16 +55,16 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            if (fIName == null) {
+            if (fModel == null) {
                 fView.Name.Text = "";
                 fView.SexCombo.SelectedIndex = 0;
                 fView.FPatr.Text = "";
                 fView.MPatr.Text = "";
             } else {
-                fView.Name.Text = fIName.Name;
-                fView.SexCombo.SelectedIndex = (sbyte)fIName.Sex;
-                fView.FPatr.Text = fIName.F_Patronymic;
-                fView.MPatr.Text = fIName.M_Patronymic;
+                fView.Name.Text = fModel.Name;
+                fView.SexCombo.SelectedIndex = (sbyte)fModel.Sex;
+                fView.FPatr.Text = fModel.F_Patronymic;
+                fView.MPatr.Text = fModel.M_Patronymic;
             }
         }
     }

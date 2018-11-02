@@ -50,7 +50,7 @@ namespace GKUI.Forms
             fSourceCitation = new GEDCOMSourceCitation(fBase.Context.Tree, null, "", "");
 
             fDialog = new SourceCitEditDlg(fBase);
-            fDialog.SourceCitation = fSourceCitation;
+            fDialog.Model = fSourceCitation;
             fDialog.Show();
         }
 
@@ -69,7 +69,7 @@ namespace GKUI.Forms
         [Test]
         public void Test_EnterDataAndApply()
         {
-            Assert.AreEqual(fSourceCitation, fDialog.SourceCitation);
+            Assert.AreEqual(fSourceCitation, fDialog.Model);
 
             // The links to other records can be added or edited only in MainWinTests
             // (where there is a complete infrastructure of the calls to BaseWin.ModifyX/SelectRecord)

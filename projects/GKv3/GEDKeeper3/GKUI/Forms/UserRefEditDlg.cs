@@ -19,7 +19,6 @@
  */
 
 using System;
-using Eto.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -34,16 +33,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class UserRefEditDlg : EditorDialog, IUserRefEditDlg
+    public sealed partial class UserRefEditDlg : EditorDialog<GEDCOMUserReference, IUserRefEditDlg, UserRefEditDlgController>, IUserRefEditDlg
     {
-        private readonly UserRefEditDlgController fController;
-
-        public GEDCOMUserReference UserRef
-        {
-            get { return fController.UserRef; }
-            set { fController.UserRef = value; }
-        }
-
         #region View Interface
 
         IComboBoxHandler IUserRefEditDlg.Ref
@@ -58,14 +49,12 @@ namespace GKUI.Forms
 
         #endregion
 
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.Ok : DialogResult.None;
-        }
-
         public UserRefEditDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");

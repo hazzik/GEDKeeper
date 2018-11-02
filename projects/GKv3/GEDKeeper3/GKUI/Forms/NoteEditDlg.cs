@@ -19,7 +19,6 @@
  */
 
 using System;
-using Eto.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -34,16 +33,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class NoteEditDlg : EditorDialog, INoteEditDlg
+    public sealed partial class NoteEditDlg : EditorDialog<GEDCOMNoteRecord, INoteEdit, NoteEditDlgController>, INoteEditDlg
     {
-        private readonly NoteEditDlgController fController;
-
-        public GEDCOMNoteRecord NoteRecord
-        {
-            get { return fController.NoteRecord; }
-            set { fController.NoteRecord = value; }
-        }
-
         #region View Interface
 
         ITextBoxHandler INoteEdit.Note
@@ -53,14 +44,12 @@ namespace GKUI.Forms
 
         #endregion
 
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.Ok : DialogResult.None;
-        }
-
         public NoteEditDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");

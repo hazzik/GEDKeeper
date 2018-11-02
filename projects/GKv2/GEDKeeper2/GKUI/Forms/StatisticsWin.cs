@@ -37,10 +37,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class StatisticsWin : CommonWindow, IStatisticsWin
+    public sealed partial class StatisticsWin : CommonWindow<IStatisticsWin, StatisticsWinController>, IStatisticsWin
     {
-        private readonly StatisticsWinController fController;
-
         private readonly ZGraphControl fGraph;
         private readonly GKListView fListStats;
 

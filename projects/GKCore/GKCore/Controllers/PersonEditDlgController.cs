@@ -34,23 +34,11 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class PersonEditDlgController : DialogController<IPersonEditDlg>
+    public sealed class PersonEditDlgController : EditorController<GEDCOMIndividualRecord, IPersonEditDlg>
     {
-        private GEDCOMIndividualRecord fPerson;
         private IImage fPortraitImg;
         private GEDCOMIndividualRecord fTarget;
         private TargetMode fTargetMode;
-
-        public GEDCOMIndividualRecord Person
-        {
-            get { return fPerson; }
-            set {
-                if (fPerson != value) {
-                    fPerson = value;
-                    UpdateView();
-                }
-            }
-        }
 
         public GEDCOMIndividualRecord Target
         {
@@ -111,7 +99,7 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                GEDCOMPersonalName np = fPerson.PersonalNames[0];
+                GEDCOMPersonalName np = fModel.PersonalNames[0];
                 GKUtils.SetNameParts(np, fView.Surname.Text, fView.Name.Text, fView.Patronymic.Text);
 
                 GEDCOMPersonalNamePieces pieces = np.Pieces;
@@ -123,18 +111,18 @@ namespace GKCore.Controllers
                     pieces.MarriedName = fView.MarriedSurname.Text;
                 }
 
-                fPerson.Sex = (GEDCOMSex)fView.SexCombo.SelectedIndex;
-                fPerson.Patriarch = fView.Patriarch.Checked;
-                fPerson.Bookmark = fView.Bookmark.Checked;
-                fPerson.Restriction = (GEDCOMRestriction)fView.RestrictionCombo.SelectedIndex;
+                fModel.Sex = (GEDCOMSex)fView.SexCombo.SelectedIndex;
+                fModel.Patriarch = fView.Patriarch.Checked;
+                fModel.Bookmark = fView.Bookmark.Checked;
+                fModel.Restriction = (GEDCOMRestriction)fView.RestrictionCombo.SelectedIndex;
 
-                if (fPerson.ChildToFamilyLinks.Count > 0) {
-                    fPerson.ChildToFamilyLinks[0].Family.SortChilds();
+                if (fModel.ChildToFamilyLinks.Count > 0) {
+                    fModel.ChildToFamilyLinks[0].Family.SortChilds();
                 }
 
                 fLocalUndoman.Commit();
 
-                fBase.NotifyRecord(fPerson, RecordAction.raEdit);
+                fBase.NotifyRecord(fModel, RecordAction.raEdit);
 
                 return true;
             } catch (Exception ex) {
@@ -146,27 +134,27 @@ namespace GKCore.Controllers
         public override void UpdateView()
         {
             try {
-                GEDCOMPersonalName np = (fPerson.PersonalNames.Count > 0) ? fPerson.PersonalNames[0] : null;
+                GEDCOMPersonalName np = (fModel.PersonalNames.Count > 0) ? fModel.PersonalNames[0] : null;
                 UpdateNameControls(np);
 
-                fView.SexCombo.SelectedIndex = (sbyte)fPerson.Sex;
-                fView.Patriarch.Checked = fPerson.Patriarch;
-                fView.Bookmark.Checked = fPerson.Bookmark;
+                fView.SexCombo.SelectedIndex = (sbyte)fModel.Sex;
+                fView.Patriarch.Checked = fModel.Patriarch;
+                fView.Bookmark.Checked = fModel.Bookmark;
 
                 //cmbRestriction.SelectedIndexChanged -= cbRestriction_SelectedIndexChanged;
-                fView.RestrictionCombo.SelectedIndex = (sbyte)fPerson.Restriction;
+                fView.RestrictionCombo.SelectedIndex = (sbyte)fModel.Restriction;
                 //cmbRestriction.SelectedIndexChanged += cbRestriction_SelectedIndexChanged;
 
-                fView.EventsList.ListModel.DataOwner = fPerson;
-                fView.NotesList.ListModel.DataOwner = fPerson;
-                fView.MediaList.ListModel.DataOwner = fPerson;
-                fView.SourcesList.ListModel.DataOwner = fPerson;
-                fView.AssociationsList.ListModel.DataOwner = fPerson;
+                fView.EventsList.ListModel.DataOwner = fModel;
+                fView.NotesList.ListModel.DataOwner = fModel;
+                fView.MediaList.ListModel.DataOwner = fModel;
+                fView.SourcesList.ListModel.DataOwner = fModel;
+                fView.AssociationsList.ListModel.DataOwner = fModel;
 
-                fView.GroupsList.ListModel.DataOwner = fPerson;
-                fView.NamesList.ListModel.DataOwner = fPerson;
-                fView.SpousesList.ListModel.DataOwner = fPerson;
-                fView.UserRefList.ListModel.DataOwner = fPerson;
+                fView.GroupsList.ListModel.DataOwner = fModel;
+                fView.NamesList.ListModel.DataOwner = fModel;
+                fView.SpousesList.ListModel.DataOwner = fModel;
+                fView.UserRefList.ListModel.DataOwner = fModel;
 
                 UpdateControls(true);
             } catch (Exception ex) {
@@ -178,8 +166,8 @@ namespace GKCore.Controllers
         {
             bool locked = (fView.RestrictionCombo.SelectedIndex == (int)GEDCOMRestriction.rnLocked);
 
-            if (fPerson.ChildToFamilyLinks.Count != 0) {
-                GEDCOMFamilyRecord family = fPerson.ChildToFamilyLinks[0].Family;
+            if (fModel.ChildToFamilyLinks.Count != 0) {
+                GEDCOMFamilyRecord family = fModel.ChildToFamilyLinks[0].Family;
                 fView.SetParentsAvl(true, locked);
 
                 GEDCOMIndividualRecord relPerson = family.GetHusband();
@@ -254,7 +242,7 @@ namespace GKCore.Controllers
         public void UpdateNameControls(GEDCOMPersonalName np)
         {
             if (np != null) {
-                var parts = GKUtils.GetNameParts(fPerson, np, false);
+                var parts = GKUtils.GetNameParts(fModel, np, false);
 
                 fView.Surname.Text = parts.Surname;
                 fView.Name.Text = parts.Name;
@@ -283,7 +271,7 @@ namespace GKCore.Controllers
         public void UpdatePortrait(bool totalUpdate)
         {
             if (fPortraitImg == null || totalUpdate) {
-                fPortraitImg = fBase.Context.GetPrimaryBitmap(fPerson, fView.Portrait.Width, fView.Portrait.Height, false);
+                fPortraitImg = fBase.Context.GetPrimaryBitmap(fModel, fView.Portrait.Width, fView.Portrait.Height, false);
             }
 
             IImage img = fPortraitImg;
@@ -375,13 +363,13 @@ namespace GKCore.Controllers
             // For the sample: we need to have gender's value on time of call AddSpouse (for define husband/wife)
             // And we need to have actual name's value for visible it in FamilyEditDlg
 
-            fLocalUndoman.DoOrdinaryOperation(OperationType.otIndividualSexChange, fPerson, (GEDCOMSex)fView.SexCombo.SelectedIndex);
-            fLocalUndoman.DoIndividualNameChange(fPerson, fView.Surname.Text, fView.Name.Text, fView.Patronymic.Text);
+            fLocalUndoman.DoOrdinaryOperation(OperationType.otIndividualSexChange, fModel, (GEDCOMSex)fView.SexCombo.SelectedIndex);
+            fLocalUndoman.DoIndividualNameChange(fModel, fView.Surname.Text, fView.Name.Text, fView.Patronymic.Text);
         }
 
         public void AddPortrait()
         {
-            if (BaseController.AddIndividualPortrait(fBase, fLocalUndoman, fPerson)) {
+            if (BaseController.AddIndividualPortrait(fBase, fLocalUndoman, fModel)) {
                 fView.MediaList.UpdateSheet();
                 UpdatePortrait(true);
             }
@@ -389,7 +377,7 @@ namespace GKCore.Controllers
 
         public void DeletePortrait()
         {
-            if (BaseController.DeleteIndividualPortrait(fBase, fLocalUndoman, fPerson)) {
+            if (BaseController.DeleteIndividualPortrait(fBase, fLocalUndoman, fModel)) {
                 UpdatePortrait(true);
             }
         }
@@ -398,11 +386,11 @@ namespace GKCore.Controllers
         {
             AcceptTempData();
 
-            GEDCOMFamilyRecord family = fBase.Context.SelectFamily(fPerson);
+            GEDCOMFamilyRecord family = fBase.Context.SelectFamily(fModel);
             if (family == null) return;
 
-            if (family.IndexOfChild(fPerson) < 0) {
-                fLocalUndoman.DoOrdinaryOperation(OperationType.otIndividualParentsAttach, fPerson, family);
+            if (family.IndexOfChild(fModel) < 0) {
+                fLocalUndoman.DoOrdinaryOperation(OperationType.otIndividualParentsAttach, fModel, family);
             }
             UpdateControls();
         }
@@ -411,7 +399,7 @@ namespace GKCore.Controllers
         {
             AcceptTempData();
 
-            GEDCOMFamilyRecord family = fBase.Context.GetChildFamily(fPerson, false, null);
+            GEDCOMFamilyRecord family = fBase.Context.GetChildFamily(fModel, false, null);
             if (family != null && BaseController.ModifyFamily(fBase, ref family, TargetMode.tmNone, null)) {
                 UpdateControls();
             }
@@ -421,37 +409,37 @@ namespace GKCore.Controllers
         {
             if (!AppHost.StdDialogs.ShowQuestionYN(LangMan.LS(LSID.LSID_DetachParentsQuery))) return;
 
-            GEDCOMFamilyRecord family = fBase.Context.GetChildFamily(fPerson, false, null);
+            GEDCOMFamilyRecord family = fBase.Context.GetChildFamily(fModel, false, null);
             if (family == null) return;
 
-            fLocalUndoman.DoOrdinaryOperation(OperationType.otIndividualParentsDetach, fPerson, family);
+            fLocalUndoman.DoOrdinaryOperation(OperationType.otIndividualParentsDetach, fModel, family);
             UpdateControls();
         }
 
         public void AddFather()
         {
-            if (BaseController.AddIndividualFather(fBase, fLocalUndoman, fPerson)) {
+            if (BaseController.AddIndividualFather(fBase, fLocalUndoman, fModel)) {
                 UpdateControls();
             }
         }
 
         public void DeleteFather()
         {
-            if (BaseController.DeleteIndividualFather(fBase, fLocalUndoman, fPerson)) {
+            if (BaseController.DeleteIndividualFather(fBase, fLocalUndoman, fModel)) {
                 UpdateControls();
             }
         }
 
         public void AddMother()
         {
-            if (BaseController.AddIndividualMother(fBase, fLocalUndoman, fPerson)) {
+            if (BaseController.AddIndividualMother(fBase, fLocalUndoman, fModel)) {
                 UpdateControls();
             }
         }
 
         public void DeleteMother()
         {
-            if (BaseController.DeleteIndividualMother(fBase, fLocalUndoman, fPerson)) {
+            if (BaseController.DeleteIndividualMother(fBase, fLocalUndoman, fModel)) {
                 UpdateControls();
             }
         }
@@ -466,7 +454,7 @@ namespace GKCore.Controllers
 
         public void JumpToFather()
         {
-            GEDCOMFamilyRecord family = fBase.Context.GetChildFamily(fPerson, false, null);
+            GEDCOMFamilyRecord family = fBase.Context.GetChildFamily(fModel, false, null);
             if (family == null) return;
 
             JumpToRecord(family.GetHusband());
@@ -474,7 +462,7 @@ namespace GKCore.Controllers
 
         public void JumpToMother()
         {
-            GEDCOMFamilyRecord family = fBase.Context.GetChildFamily(fPerson, false, null);
+            GEDCOMFamilyRecord family = fBase.Context.GetChildFamily(fModel, false, null);
             if (family == null) return;
 
             JumpToRecord(family.GetWife());

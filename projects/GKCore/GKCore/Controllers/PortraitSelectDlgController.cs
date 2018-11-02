@@ -30,22 +30,8 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public class PortraitSelectDlgController : DialogController<IPortraitSelectDlg>
+    public class PortraitSelectDlgController : EditorController<GEDCOMMultimediaLink, IPortraitSelectDlg>
     {
-        private GEDCOMMultimediaLink fMultimediaLink;
-
-        public GEDCOMMultimediaLink MultimediaLink
-        {
-            get { return fMultimediaLink; }
-            set {
-                if (fMultimediaLink != value) {
-                    fMultimediaLink = value;
-                    UpdateView();
-                }
-            }
-        }
-
-
         public PortraitSelectDlgController(IPortraitSelectDlg view) : base(view)
         {
         }
@@ -56,14 +42,14 @@ namespace GKCore.Controllers
                 ExtRect selectRegion = fView.ImageCtl.SelectionRegion;
 
                 if (!selectRegion.IsEmpty()) {
-                    fMultimediaLink.IsPrimaryCutout = true;
-                    fMultimediaLink.CutoutPosition.Value = selectRegion;
+                    fModel.IsPrimaryCutout = true;
+                    fModel.CutoutPosition.Value = selectRegion;
                 } else {
-                    fMultimediaLink.IsPrimaryCutout = false;
-                    fMultimediaLink.CutoutPosition.Value = ExtRect.CreateEmpty();
+                    fModel.IsPrimaryCutout = false;
+                    fModel.CutoutPosition.Value = ExtRect.CreateEmpty();
                 }
 
-                PortraitsCache.Instance.RemoveObsolete(fMultimediaLink);
+                PortraitsCache.Instance.RemoveObsolete(fModel);
 
                 return true;
             } catch (Exception ex) {
@@ -74,17 +60,17 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            if (fMultimediaLink == null || fMultimediaLink.Value == null) return;
+            if (fModel == null || fModel.Value == null) return;
 
-            GEDCOMMultimediaRecord mmRec = (GEDCOMMultimediaRecord)fMultimediaLink.Value;
+            GEDCOMMultimediaRecord mmRec = (GEDCOMMultimediaRecord)fModel.Value;
 
             IImage img = fBase.Context.LoadMediaImage(mmRec.FileReferences[0], false);
             if (img == null) return;
 
             fView.ImageCtl.OpenImage(img);
 
-            if (fMultimediaLink.IsPrimaryCutout) {
-                fView.ImageCtl.SelectionRegion = fMultimediaLink.CutoutPosition.Value;
+            if (fModel.IsPrimaryCutout) {
+                fView.ImageCtl.SelectionRegion = fModel.CutoutPosition.Value;
             }
         }
     }

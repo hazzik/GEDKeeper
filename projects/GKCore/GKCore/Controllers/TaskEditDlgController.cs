@@ -29,21 +29,9 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class TaskEditDlgController : DialogController<ITaskEditDlg>
+    public sealed class TaskEditDlgController : EditorController<GEDCOMTaskRecord, ITaskEditDlg>
     {
-        private GEDCOMTaskRecord fTask;
         private GEDCOMRecord fTempRec;
-
-        public GEDCOMTaskRecord Task
-        {
-            get { return fTask; }
-            set {
-                if (fTask != value) {
-                    fTask = value;
-                    UpdateView();
-                }
-            }
-        }
 
 
         public TaskEditDlgController(ITaskEditDlg view) : base(view)
@@ -62,26 +50,26 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                fTask.Priority = (GKResearchPriority)fView.Priority.SelectedIndex;
-                fTask.StartDate.Assign(GEDCOMDate.CreateByFormattedStr(fView.StartDate.Text, true));
-                fTask.StopDate.Assign(GEDCOMDate.CreateByFormattedStr(fView.StopDate.Text, true));
+                fModel.Priority = (GKResearchPriority)fView.Priority.SelectedIndex;
+                fModel.StartDate.Assign(GEDCOMDate.CreateByFormattedStr(fView.StartDate.Text, true));
+                fModel.StopDate.Assign(GEDCOMDate.CreateByFormattedStr(fView.StopDate.Text, true));
 
                 GKGoalType gt = (GKGoalType)fView.GoalType.SelectedIndex;
                 switch (gt) {
                     case GKGoalType.gtIndividual:
                     case GKGoalType.gtFamily:
                     case GKGoalType.gtSource:
-                        fTask.Goal = GEDCOMUtils.EncloseXRef(fTempRec.XRef);
+                        fModel.Goal = GEDCOMUtils.EncloseXRef(fTempRec.XRef);
                         break;
 
                     case GKGoalType.gtOther:
-                        fTask.Goal = fView.Goal.Text;
+                        fModel.Goal = fView.Goal.Text;
                         break;
                 }
 
                 fLocalUndoman.Commit();
 
-                fBase.NotifyRecord(fTask, RecordAction.raEdit);
+                fBase.NotifyRecord(fModel, RecordAction.raEdit);
 
                 return true;
             } catch (Exception ex) {
@@ -92,18 +80,18 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            if (fTask == null) {
+            if (fModel == null) {
                 fView.Priority.SelectedIndex = -1;
                 fView.StartDate.Text = "";
                 fView.StopDate.Text = "";
                 fView.GoalType.SelectedIndex = 0;
                 fView.Goal.Text = "";
             } else {
-                fView.Priority.SelectedIndex = (sbyte)fTask.Priority;
-                fView.StartDate.Text = fTask.StartDate.GetDisplayString(DateFormat.dfDD_MM_YYYY);
-                fView.StopDate.Text = fTask.StopDate.GetDisplayString(DateFormat.dfDD_MM_YYYY);
+                fView.Priority.SelectedIndex = (sbyte)fModel.Priority;
+                fView.StartDate.Text = fModel.StartDate.GetDisplayString(DateFormat.dfDD_MM_YYYY);
+                fView.StopDate.Text = fModel.StopDate.GetDisplayString(DateFormat.dfDD_MM_YYYY);
 
-                var goal = fTask.GetTaskGoal();
+                var goal = fModel.GetTaskGoal();
                 fTempRec = goal.GoalRec;
                 fView.GoalType.SelectedIndex = (sbyte)goal.GoalType;
 
@@ -115,12 +103,12 @@ namespace GKCore.Controllers
                         break;
 
                     case GKGoalType.gtOther:
-                        fView.Goal.Text = fTask.Goal;
+                        fView.Goal.Text = fModel.Goal;
                         break;
                 }
             }
 
-            fView.NotesList.ListModel.DataOwner = fTask;
+            fView.NotesList.ListModel.DataOwner = fModel;
 
             ChangeGoalType();
         }

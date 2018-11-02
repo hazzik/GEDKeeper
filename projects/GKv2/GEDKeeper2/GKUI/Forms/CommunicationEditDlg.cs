@@ -19,7 +19,6 @@
  */
 
 using System;
-using System.Windows.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -35,18 +34,10 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class CommunicationEditDlg : EditorDialog, ICommunicationEditDlg
+    public sealed partial class CommunicationEditDlg : EditorDialog<GEDCOMCommunicationRecord, ICommunicationEditDlg, CommunicationEditDlgController>, ICommunicationEditDlg
     {
-        private readonly CommunicationEditDlgController fController;
-
         private readonly GKSheetList fNotesList;
         private readonly GKSheetList fMediaList;
-
-        public GEDCOMCommunicationRecord Communication
-        {
-            get { return fController.Communication; }
-            set { fController.Communication = value; }
-        }
 
         #region View Interface
 
@@ -87,20 +78,6 @@ namespace GKUI.Forms
 
         #endregion
 
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            try {
-                fController.Cancel();
-            } catch (Exception ex) {
-                Logger.LogWrite("CommunicationEditDlg.btnCancel_Click(): " + ex.Message);
-            }
-        }
-
         private void btnPersonAdd_Click(object sender, EventArgs e)
         {
             fController.SetPerson();
@@ -109,6 +86,9 @@ namespace GKUI.Forms
         public CommunicationEditDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");

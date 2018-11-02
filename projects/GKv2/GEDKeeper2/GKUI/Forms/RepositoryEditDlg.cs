@@ -19,7 +19,6 @@
  */
 
 using System;
-using System.Windows.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -35,17 +34,9 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class RepositoryEditDlg : EditorDialog, IRepositoryEditDlg
+    public sealed partial class RepositoryEditDlg : EditorDialog<GEDCOMRepositoryRecord, IRepositoryEditDlg, RepositoryEditDlgController>, IRepositoryEditDlg
     {
-        private readonly RepositoryEditDlgController fController;
-
         private readonly GKSheetList fNotesList;
-
-        public GEDCOMRepositoryRecord Repository
-        {
-            get { return fController.Repository; }
-            set { fController.Repository = value; }
-        }
 
         #region View Interface
 
@@ -66,23 +57,12 @@ namespace GKUI.Forms
             fController.ModifyAddress();
         }
 
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            try {
-                fController.Cancel();
-            } catch (Exception ex) {
-                Logger.LogWrite("RepositoryEditDlg.btnCancel_Click(): " + ex.Message);
-            }
-        }
-
         public RepositoryEditDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");

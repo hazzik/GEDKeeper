@@ -19,7 +19,6 @@
  */
 
 using System;
-using System.Windows.Forms;
 
 using BSLib;
 using GKCore;
@@ -36,17 +35,9 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class TreeFilterDlg : EditorDialog, ITreeFilterDlg
+    public sealed partial class TreeFilterDlg : EditorDialog<ChartFilter, ITreeFilterDlg, TreeFilterDlgController>, ITreeFilterDlg
     {
-        private readonly TreeFilterDlgController fController;
-
         private readonly GKSheetList fPersonsList;
-
-        public ChartFilter Filter
-        {
-            get { return fController.Filter; }
-            set { fController.Filter = value; }
-        }
 
         #region View Interface
 
@@ -100,18 +91,8 @@ namespace GKUI.Forms
 
         private void rbCutNoneClick(object sender, EventArgs e)
         {
-            fController.Filter.BranchCut = (ChartFilter.BranchCutType)((ITreeFilterDlg)this).GetCutModeRadio();
+            fController.Model.BranchCut = (ChartFilter.BranchCutType)((ITreeFilterDlg)this).GetCutModeRadio();
             fController.UpdateControls();
-        }
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            fController.Filter.Reset();
         }
 
         private void TreeFilterDlg_Load(object sender, EventArgs e)
@@ -122,6 +103,9 @@ namespace GKUI.Forms
         public TreeFilterDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");

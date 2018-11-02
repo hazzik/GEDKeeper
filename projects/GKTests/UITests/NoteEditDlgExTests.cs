@@ -52,7 +52,7 @@ namespace GKUI.Forms
             fNoteRecord = new GEDCOMNoteRecord(fBase.Context.Tree, fBase.Context.Tree, "", "");
 
             fDialog = new NoteEditDlgEx(fBase);
-            fDialog.NoteRecord = fNoteRecord;
+            fDialog.Model = fNoteRecord;
             fDialog.Show();
         }
 
@@ -71,7 +71,7 @@ namespace GKUI.Forms
         [Test]
         public void Test_EnterDataAndApply()
         {
-            Assert.AreEqual(fNoteRecord, fDialog.NoteRecord);
+            Assert.AreEqual(fNoteRecord, fDialog.Model);
 
             ClickToolStripButton("btnBold", fDialog);
             ClickToolStripButton("btnItalic", fDialog);

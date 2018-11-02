@@ -3,7 +3,10 @@
     partial class LanguageSelectDlg
     {
         private System.ComponentModel.IContainer components = null;
-        
+        private GKUI.Components.GKListView lstLanguages;
+        private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.Button btnAccept;
+
         protected override void Dispose(bool disposing)
         {
             if (disposing) {
@@ -13,7 +16,7 @@
             }
             base.Dispose(disposing);
         }
-        
+
         private void InitializeComponent()
         {
             this.btnAccept = new System.Windows.Forms.Button();
@@ -31,7 +34,6 @@
             this.btnAccept.TabIndex = 7;
             this.btnAccept.Text = "OK";
             this.btnAccept.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
             // 
             // btnCancel
             // 
@@ -76,8 +78,5 @@
             this.Text = "Select language";
             this.ResumeLayout(false);
         }
-        private GKUI.Components.GKListView lstLanguages;
-        private System.Windows.Forms.Button btnCancel;
-        private System.Windows.Forms.Button btnAccept;
     }
 }

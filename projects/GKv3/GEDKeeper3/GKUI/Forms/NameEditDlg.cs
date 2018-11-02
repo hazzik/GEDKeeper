@@ -33,16 +33,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class NameEditDlg : CommonDialog, INameEditDlg
+    public sealed partial class NameEditDlg : EditorDialog<NameEntry, INameEditDlg, NameEditDlgController>, INameEditDlg
     {
-        private readonly NameEditDlgController fController;
-
-        public NameEntry IName
-        {
-            get { return fController.NameEntry; }
-            set { fController.NameEntry = value; }
-        }
-
         #region View Interface
 
         ITextBoxHandler INameEditDlg.Name
@@ -67,11 +59,6 @@ namespace GKUI.Forms
 
         #endregion
 
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.Ok : DialogResult.None;
-        }
-
         private void edName_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyChar == '/') {
@@ -82,6 +69,9 @@ namespace GKUI.Forms
         public NameEditDlg()
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");

@@ -84,7 +84,7 @@ namespace GKCore.Lists
                             ast = new GEDCOMAssociation(fBaseWin.Context.Tree, person, "", "");
                         }
 
-                        dlg.Association = ast;
+                        dlg.Model = ast;
                         result = AppHost.Instance.ShowModalX(dlg, false);
 
                         if (!exists) {

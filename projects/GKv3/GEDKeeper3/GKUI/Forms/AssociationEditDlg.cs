@@ -19,7 +19,6 @@
  */
 
 using System;
-using Eto.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -34,16 +33,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class AssociationEditDlg : EditorDialog, IAssociationEditDlg
+    public sealed partial class AssociationEditDlg : EditorDialog<GEDCOMAssociation, IAssociationEditDlg, AssociationEditDlgController>, IAssociationEditDlg
     {
-        private readonly AssociationEditDlgController fController;
-
-        public GEDCOMAssociation Association
-        {
-            get { return fController.Association; }
-            set { fController.Association = value; }
-        }
-
         #region View Interface
 
         IComboBoxHandler IAssociationEditDlg.Relation
@@ -62,6 +53,9 @@ namespace GKUI.Forms
         {
             InitializeComponent();
 
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
+
             btnPersonAdd.Image = UIHelper.LoadResourceImage("Resources.btn_rec_new.gif");
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");
@@ -77,11 +71,6 @@ namespace GKUI.Forms
 
             fController = new AssociationEditDlgController(this);
             fController.Init(baseWin);
-        }
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.Ok : DialogResult.None;
         }
 
         private void btnPersonAdd_Click(object sender, EventArgs e)

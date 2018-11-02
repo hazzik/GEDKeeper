@@ -50,7 +50,7 @@ namespace GKUI.Forms
             fPersonalName = new GEDCOMPersonalName(fBase.Context.Tree, fPerson, "", "");
 
             fDialog = new PersonalNameEditDlg(fBase);
-            fDialog.PersonalName = fPersonalName;
+            fDialog.Model = fPersonalName;
             fDialog.Show();
         }
 
@@ -69,7 +69,7 @@ namespace GKUI.Forms
         [Test]
         public void Test_EnterDataAndApply()
         {
-            Assert.AreEqual(fPersonalName, fDialog.PersonalName);
+            Assert.AreEqual(fPersonalName, fDialog.Model);
 
             var txtSurname = new TextBoxTester("txtSurname");
             txtSurname.Enter("sample text");

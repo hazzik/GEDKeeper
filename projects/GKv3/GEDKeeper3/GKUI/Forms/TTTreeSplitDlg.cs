@@ -32,10 +32,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class TTTreeSplitDlg : CommonDialog, ITreeSplitDlg
+    public sealed partial class TTTreeSplitDlg : CommonDialog<ITreeSplitDlg, TreeSplitController>, ITreeSplitDlg
     {
-        private readonly TreeSplitController fController;
-
         #region View Interface
 
         IListView ITreeSplitDlg.SelectedList

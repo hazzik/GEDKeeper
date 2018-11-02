@@ -19,7 +19,6 @@
  */
 
 using System;
-using Eto.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -35,18 +34,10 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class MediaEditDlg : EditorDialog, IMediaEditDlg
+    public sealed partial class MediaEditDlg : EditorDialog<GEDCOMMultimediaRecord, IMediaEditDlg, MediaEditDlgController>, IMediaEditDlg
     {
-        private readonly MediaEditDlgController fController;
-
         private readonly GKSheetList fNotesList;
         private readonly GKSheetList fSourcesList;
-
-        public GEDCOMMultimediaRecord MediaRec
-        {
-            get { return fController.MediaRec; }
-            set { fController.MediaRec = value; }
-        }
 
         #region View Interface
 
@@ -87,21 +78,6 @@ namespace GKUI.Forms
 
         #endregion
 
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.Ok : DialogResult.None;
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            try {
-                fController.Cancel();
-                CancelClickHandler(sender, e);
-            } catch (Exception ex) {
-                Logger.LogWrite("MediaEditDlg.btnCancel_Click(): " + ex.Message);
-            }
-        }
-
         private void btnFileSelect_Click(object sender, EventArgs e)
         {
             fController.SelectFile();
@@ -120,6 +96,9 @@ namespace GKUI.Forms
         public MediaEditDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");

@@ -80,7 +80,6 @@
     <Compile Include="GKUI\Forms\DayTipsDlg.design.cs">
       <DependentUpon>DayTipsDlg.cs</DependentUpon>
     </Compile>
-    <Compile Include="GKUI\Forms\EditorDialog.cs" />
     <Compile Include="GKUI\Forms\EventEditDlg.cs" />
     <Compile Include="GKUI\Forms\EventEditDlg.design.cs">
       <DependentUpon>EventEditDlg.cs</DependentUpon>

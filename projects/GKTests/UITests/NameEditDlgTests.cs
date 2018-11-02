@@ -50,8 +50,8 @@ namespace GKUI.Forms
             fNameEntry = new NameEntry();
 
             fDialog = new NameEditDlg();
-            fDialog.IName = null;
-            fDialog.IName = fNameEntry;
+            fDialog.Model = null;
+            fDialog.Model = fNameEntry;
             fDialog.Show();
         }
 
@@ -69,7 +69,7 @@ namespace GKUI.Forms
         [Test]
         public void Test_EnterDataAndApply()
         {
-            Assert.AreEqual(fNameEntry, fDialog.IName);
+            Assert.AreEqual(fNameEntry, fDialog.Model);
 
             /*var cmbRelation = new ComboBoxTester("cmbRelation");
             cmbRelation.Enter("sample text");

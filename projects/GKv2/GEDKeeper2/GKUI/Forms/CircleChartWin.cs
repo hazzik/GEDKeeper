@@ -33,10 +33,8 @@ using GKUI.Components;
 
 namespace GKUI.Forms
 {
-    public partial class CircleChartWin : PrintableForm, ICircleChartWin
+    public partial class CircleChartWin : PrintableForm<ICircleChartWin, CircleChartWinController>, ICircleChartWin
     {
-        private readonly CircleChartWinController fController;
-
         private readonly IBaseWindow fBaseWin;
         private readonly CircleChart fCircleChart;
 

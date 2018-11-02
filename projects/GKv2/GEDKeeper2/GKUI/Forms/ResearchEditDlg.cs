@@ -19,7 +19,6 @@
  */
 
 using System;
-using System.Windows.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -36,20 +35,12 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public partial class ResearchEditDlg : EditorDialog, IResearchEditDlg
+    public partial class ResearchEditDlg : EditorDialog<GEDCOMResearchRecord, IResearchEditDlg, ResearchEditDlgController>, IResearchEditDlg
     {
-        private readonly ResearchEditDlgController fController;
-
         private readonly GKSheetList fTasksList;
         private readonly GKSheetList fCommunicationsList;
         private readonly GKSheetList fGroupsList;
         private readonly GKSheetList fNotesList;
-
-        public GEDCOMResearchRecord Research
-        {
-            get { return fController.Research; }
-            set { fController.Research = value; }
-        }
 
         #region View Interface
 
@@ -109,6 +100,9 @@ namespace GKUI.Forms
         public ResearchEditDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");
@@ -173,20 +167,6 @@ namespace GKUI.Forms
         {
             if (eArgs.Action == RecordAction.raJump) {
                 fController.JumpToRecord(eArgs.ItemData as GEDCOMGroupRecord);
-            }
-        }
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            try {
-                fController.Cancel();
-            } catch (Exception ex) {
-                Logger.LogWrite("ResearchEditDlg.btnCancel_Click(): " + ex.Message);
             }
         }
     }

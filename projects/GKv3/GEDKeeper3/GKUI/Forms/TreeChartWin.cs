@@ -38,10 +38,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public partial class TreeChartWin : PrintableForm, ITreeChartWin
+    public partial class TreeChartWin : PrintableForm<ITreeChartWin, TreeChartWinController>, ITreeChartWin
     {
-        private readonly TreeChartWinController fController;
-
         private readonly IBaseWindow fBase;
         private readonly TreeChartBox fTreeBox;
 

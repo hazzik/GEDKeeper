@@ -30,22 +30,8 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class NoteEditDlgController : DialogController<INoteEdit>
+    public sealed class NoteEditDlgController : EditorController<GEDCOMNoteRecord, INoteEdit>
     {
-        private GEDCOMNoteRecord fNoteRecord;
-
-        public GEDCOMNoteRecord NoteRecord
-        {
-            get { return fNoteRecord; }
-            set {
-                if (fNoteRecord != value) {
-                    fNoteRecord = value;
-                    UpdateView();
-                }
-            }
-        }
-
-
         public NoteEditDlgController(INoteEdit view) : base(view)
         {
         }
@@ -55,9 +41,9 @@ namespace GKCore.Controllers
             try {
                 string noteText = fView.Note.Text.Trim();
                 if (!string.IsNullOrEmpty(noteText)) {
-                    fNoteRecord.SetNotesArray(fView.Note.Lines);
+                    fModel.SetNotesArray(fView.Note.Lines);
 
-                    fBase.NotifyRecord(fNoteRecord, RecordAction.raEdit);
+                    fBase.NotifyRecord(fModel, RecordAction.raEdit);
 
                     return true;
                 } else {
@@ -71,7 +57,7 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            fView.Note.Text = fNoteRecord.Note.Text.Trim();
+            fView.Note.Text = fModel.Note.Text.Trim();
         }
 
         public void SetBold()

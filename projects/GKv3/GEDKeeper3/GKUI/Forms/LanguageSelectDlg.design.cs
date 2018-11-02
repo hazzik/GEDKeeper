@@ -18,13 +18,11 @@ namespace GKUI.Forms
             btnAccept.ImagePosition = ButtonImagePosition.Left;
             btnAccept.Size = new Size(130, 26);
             btnAccept.Text = "OK";
-            btnAccept.Click += btnAccept_Click;
 
             btnCancel = new Button();
             btnCancel.ImagePosition = ButtonImagePosition.Left;
             btnCancel.Size = new Size(130, 26);
             btnCancel.Text = "Cancel";
-            btnCancel.Click += CancelClickHandler;
 
             lstLanguages = new GKListView();
 

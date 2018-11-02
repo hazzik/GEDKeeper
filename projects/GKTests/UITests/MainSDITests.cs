@@ -1067,7 +1067,7 @@ namespace GKUI.Forms
 
         private void FamilyEditDlg_Handler(FamilyEditDlg dlg)
         {
-            GEDCOMFamilyRecord familyRecord = dlg.Family;
+            GEDCOMFamilyRecord familyRecord = dlg.Model;
             var tabs = new TabControlTester("tabsFamilyData", dlg);
             GKSheetListTester sheetTester;
 
@@ -1131,7 +1131,7 @@ namespace GKUI.Forms
 
         private void PersonEditDlg_Handler(PersonEditDlg dlg)
         {
-            GEDCOMIndividualRecord indiRecord = dlg.Person;
+            GEDCOMIndividualRecord indiRecord = dlg.Model;
 
             var cmbSex = new ComboBoxTester("cmbSex", dlg);
             cmbSex.Select(1); // male
@@ -1300,7 +1300,7 @@ namespace GKUI.Forms
 
         private void ResearchEditDlg_Handler(ResearchEditDlg dlg)
         {
-            GEDCOMResearchRecord resRecord = dlg.Research;
+            GEDCOMResearchRecord resRecord = dlg.Model;
             GKSheetListTester sheetTester;
             var tabs = new TabControlTester("tabsData", dlg);
 
@@ -1412,7 +1412,7 @@ namespace GKUI.Forms
 
         private void GroupEditDlg_Handler(GroupEditDlg dlg)
         {
-            GEDCOMGroupRecord groupRecord = dlg.Group;
+            GEDCOMGroupRecord groupRecord = dlg.Model;
             GKSheetListTester sheetTester = new GKSheetListTester("fMembersList", dlg);
 
             // members
@@ -1430,7 +1430,7 @@ namespace GKUI.Forms
         private void EventEditDlg_Select_Handler(string name, IntPtr ptr, Form form)
         {
             EventEditDlg eventDlg = (EventEditDlg) form;
-            Assert.IsNotNull(eventDlg.Event);
+            Assert.IsNotNull(eventDlg.Model);
 
             var cmbEventType = new ComboBoxTester("cmbEventType", form);
             cmbEventType.Select(1); // Birth(indi) / ?(fam)

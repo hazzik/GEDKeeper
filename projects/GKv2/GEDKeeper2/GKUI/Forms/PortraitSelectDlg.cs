@@ -19,7 +19,6 @@
  */
 
 using System;
-using System.Windows.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -34,16 +33,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class PortraitSelectDlg : EditorDialog, IPortraitSelectDlg
+    public sealed partial class PortraitSelectDlg : EditorDialog<GEDCOMMultimediaLink, IPortraitSelectDlg, PortraitSelectDlgController>, IPortraitSelectDlg
     {
-        private readonly PortraitSelectDlgController fController;
-
-        public GEDCOMMultimediaLink MultimediaLink
-        {
-            get { return fController.MultimediaLink; }
-            set { fController.MultimediaLink = value; }
-        }
-
         #region View Interface
 
         IImageView IPortraitSelectDlg.ImageCtl
@@ -53,14 +44,12 @@ namespace GKUI.Forms
 
         #endregion
 
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
-        }
-
         public PortraitSelectDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");

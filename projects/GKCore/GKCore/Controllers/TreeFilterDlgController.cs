@@ -31,16 +31,9 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class TreeFilterDlgController : DialogController<ITreeFilterDlg>
+    public sealed class TreeFilterDlgController : EditorController<ChartFilter, ITreeFilterDlg>
     {
-        private ChartFilter fFilter;
         private string fTemp;
-
-        public ChartFilter Filter
-        {
-            get { return fFilter; }
-            set { fFilter = value; }
-        }
 
         public TreeFilterDlgController(ITreeFilterDlg view) : base(view)
         {
@@ -49,25 +42,25 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                fFilter.BranchCut = (ChartFilter.BranchCutType)fView.GetCutModeRadio();
-                if (fFilter.BranchCut == ChartFilter.BranchCutType.Years) {
-                    fFilter.BranchYear = (int)fView.YearNum.Value;
-                } else if (fFilter.BranchCut == ChartFilter.BranchCutType.Persons) {
-                    fFilter.BranchPersons = fTemp;
+                fModel.BranchCut = (ChartFilter.BranchCutType)fView.GetCutModeRadio();
+                if (fModel.BranchCut == ChartFilter.BranchCutType.Years) {
+                    fModel.BranchYear = (int)fView.YearNum.Value;
+                } else if (fModel.BranchCut == ChartFilter.BranchCutType.Persons) {
+                    fModel.BranchPersons = fTemp;
                 }
 
                 int selectedIndex = fView.SourceCombo.SelectedIndex;
                 if (selectedIndex >= 0 && selectedIndex < 3) {
-                    fFilter.SourceMode = (FilterGroupMode)fView.SourceCombo.SelectedIndex;
-                    fFilter.SourceRef = "";
+                    fModel.SourceMode = (FilterGroupMode)fView.SourceCombo.SelectedIndex;
+                    fModel.SourceRef = "";
                 } else {
                     GEDCOMRecord rec = fView.SourceCombo.SelectedTag as GEDCOMRecord;
                     if (rec != null) {
-                        fFilter.SourceMode = FilterGroupMode.Selected;
-                        fFilter.SourceRef = rec.XRef;
+                        fModel.SourceMode = FilterGroupMode.Selected;
+                        fModel.SourceRef = rec.XRef;
                     } else {
-                        fFilter.SourceMode = FilterGroupMode.All;
-                        fFilter.SourceRef = "";
+                        fModel.SourceMode = FilterGroupMode.All;
+                        fModel.SourceRef = "";
                     }
                 }
 
@@ -78,10 +71,16 @@ namespace GKCore.Controllers
             }
         }
 
+        public override void Cancel()
+        {
+            fModel.Reset();
+            base.Cancel();
+        }
+
         public override void UpdateView()
         {
             GEDCOMTree tree = fBase.Context.Tree;
-            fTemp = fFilter.BranchPersons;
+            fTemp = fModel.BranchPersons;
 
             var values = new StringList();
             int num = tree.RecordsCount;
@@ -102,10 +101,10 @@ namespace GKCore.Controllers
 
         public void UpdateControls()
         {
-            fView.SetCutModeRadio((int)fFilter.BranchCut);
-            fView.YearNum.Enabled = (fFilter.BranchCut == ChartFilter.BranchCutType.Years);
-            fView.PersonsList.Enabled = (fFilter.BranchCut == ChartFilter.BranchCutType.Persons);
-            fView.YearNum.Text = fFilter.BranchYear.ToString();
+            fView.SetCutModeRadio((int)fModel.BranchCut);
+            fView.YearNum.Enabled = (fModel.BranchCut == ChartFilter.BranchCutType.Years);
+            fView.PersonsList.Enabled = (fModel.BranchCut == ChartFilter.BranchCutType.Persons);
+            fView.YearNum.Text = fModel.BranchYear.ToString();
             fView.PersonsList.ClearItems();
 
             if (!string.IsNullOrEmpty(fTemp)) {
@@ -119,10 +118,10 @@ namespace GKCore.Controllers
                 }
             }
 
-            if (fFilter.SourceMode != FilterGroupMode.Selected) {
-                fView.SourceCombo.SelectedIndex = (sbyte)fFilter.SourceMode;
+            if (fModel.SourceMode != FilterGroupMode.Selected) {
+                fView.SourceCombo.SelectedIndex = (sbyte)fModel.SourceMode;
             } else {
-                GEDCOMSourceRecord srcRec = fBase.Context.Tree.XRefIndex_Find(fFilter.SourceRef) as GEDCOMSourceRecord;
+                GEDCOMSourceRecord srcRec = fBase.Context.Tree.XRefIndex_Find(fModel.SourceRef) as GEDCOMSourceRecord;
                 if (srcRec != null) fView.SourceCombo.Text = srcRec.FiledByEntry;
             }
         }

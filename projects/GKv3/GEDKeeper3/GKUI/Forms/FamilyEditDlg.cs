@@ -19,7 +19,6 @@
  */
 
 using System;
-using Eto.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -36,21 +35,13 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public partial class FamilyEditDlg : EditorDialog, IFamilyEditDlg
+    public partial class FamilyEditDlg : EditorDialog<GEDCOMFamilyRecord, IFamilyEditDlg, FamilyEditDlgController>, IFamilyEditDlg
     {
-        private readonly FamilyEditDlgController fController;
-
         private readonly GKSheetList fChildrenList;
         private readonly GKSheetList fEventsList;
         private readonly GKSheetList fNotesList;
         private readonly GKSheetList fMediaList;
         private readonly GKSheetList fSourcesList;
-
-        public GEDCOMFamilyRecord Family
-        {
-            get { return fController.Family; }
-            set { fController.Family = value; }
-        }
 
         #region View Interface
 
@@ -104,6 +95,9 @@ namespace GKUI.Forms
         public FamilyEditDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");
@@ -203,21 +197,6 @@ namespace GKUI.Forms
         {
             if (eArgs.Action == RecordAction.raJump) {
                 fController.JumpToRecord(eArgs.ItemData as GEDCOMIndividualRecord);
-            }
-        }
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.Ok : DialogResult.None;
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            try {
-                fController.Cancel();
-                CancelClickHandler(sender, e);
-            } catch (Exception ex) {
-                Logger.LogWrite("FamilyEditDlg.btnCancel_Click(): " + ex.Message);
             }
         }
 

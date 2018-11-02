@@ -29,22 +29,8 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class RepositoryEditDlgController : DialogController<IRepositoryEditDlg>
+    public sealed class RepositoryEditDlgController : EditorController<GEDCOMRepositoryRecord, IRepositoryEditDlg>
     {
-        private GEDCOMRepositoryRecord fRepository;
-
-        public GEDCOMRepositoryRecord Repository
-        {
-            get { return fRepository; }
-            set {
-                if (fRepository != value) {
-                    fRepository = value;
-                    UpdateView();
-                }
-            }
-        }
-
-
         public RepositoryEditDlgController(IRepositoryEditDlg view) : base(view)
         {
             fView.Name.Activate();
@@ -53,9 +39,9 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                fRepository.RepositoryName = fView.Name.Text;
+                fModel.RepositoryName = fView.Name.Text;
 
-                fBase.NotifyRecord(fRepository, RecordAction.raEdit);
+                fBase.NotifyRecord(fModel, RecordAction.raEdit);
 
                 CommitChanges();
 
@@ -68,14 +54,14 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            fView.Name.Text = fRepository.RepositoryName;
+            fView.Name.Text = fModel.RepositoryName;
 
-            fView.NotesList.ListModel.DataOwner = fRepository;
+            fView.NotesList.ListModel.DataOwner = fModel;
         }
 
         public void ModifyAddress()
         {
-            BaseController.ModifyAddress(fBase, fRepository.Address);
+            BaseController.ModifyAddress(fBase, fModel.Address);
         }
     }
 }

@@ -19,7 +19,6 @@
  */
 
 using System;
-using System.Windows.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -33,10 +32,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class LanguageEditDlg : CommonDialog, ILanguageEditDlg
+    public sealed partial class LanguageEditDlg : CommonDialog<ILanguageEditDlg, LanguageEditDlgController>, ILanguageEditDlg
     {
-        private readonly LanguageEditDlgController fController;
-
         public GEDCOMLanguageID LanguageID
         {
             get { return fController.LanguageID; }
@@ -56,6 +53,9 @@ namespace GKUI.Forms
         {
             InitializeComponent();
 
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
+
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");
 
@@ -66,11 +66,6 @@ namespace GKUI.Forms
             lblLanguage.Text = LangMan.LS(LSID.LSID_Language);
 
             fController = new LanguageEditDlgController(this);
-        }
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
         }
     }
 }

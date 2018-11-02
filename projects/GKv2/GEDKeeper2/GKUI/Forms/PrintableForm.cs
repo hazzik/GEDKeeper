@@ -26,6 +26,7 @@ using System.Windows.Forms;
 
 using BSLib;
 using GKCore.Interfaces;
+using GKCore.MVP;
 using GKUI.Components;
 
 namespace GKUI.Forms
@@ -33,7 +34,9 @@ namespace GKUI.Forms
     /// <summary>
     /// Form's class, common for the implementation of the print.
     /// </summary>
-    public class PrintableForm : StatusForm
+    public class PrintableForm<TView, TController> : StatusForm<TView, TController>
+        where TView : IView
+        where TController : FormController<TView>
     {
         private PrintDocument fPrintDoc;
 

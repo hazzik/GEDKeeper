@@ -34,10 +34,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class RecordSelectDlg : EditorDialog, IRecordSelectDialog
+    public sealed partial class RecordSelectDlg : CommonDialog<IRecordSelectDialog, RecordSelectDlgController>, IRecordSelectDialog
     {
-        private readonly RecordSelectDlgController fController;
-
         private GKListView fListRecords;
 
 

@@ -35,6 +35,7 @@ namespace GKCore.Controllers
     {
         private readonly List<GEDCOMRecord> fSplitList;
 
+
         public TreeSplitController(ITreeSplitDlg view) : base(view)
         {
             fSplitList = new List<GEDCOMRecord>();

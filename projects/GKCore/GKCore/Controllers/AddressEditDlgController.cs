@@ -29,22 +29,8 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class AddressEditDlgController : DialogController<IAddressEditDlg>
+    public sealed class AddressEditDlgController : EditorController<GEDCOMAddress, IAddressEditDlg>
     {
-        private GEDCOMAddress fAddress;
-
-        public GEDCOMAddress Address
-        {
-            get { return fAddress; }
-            set {
-                if (fAddress != value) {
-                    fAddress = value;
-                    UpdateView();
-                }
-            }
-        }
-
-
         public AddressEditDlgController(IAddressEditDlg view) : base(view)
         {
         }
@@ -52,11 +38,11 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                fAddress.AddressCountry = fView.Country.Text;
-                fAddress.AddressState = fView.State.Text;
-                fAddress.AddressCity = fView.City.Text;
-                fAddress.AddressPostalCode = fView.PostalCode.Text;
-                fAddress.SetAddressText(fView.AddressLine.Text);
+                fModel.AddressCountry = fView.Country.Text;
+                fModel.AddressState = fView.State.Text;
+                fModel.AddressCity = fView.City.Text;
+                fModel.AddressPostalCode = fView.PostalCode.Text;
+                fModel.SetAddressText(fView.AddressLine.Text);
 
                 return true;
             } catch (Exception ex) {
@@ -67,11 +53,11 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            fView.Country.Text = fAddress.AddressCountry;
-            fView.State.Text = fAddress.AddressState;
-            fView.City.Text = fAddress.AddressCity;
-            fView.PostalCode.Text = fAddress.AddressPostalCode;
-            fView.AddressLine.Text = fAddress.Address.Text.Trim();
+            fView.Country.Text = fModel.AddressCountry;
+            fView.State.Text = fModel.AddressState;
+            fView.City.Text = fModel.AddressCity;
+            fView.PostalCode.Text = fModel.AddressPostalCode;
+            fView.AddressLine.Text = fModel.Address.Text.Trim();
 
             UpdateLists();
         }
@@ -79,17 +65,17 @@ namespace GKCore.Controllers
         public void UpdateLists()
         {
             fView.PhonesList.ClearItems();
-            foreach (GEDCOMTag tag in fAddress.PhoneNumbers) {
+            foreach (GEDCOMTag tag in fModel.PhoneNumbers) {
                 fView.PhonesList.AddItem(tag, tag.StringValue);
             }
 
             fView.MailsList.ClearItems();
-            foreach (GEDCOMTag tag in fAddress.EmailAddresses) {
+            foreach (GEDCOMTag tag in fModel.EmailAddresses) {
                 fView.MailsList.AddItem(tag, tag.StringValue);
             }
 
             fView.WebsList.ClearItems();
-            foreach (GEDCOMTag tag in fAddress.WebPages) {
+            foreach (GEDCOMTag tag in fModel.WebPages) {
                 fView.WebsList.AddItem(tag, tag.StringValue);
             }
         }
@@ -101,7 +87,7 @@ namespace GKCore.Controllers
                 case RecordAction.raAdd:
                     val = "";
                     if (AppHost.StdDialogs.GetInput(LangMan.LS(LSID.LSID_Telephone), ref val)) {
-                        fAddress.AddPhoneNumber(val);
+                        fModel.AddPhoneNumber(val);
                     }
                     break;
 
@@ -113,7 +99,7 @@ namespace GKCore.Controllers
                     break;
 
                 case RecordAction.raDelete:
-                    fAddress.PhoneNumbers.Delete(itemTag);
+                    fModel.PhoneNumbers.Delete(itemTag);
                     break;
             }
             UpdateLists();
@@ -126,7 +112,7 @@ namespace GKCore.Controllers
                 case RecordAction.raAdd:
                     val = "";
                     if (AppHost.StdDialogs.GetInput(LangMan.LS(LSID.LSID_Mail), ref val)) {
-                        fAddress.AddEmailAddress(val);
+                        fModel.AddEmailAddress(val);
                     }
                     break;
 
@@ -138,7 +124,7 @@ namespace GKCore.Controllers
                     break;
 
                 case RecordAction.raDelete:
-                    fAddress.EmailAddresses.Delete(itemTag);
+                    fModel.EmailAddresses.Delete(itemTag);
                     break;
             }
             UpdateLists();
@@ -151,7 +137,7 @@ namespace GKCore.Controllers
                 case RecordAction.raAdd:
                     val = "";
                     if (AppHost.StdDialogs.GetInput(LangMan.LS(LSID.LSID_WebSite), ref val)) {
-                        fAddress.AddWebPage(val);
+                        fModel.AddWebPage(val);
                     }
                     break;
 
@@ -163,7 +149,7 @@ namespace GKCore.Controllers
                     break;
 
                 case RecordAction.raDelete:
-                    fAddress.WebPages.Delete(itemTag);
+                    fModel.WebPages.Delete(itemTag);
                     break;
             }
             UpdateLists();

@@ -19,7 +19,6 @@
  */
 
 using System;
-using System.Windows.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -36,19 +35,11 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class AddressEditDlg : EditorDialog, IAddressEditDlg
+    public sealed partial class AddressEditDlg : EditorDialog<GEDCOMAddress, IAddressEditDlg, AddressEditDlgController>, IAddressEditDlg
     {
-        private readonly AddressEditDlgController fController;
-
         private readonly GKSheetList fPhonesList;
         private readonly GKSheetList fMailsList;
         private readonly GKSheetList fWebsList;
-
-        public GEDCOMAddress Address
-        {
-            get { return fController.Address; }
-            set { fController.Address = value; }
-        }
 
         #region View Interface
 
@@ -109,14 +100,12 @@ namespace GKUI.Forms
             }
         }
 
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
-        }
-
         public AddressEditDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");

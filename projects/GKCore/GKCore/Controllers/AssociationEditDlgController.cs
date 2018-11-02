@@ -30,27 +30,21 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class AssociationEditDlgController : DialogController<IAssociationEditDlg>
+    public sealed class AssociationEditDlgController : EditorController<GEDCOMAssociation, IAssociationEditDlg>
     {
-        private GEDCOMAssociation fAssociation;
         private GEDCOMIndividualRecord fTempPerson;
-
-        public GEDCOMAssociation Association
-        {
-            get { return fAssociation; }
-            set {
-                if (fAssociation != value) {
-                    fAssociation = value;
-                    fTempPerson = fAssociation.Individual;
-                    UpdateView();
-                }
-            }
-        }
 
 
         public AssociationEditDlgController(IAssociationEditDlg view) : base(view)
         {
             fView.Relation.AddStrings(GlobalOptions.Instance.Relations);
+        }
+
+        protected override void SetModel(GEDCOMAssociation value)
+        {
+            fModel = value;
+            fTempPerson = (fModel == null) ? null : fModel.Individual;
+            UpdateView();
         }
 
         public override bool Accept()
@@ -61,8 +55,8 @@ namespace GKCore.Controllers
                     GlobalOptions.Instance.Relations.Add(rel);
                 }
 
-                fAssociation.Relation = rel;
-                fAssociation.Individual = fTempPerson;
+                fModel.Relation = rel;
+                fModel.Individual = fTempPerson;
 
                 return true;
             } catch (Exception ex) {
@@ -73,7 +67,7 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            fView.Relation.Text = fAssociation.Relation;
+            fView.Relation.Text = fModel.Relation;
             fView.Person.Text = (fTempPerson == null) ? "" : GKUtils.GetNameString(fTempPerson, true, false);
         }
 

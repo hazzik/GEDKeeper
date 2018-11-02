@@ -32,10 +32,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class TTRecMergeDlg : CommonDialog, IRecMergeDlg
+    public sealed partial class TTRecMergeDlg : CommonDialog<IRecMergeDlg, RecMergeController>, IRecMergeDlg
     {
-        private readonly RecMergeController fController;
-
         #region View Interface
 
         IMergeControl IRecMergeDlg.MergeCtl

@@ -20,6 +20,7 @@
 
 using System;
 using Eto.Forms;
+using GKCore;
 using GKCore.Interfaces;
 using GKCore.MVP;
 using GKUI.Components;
@@ -48,6 +49,13 @@ namespace GKUI.Forms
             fControlsManager = new ControlsManager();
         }
 
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing) {
+            }
+            base.Dispose(disposing);
+        }
+
         public void SetToolTip(BindableWidget component, string toolTip)
         {
             if (component != null && !string.IsNullOrEmpty(toolTip)) {
@@ -70,7 +78,7 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public abstract class CommonWindow : CommonForm, IWindow
+    public class CommonWindow : CommonForm, IWindow
     {
         public virtual void Show(bool showInTaskbar)
         {
@@ -81,6 +89,17 @@ namespace GKUI.Forms
         public virtual void SetLang()
         {
         }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CommonWindow<TView, TController> : CommonWindow
+        where TView : IView
+        where TController : FormController<TView>
+    {
+        protected TController fController;
     }
 
 
@@ -154,6 +173,47 @@ namespace GKUI.Forms
         public void SetPredefProperties(int width, int height, bool fontPreset = true)
         {
             UIHelper.SetPredefProperties(this, width, height, fontPreset);
+        }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CommonDialog<TView, TController> : CommonDialog
+        where TView : IView
+        where TController : DialogController<TView>
+    {
+        protected TController fController;
+
+        protected virtual void AcceptHandler(object sender, EventArgs e)
+        {
+            DialogResult = fController.Accept() ? DialogResult.Ok : DialogResult.None;
+        }
+
+        protected virtual void CancelHandler(object sender, EventArgs e)
+        {
+            try {
+                fController.Cancel();
+            } catch (Exception ex) {
+                Logger.LogWrite("CommonDialog.CancelHandler(): " + ex.Message);
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class EditorDialog<TModel, TView, TController> : CommonDialog<TView, TController>, IBaseEditor
+        where TModel : class
+        where TView : IView
+        where TController : EditorController<TModel, TView>
+    {
+        public TModel Model
+        {
+            get { return fController.Model; }
+            set { fController.Model = value; }
         }
     }
 }

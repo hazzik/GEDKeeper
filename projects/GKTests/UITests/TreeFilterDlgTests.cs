@@ -53,7 +53,7 @@ namespace GKUI.Forms
             fChartFilter = new ChartFilter();
 
             fDialog = new TreeFilterDlg(fBase);
-            fDialog.Filter = fChartFilter;
+            fDialog.Model = fChartFilter;
             fDialog.Show();
         }
 
@@ -71,7 +71,7 @@ namespace GKUI.Forms
         [Test]
         public void Test_EnterDataAndApply()
         {
-            Assert.IsNotNull(fDialog.Filter);
+            Assert.IsNotNull(fDialog.Model);
 
             var rbCutPersons = new RadioButtonTester("rbCutPersons", fDialog);
             rbCutPersons.Click();

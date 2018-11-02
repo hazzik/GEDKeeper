@@ -29,21 +29,9 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class CommunicationEditDlgController : DialogController<ICommunicationEditDlg>
+    public sealed class CommunicationEditDlgController : EditorController<GEDCOMCommunicationRecord, ICommunicationEditDlg>
     {
-        private GEDCOMCommunicationRecord fCommunication;
         private GEDCOMIndividualRecord fTempInd;
-
-        public GEDCOMCommunicationRecord Communication
-        {
-            get { return fCommunication; }
-            set {
-                if (fCommunication != value) {
-                    fCommunication = value;
-                    UpdateView();
-                }
-            }
-        }
 
 
         public CommunicationEditDlgController(ICommunicationEditDlg view) : base(view)
@@ -65,12 +53,12 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                fCommunication.CommName = fView.Name.Text;
-                fCommunication.CommunicationType = (GKCommunicationType)fView.CorrType.SelectedIndex;
-                fCommunication.Date.Assign(GEDCOMDate.CreateByFormattedStr(fView.Date.Text, true));
-                fCommunication.SetCorresponder((GKCommunicationDir)fView.Dir.SelectedIndex, fTempInd);
+                fModel.CommName = fView.Name.Text;
+                fModel.CommunicationType = (GKCommunicationType)fView.CorrType.SelectedIndex;
+                fModel.Date.Assign(GEDCOMDate.CreateByFormattedStr(fView.Date.Text, true));
+                fModel.SetCorresponder((GKCommunicationDir)fView.Dir.SelectedIndex, fTempInd);
 
-                fBase.NotifyRecord(fCommunication, RecordAction.raEdit);
+                fBase.NotifyRecord(fModel, RecordAction.raEdit);
 
                 CommitChanges();
 
@@ -84,21 +72,21 @@ namespace GKCore.Controllers
         public override void UpdateView()
         {
             try {
-                fView.NotesList.ListModel.DataOwner = fCommunication;
-                fView.MediaList.ListModel.DataOwner = fCommunication;
+                fView.NotesList.ListModel.DataOwner = fModel;
+                fView.MediaList.ListModel.DataOwner = fModel;
 
-                if (fCommunication == null) {
+                if (fModel == null) {
                     fView.Name.Text = "";
                     fView.CorrType.SelectedIndex = -1;
                     fView.Date.Text = "";
                     fView.Dir.SelectedIndex = 0;
                     fView.Corresponder.Text = "";
                 } else {
-                    fView.Name.Text = fCommunication.CommName;
-                    fView.CorrType.SelectedIndex = (int)fCommunication.CommunicationType;
-                    fView.Date.Text = fCommunication.Date.GetDisplayString(DateFormat.dfDD_MM_YYYY);
+                    fView.Name.Text = fModel.CommName;
+                    fView.CorrType.SelectedIndex = (int)fModel.CommunicationType;
+                    fView.Date.Text = fModel.Date.GetDisplayString(DateFormat.dfDD_MM_YYYY);
 
-                    var corr = fCommunication.GetCorresponder();
+                    var corr = fModel.GetCorresponder();
                     fTempInd = corr.Corresponder;
 
                     if (fTempInd != null) {

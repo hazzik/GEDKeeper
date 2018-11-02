@@ -48,7 +48,7 @@ namespace GKUI.Forms
             fEvent = new GEDCOMIndividualEvent(fBase.Context.Tree, null, "", "");
 
             fDialog = new EventEditDlg(fBase);
-            fDialog.Event = fEvent;
+            fDialog.Model = fEvent;
         }
 
         public override void TearDown()
@@ -62,7 +62,7 @@ namespace GKUI.Forms
         public void Test_Date1()
         {
             fEvent.Date.ParseString("3 MAY 1835");
-            fDialog.Event = fEvent;
+            fDialog.Model = fEvent;
             fDialog.Show();
             ClickButton("btnAccept", fDialog);
         }
@@ -72,7 +72,7 @@ namespace GKUI.Forms
         public void Test_Date2()
         {
             fEvent.Date.ParseString("ABT 1844");
-            fDialog.Event = fEvent;
+            fDialog.Model = fEvent;
             fDialog.Show();
             ClickButton("btnAccept", fDialog);
         }
@@ -84,7 +84,7 @@ namespace GKUI.Forms
         public void Test_Date3()
         {
             fEvent.Date.ParseString("ABT 20 JAN 2013");
-            fDialog.Event = fEvent;
+            fDialog.Model = fEvent;
             fDialog.Show();
             ClickButton("btnAccept", fDialog);
         }
@@ -94,7 +94,7 @@ namespace GKUI.Forms
         public void Test_Date4()
         {
             fEvent.Date.ParseString("CAL 20 JAN 2013");
-            fDialog.Event = fEvent;
+            fDialog.Model = fEvent;
             fDialog.Show();
             ClickButton("btnAccept", fDialog);
         }
@@ -104,7 +104,7 @@ namespace GKUI.Forms
         public void Test_Date5()
         {
             fEvent.Date.ParseString("EST 20 DEC 2013");
-            fDialog.Event = fEvent;
+            fDialog.Model = fEvent;
             fDialog.Show();
             ClickButton("btnAccept", fDialog);
         }
@@ -114,7 +114,7 @@ namespace GKUI.Forms
         public void Test_Date6()
         {
             fEvent.Date.ParseString("FROM 04 JAN 2013 TO 23 JAN 2013");
-            fDialog.Event = fEvent;
+            fDialog.Model = fEvent;
             fDialog.Show();
             ClickButton("btnAccept", fDialog);
         }
@@ -124,7 +124,7 @@ namespace GKUI.Forms
         public void Test_Date7()
         {
             fEvent.Date.ParseString("BEF 20 JAN 2013");
-            fDialog.Event = fEvent;
+            fDialog.Model = fEvent;
             fDialog.Show();
             ClickButton("btnAccept", fDialog);
         }
@@ -134,7 +134,7 @@ namespace GKUI.Forms
         public void Test_Date8()
         {
             fEvent.Date.ParseString("AFT 20 JAN 2013");
-            fDialog.Event = fEvent;
+            fDialog.Model = fEvent;
             fDialog.Show();
             ClickButton("btnAccept", fDialog);
         }
@@ -144,7 +144,7 @@ namespace GKUI.Forms
         public void Test_Date9()
         {
             fEvent.Date.ParseString("BET 04 JAN 2013 AND 25 JAN 2013");
-            fDialog.Event = fEvent;
+            fDialog.Model = fEvent;
             fDialog.Show();
             ClickButton("btnAccept", fDialog);
         }
@@ -154,7 +154,7 @@ namespace GKUI.Forms
         public void Test_Date10()
         {
             fEvent.Date.ParseString("FROM 04 JAN 2013");
-            fDialog.Event = fEvent;
+            fDialog.Model = fEvent;
             fDialog.Show();
             ClickButton("btnAccept", fDialog);
         }
@@ -164,7 +164,7 @@ namespace GKUI.Forms
         public void Test_Date11()
         {
             fEvent.Date.ParseString("TO 23 JAN 2013");
-            fDialog.Event = fEvent;
+            fDialog.Model = fEvent;
             fDialog.Show();
             ClickButton("btnAccept", fDialog);
         }
@@ -175,7 +175,7 @@ namespace GKUI.Forms
         {
             fDialog.Show();
 
-            Assert.AreEqual(fEvent, fDialog.Event);
+            Assert.AreEqual(fEvent, fDialog.Model);
 
             // The links to other records can be added or edited only in MainWinTests
             // (where there is a complete infrastructure of the calls to BaseWin.ModifyX)

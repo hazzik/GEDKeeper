@@ -51,7 +51,7 @@ namespace GKUI.Forms
             fUserRef = new GEDCOMUserReference(fBase.Context.Tree, null, "", "");
 
             fDialog = new UserRefEditDlg(fBase);
-            fDialog.UserRef = fUserRef;
+            fDialog.Model = fUserRef;
             fDialog.Show();
         }
 
@@ -70,7 +70,7 @@ namespace GKUI.Forms
         [Test]
         public void Test_EnterDataAndApply()
         {
-            Assert.AreEqual(fUserRef, fDialog.UserRef);
+            Assert.AreEqual(fUserRef, fDialog.Model);
 
             var cmbRef = new ComboBoxTester("cmbRef");
             cmbRef.Enter("sample text");

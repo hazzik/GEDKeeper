@@ -19,7 +19,6 @@
  */
 
 using System;
-using System.Windows.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -31,16 +30,8 @@ using GKUI.Components;
 
 namespace GKUI.Forms
 {
-    public partial class PersonalNameEditDlg: EditorDialog, IPersonalNameEditDlg
+    public partial class PersonalNameEditDlg: EditorDialog<GEDCOMPersonalName, IPersonalNameEditDlg, PersonalNameEditDlgController>, IPersonalNameEditDlg
     {
-        private readonly PersonalNameEditDlgController fController;
-
-        public GEDCOMPersonalName PersonalName
-        {
-            get { return fController.PersonalName; }
-            set { fController.PersonalName = value; }
-        }
-
         #region View Interface
 
         ILabelHandler IPersonalNameEditDlg.SurnameLabel
@@ -100,14 +91,12 @@ namespace GKUI.Forms
 
         #endregion
 
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
-        }
-
         public PersonalNameEditDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");

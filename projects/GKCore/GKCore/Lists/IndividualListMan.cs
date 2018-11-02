@@ -773,7 +773,7 @@ namespace GKCore.Lists
                             persName = new GEDCOMPersonalName(fBaseWin.Context.Tree, iRec, "", "");
                         }
 
-                        dlg.PersonalName = persName;
+                        dlg.Model = persName;
                         result = AppHost.Instance.ShowModalX(dlg, false);
 
                         if (!exists) {
@@ -994,7 +994,7 @@ namespace GKCore.Lists
                             userRef = new GEDCOMUserReference(fBaseWin.Context.Tree, iRec, "", "");
                         }
 
-                        dlg.UserRef = userRef;
+                        dlg.Model = userRef;
                         result = AppHost.Instance.ShowModalX(dlg, false);
 
                         if (!exists) {

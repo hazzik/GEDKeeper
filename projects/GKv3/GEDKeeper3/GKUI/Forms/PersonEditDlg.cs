@@ -38,10 +38,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public partial class PersonEditDlg : EditorDialog, IPersonEditDlg
+    public partial class PersonEditDlg : EditorDialog<GEDCOMIndividualRecord, IPersonEditDlg, PersonEditDlgController>, IPersonEditDlg
     {
-        private readonly PersonEditDlgController fController;
-
         private readonly GKSheetList fEventsList;
         private readonly GKSheetList fSpousesList;
         private readonly GKSheetList fAssociationsList;
@@ -51,12 +49,6 @@ namespace GKUI.Forms
         private readonly GKSheetList fSourcesList;
         private readonly GKSheetList fUserRefList;
         private readonly GKSheetList fNamesList;
-
-        public GEDCOMIndividualRecord Person
-        {
-            get { return fController.Person; }
-            set { fController.Person = value; }
-        }
 
         public GEDCOMIndividualRecord Target
         {
@@ -243,25 +235,10 @@ namespace GKUI.Forms
             fController.UpdateControls();
         }
 
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.Ok : DialogResult.None;
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            try {
-                fController.Cancel();
-                CancelClickHandler(sender, e);
-            } catch (Exception ex) {
-                Logger.LogWrite("PersonEditDlg.btnCancel_Click(): " + ex.Message);
-            }
-        }
-
         private void ModifyNamesSheet(object sender, ModifyEventArgs eArgs)
         {
             if (eArgs.Action == RecordAction.raMoveUp || eArgs.Action == RecordAction.raMoveDown) {
-                fController.UpdateNameControls(fController.Person.PersonalNames[0]);
+                fController.UpdateNameControls(fController.Model.PersonalNames[0]);
             }
         }
 
@@ -278,7 +255,7 @@ namespace GKUI.Forms
             GEDCOMFamilyRecord family = eArgs.ItemData as GEDCOMFamilyRecord;
             if (eArgs.Action == RecordAction.raJump && family != null) {
                 GEDCOMIndividualRecord spouse = null;
-                switch (fController.Person.Sex) {
+                switch (fController.Model.Sex) {
                     case GEDCOMSex.svMale:
                         spouse = family.GetWife();
                         break;
@@ -302,7 +279,7 @@ namespace GKUI.Forms
         private void Names_TextChanged(object sender, EventArgs e)
         {
             Title = string.Format("{0} \"{1} {2} {3}\" [{4}]", LangMan.LS(LSID.LSID_Person), txtSurname.Text, txtName.Text,
-                                  cmbPatronymic.Text, fController.Person.GetXRefNum());
+                                  cmbPatronymic.Text, fController.Model.GetXRefNum());
         }
 
         private void btnFatherAdd_Click(object sender, EventArgs e)
@@ -352,7 +329,7 @@ namespace GKUI.Forms
 
         private void btnNameCopy_Click(object sender, EventArgs e)
         {
-            UIHelper.SetClipboardText(GKUtils.GetNameString(fController.Person, true, false));
+            UIHelper.SetClipboardText(GKUtils.GetNameString(fController.Model, true, false));
         }
 
         private void btnPortraitAdd_Click(object sender, EventArgs e)
@@ -383,6 +360,9 @@ namespace GKUI.Forms
         public PersonEditDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             txtMarriedSurname.TextChanged += Names_TextChanged;
             txtSurname.TextChanged += Names_TextChanged;

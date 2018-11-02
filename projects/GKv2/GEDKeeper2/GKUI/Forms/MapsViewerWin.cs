@@ -35,10 +35,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class MapsViewerWin : CommonWindow, IMapsViewerWin
+    public sealed partial class MapsViewerWin : CommonWindow<IMapsViewerWin, MapsViewerWinController>, IMapsViewerWin
     {
-        private readonly MapsViewerWinController fController;
-
         private readonly GKMapBrowser fMapBrowser;
 
         #region View Interface

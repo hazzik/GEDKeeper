@@ -35,10 +35,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class ScriptEditWin : CommonDialog, IScriptEditWin
+    public sealed partial class ScriptEditWin : CommonDialog<IScriptEditWin, ScriptEditWinController>, IScriptEditWin
     {
-        private readonly ScriptEditWinController fController;
-
         private string fFileName;
         private bool fModified;
 

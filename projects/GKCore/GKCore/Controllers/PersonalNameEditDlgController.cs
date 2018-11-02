@@ -31,21 +31,8 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class PersonalNameEditDlgController : DialogController<IPersonalNameEditDlg>
+    public sealed class PersonalNameEditDlgController : EditorController<GEDCOMPersonalName, IPersonalNameEditDlg>
     {
-        private GEDCOMPersonalName fPersonalName;
-
-        public GEDCOMPersonalName PersonalName
-        {
-            get { return fPersonalName; }
-            set {
-                if (fPersonalName != value) {
-                    fPersonalName = value;
-                    UpdateView();
-                }
-            }
-        }
-
         public PersonalNameEditDlgController(IPersonalNameEditDlg view) : base(view)
         {
             for (GEDCOMNameType nt = GEDCOMNameType.ntNone; nt <= GEDCOMNameType.ntMarried; nt++) {
@@ -61,18 +48,18 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                GKUtils.SetNameParts(fPersonalName, fView.Surname.Text, fView.Name.Text, fView.Patronymic.Text);
+                GKUtils.SetNameParts(fModel, fView.Surname.Text, fView.Name.Text, fView.Patronymic.Text);
 
-                GEDCOMPersonalNamePieces pieces = fPersonalName.Pieces;
+                GEDCOMPersonalNamePieces pieces = fModel.Pieces;
                 pieces.Nickname = fView.Nickname.Text;
                 pieces.Prefix = fView.NamePrefix.Text;
                 pieces.SurnamePrefix = fView.SurnamePrefix.Text;
                 pieces.Suffix = fView.NameSuffix.Text;
 
-                fPersonalName.NameType = (GEDCOMNameType)fView.NameType.SelectedIndex;
-                fPersonalName.Language.Value = (GEDCOMLanguageID)fView.Language.SelectedTag;
+                fModel.NameType = (GEDCOMNameType)fView.NameType.SelectedIndex;
+                fModel.Language.Value = (GEDCOMLanguageID)fView.Language.SelectedTag;
 
-                fBase.Context.CollectNameLangs(fPersonalName);
+                fBase.Context.CollectNameLangs(fModel);
 
                 return true;
             } catch (Exception ex) {
@@ -83,7 +70,7 @@ namespace GKCore.Controllers
 
         private bool IsExtendedWomanSurname()
         {
-            GEDCOMIndividualRecord iRec = fPersonalName.Parent as GEDCOMIndividualRecord;
+            GEDCOMIndividualRecord iRec = fModel.Parent as GEDCOMIndividualRecord;
 
             bool result = (GlobalOptions.Instance.WomanSurnameFormat != WomanSurnameFormat.wsfNotExtend) &&
                 (iRec.Sex == GEDCOMSex.svFemale);
@@ -92,21 +79,21 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            GEDCOMIndividualRecord iRec = fPersonalName.Parent as GEDCOMIndividualRecord;
+            GEDCOMIndividualRecord iRec = fModel.Parent as GEDCOMIndividualRecord;
 
-            var parts = GKUtils.GetNameParts(iRec, fPersonalName);
+            var parts = GKUtils.GetNameParts(iRec, fModel);
 
             fView.Surname.Text = parts.Surname;
             fView.Name.Text = parts.Name;
             fView.Patronymic.Text = parts.Patronymic;
-            fView.NameType.SelectedIndex = (sbyte)fPersonalName.NameType;
+            fView.NameType.SelectedIndex = (sbyte)fModel.NameType;
 
-            fView.NamePrefix.Text = fPersonalName.Pieces.Prefix;
-            fView.Nickname.Text = fPersonalName.Pieces.Nickname;
-            fView.SurnamePrefix.Text = fPersonalName.Pieces.SurnamePrefix;
-            fView.NameSuffix.Text = fPersonalName.Pieces.Suffix;
+            fView.NamePrefix.Text = fModel.Pieces.Prefix;
+            fView.Nickname.Text = fModel.Pieces.Nickname;
+            fView.SurnamePrefix.Text = fModel.Pieces.SurnamePrefix;
+            fView.NameSuffix.Text = fModel.Pieces.Suffix;
 
-            fView.MarriedSurname.Text = fPersonalName.Pieces.MarriedName;
+            fView.MarriedSurname.Text = fModel.Pieces.MarriedName;
 
             if (!IsExtendedWomanSurname()) {
                 fView.SurnameLabel.Text = LangMan.LS(LSID.LSID_Surname);
@@ -120,7 +107,7 @@ namespace GKCore.Controllers
             fView.Surname.Enabled = fView.Surname.Enabled && culture.HasSurname();
             fView.Patronymic.Enabled = fView.Patronymic.Enabled && culture.HasPatronymic();
 
-            GEDCOMLanguageID langID = fPersonalName.Language.Value;
+            GEDCOMLanguageID langID = fModel.Language.Value;
             fView.Language.Text = GEDCOMLanguageEnum.Instance.GetStrValue(langID);
         }
     }

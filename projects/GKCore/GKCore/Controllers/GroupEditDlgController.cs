@@ -29,22 +29,8 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class GroupEditDlgController : DialogController<IGroupEditDlg>
+    public sealed class GroupEditDlgController : EditorController<GEDCOMGroupRecord, IGroupEditDlg>
     {
-        private GEDCOMGroupRecord fGroup;
-
-        public GEDCOMGroupRecord Group
-        {
-            get { return fGroup; }
-            set {
-                if (fGroup != value) {
-                    fGroup = value;
-                    UpdateView();
-                }
-            }
-        }
-
-
         public GroupEditDlgController(IGroupEditDlg view) : base(view)
         {
             fView.Name.Activate();
@@ -53,9 +39,9 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                fGroup.GroupName = fView.Name.Text;
+                fModel.GroupName = fView.Name.Text;
 
-                fBase.NotifyRecord(fGroup, RecordAction.raEdit);
+                fBase.NotifyRecord(fModel, RecordAction.raEdit);
 
                 CommitChanges();
 
@@ -68,11 +54,11 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            fView.Name.Text = (fGroup == null) ? "" : fGroup.GroupName;
+            fView.Name.Text = (fModel == null) ? "" : fModel.GroupName;
 
-            fView.MembersList.ListModel.DataOwner = fGroup;
-            fView.NotesList.ListModel.DataOwner = fGroup;
-            fView.MediaList.ListModel.DataOwner = fGroup;
+            fView.MembersList.ListModel.DataOwner = fModel;
+            fView.NotesList.ListModel.DataOwner = fModel;
+            fView.MediaList.ListModel.DataOwner = fModel;
         }
 
         public void JumpToRecord(GEDCOMRecord record)

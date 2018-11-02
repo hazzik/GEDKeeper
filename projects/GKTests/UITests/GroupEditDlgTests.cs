@@ -49,7 +49,7 @@ namespace GKUI.Forms
             fGroupRecord = new GEDCOMGroupRecord(fBase.Context.Tree, fBase.Context.Tree, "", "");
 
             fDialog = new GroupEditDlg(fBase);
-            fDialog.Group = fGroupRecord;
+            fDialog.Model = fGroupRecord;
             fDialog.Show();
         }
 
@@ -68,7 +68,7 @@ namespace GKUI.Forms
         [Test]
         public void Test_EnterDataAndApply()
         {
-            Assert.AreEqual(fGroupRecord, fDialog.Group);
+            Assert.AreEqual(fGroupRecord, fDialog.Model);
 
             var sheetTester = new GKSheetListTester("fMembersList", fDialog);
             //EnumSet<SheetButton> buttons = sheetTester.Properties.Buttons;

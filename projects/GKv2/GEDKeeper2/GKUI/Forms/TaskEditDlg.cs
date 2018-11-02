@@ -19,7 +19,6 @@
  */
 
 using System;
-using System.Windows.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -35,17 +34,9 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class TaskEditDlg : EditorDialog, ITaskEditDlg
+    public sealed partial class TaskEditDlg : EditorDialog<GEDCOMTaskRecord, ITaskEditDlg, TaskEditDlgController>, ITaskEditDlg
     {
-        private readonly TaskEditDlgController fController;
-
         private readonly GKSheetList fNotesList;
-
-        public GEDCOMTaskRecord Task
-        {
-            get { return fController.Task; }
-            set { fController.Task = value; }
-        }
 
         #region View Interface
 
@@ -86,20 +77,6 @@ namespace GKUI.Forms
 
         #endregion
 
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            try {
-                fController.Cancel();
-            } catch (Exception ex) {
-                Logger.LogWrite("TaskEditDlg.btnCancel_Click(): " + ex.Message);
-            }
-        }
-
         private void btnGoalSelect_Click(object sender, EventArgs e)
         {
             fController.SelectGoal();
@@ -113,6 +90,9 @@ namespace GKUI.Forms
         public TaskEditDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnGoalSelect.Image = UIHelper.LoadResourceImage("Resources.btn_rec_new.gif");
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");

@@ -19,7 +19,6 @@
  */
 
 using System;
-using Eto.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -36,19 +35,11 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class GroupEditDlg : EditorDialog, IGroupEditDlg
+    public sealed partial class GroupEditDlg : EditorDialog<GEDCOMGroupRecord, IGroupEditDlg, GroupEditDlgController>, IGroupEditDlg
     {
-        private readonly GroupEditDlgController fController;
-
         private readonly GKSheetList fMembersList;
         private readonly GKSheetList fNotesList;
         private readonly GKSheetList fMediaList;
-
-        public GEDCOMGroupRecord Group
-        {
-            get { return fController.Group; }
-            set { fController.Group = value; }
-        }
 
         #region View Interface
 
@@ -77,6 +68,9 @@ namespace GKUI.Forms
         public GroupEditDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");
@@ -108,21 +102,6 @@ namespace GKUI.Forms
         {
             if (eArgs.Action == RecordAction.raJump) {
                 fController.JumpToRecord(eArgs.ItemData as GEDCOMIndividualRecord);
-            }
-        }
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.Ok : DialogResult.None;
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            try {
-                fController.Cancel();
-                CancelClickHandler(sender, e);
-            } catch (Exception ex) {
-                Logger.LogWrite("GroupEditDlg.btnCancel_Click(): " + ex.Message);
             }
         }
     }

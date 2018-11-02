@@ -100,13 +100,11 @@ namespace GKUI.Forms
             btnAccept.ImagePosition = ButtonImagePosition.Left;
             btnAccept.Size = UIHelper.LongButtonSize;
             btnAccept.Text = "btnAccept";
-            btnAccept.Click += btnAccept_Click;
 
             btnCancel = new Button();
             btnCancel.ImagePosition = ButtonImagePosition.Left;
             btnCancel.Size = UIHelper.LongButtonSize;
             btnCancel.Text = "btnCancel";
-            btnCancel.Click += CancelClickHandler;
 
             Content = new DefTableLayout {
                 Rows = {

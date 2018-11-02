@@ -19,7 +19,6 @@
  */
 
 using System;
-using System.Windows.Forms;
 
 using GKCore.Controllers;
 using GKCore.Interfaces;
@@ -31,10 +30,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public partial class LanguageSelectDlg : CommonDialog, ILanguageSelectDlg
+    public partial class LanguageSelectDlg : CommonDialog<ILanguageSelectDlg, LanguageSelectDlgController>, ILanguageSelectDlg
     {
-        private readonly LanguageSelectDlgController fController;
-
         public int SelectedLanguage
         {
             get { return fController.SelectedLanguage; }
@@ -54,15 +51,13 @@ namespace GKUI.Forms
         {
             InitializeComponent();
 
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
+
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");
 
             fController = new LanguageSelectDlgController(this);
-        }
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
         }
     }
 }

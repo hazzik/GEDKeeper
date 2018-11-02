@@ -21,6 +21,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using GKCore;
 using GKCore.Interfaces;
 using GKCore.MVP;
 
@@ -80,7 +81,7 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public abstract class CommonWindow : CommonForm, IWindow
+    public class CommonWindow : CommonForm, IWindow
     {
         public virtual void Show(bool showInTaskbar)
         {
@@ -97,11 +98,63 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
+    public class CommonWindow<TView, TController> : CommonWindow
+        where TView : IView
+        where TController : FormController<TView>
+    {
+        protected TController fController;
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
     public class CommonDialog : CommonForm, ICommonDialog
     {
         public virtual bool ShowModalX(object owner)
         {
             return (ShowDialog() == DialogResult.OK);
+        }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class CommonDialog<TView, TController> : CommonDialog
+        where TView : IView
+        where TController : DialogController<TView>
+    {
+        protected TController fController;
+
+        protected virtual void AcceptHandler(object sender, EventArgs e)
+        {
+            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
+        }
+
+        protected virtual void CancelHandler(object sender, EventArgs e)
+        {
+            try {
+                fController.Cancel();
+            } catch (Exception ex) {
+                Logger.LogWrite("CommonDialog.CancelHandler(): " + ex.Message);
+            }
+        }
+    }
+
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public class EditorDialog<TModel, TView, TController> : CommonDialog<TView, TController>, IBaseEditor
+        where TModel : class
+        where TView : IView
+        where TController : EditorController<TModel, TView>
+    {
+        public TModel Model
+        {
+            get { return fController.Model; }
+            set { fController.Model = value; }
         }
     }
 }

@@ -29,22 +29,8 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class UserRefEditDlgController : DialogController<IUserRefEditDlg>
+    public sealed class UserRefEditDlgController : EditorController<GEDCOMUserReference, IUserRefEditDlg>
     {
-        private GEDCOMUserReference fUserRef;
-
-        public GEDCOMUserReference UserRef
-        {
-            get { return fUserRef; }
-            set {
-                if (fUserRef != value) {
-                    fUserRef = value;
-                    UpdateView();
-                }
-            }
-        }
-
-
         public UserRefEditDlgController(IUserRefEditDlg view) : base(view)
         {
             fView.Ref.Add("");
@@ -57,8 +43,8 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                fUserRef.StringValue = fView.Ref.Text;
-                fUserRef.ReferenceType = fView.RefType.Text;
+                fModel.StringValue = fView.Ref.Text;
+                fModel.ReferenceType = fView.RefType.Text;
 
                 return true;
             } catch (Exception ex) {
@@ -69,8 +55,8 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            fView.Ref.Text = fUserRef.StringValue;
-            fView.RefType.Text = fUserRef.ReferenceType;
+            fView.Ref.Text = fModel.StringValue;
+            fView.RefType.Text = fModel.ReferenceType;
         }
     }
 }

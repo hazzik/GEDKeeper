@@ -19,7 +19,6 @@
  */
 
 using System;
-using System.Windows.Forms;
 
 using GKCore;
 using GKCore.Controllers;
@@ -33,10 +32,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class FilePropertiesDlg : CommonDialog, IFilePropertiesDlg
+    public sealed partial class FilePropertiesDlg : CommonDialog<IFilePropertiesDlg, FilePropertiesDlgController>, IFilePropertiesDlg
     {
-        private readonly FilePropertiesDlgController fController;
-
         #region View Interface
 
         IListView IFilePropertiesDlg.RecordStats
@@ -70,6 +67,9 @@ namespace GKUI.Forms
         {
             InitializeComponent();
 
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
+
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");
             btnLangEdit.Image = UIHelper.LoadResourceImage("Resources.btn_rec_edit.gif");
@@ -89,11 +89,6 @@ namespace GKUI.Forms
             fController = new FilePropertiesDlgController(this);
             fController.Init(baseWin);
             fController.UpdateView();
-        }
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
         }
 
         private void btnLangEdit_Click(object sender, EventArgs e)

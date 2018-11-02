@@ -31,21 +31,9 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class MediaEditDlgController : DialogController<IMediaEditDlg>
+    public sealed class MediaEditDlgController : EditorController<GEDCOMMultimediaRecord, IMediaEditDlg>
     {
-        private GEDCOMMultimediaRecord fMediaRec;
         private bool fIsNew;
-
-        public GEDCOMMultimediaRecord MediaRec
-        {
-            get { return fMediaRec; }
-            set {
-                if (fMediaRec != value) {
-                    fMediaRec = value;
-                    UpdateView();
-                }
-            }
-        }
 
 
         public MediaEditDlgController(IMediaEditDlg view) : base(view)
@@ -60,7 +48,7 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                GEDCOMFileReferenceWithTitle fileRef = fMediaRec.FileReferences[0];
+                GEDCOMFileReferenceWithTitle fileRef = fModel.FileReferences[0];
 
                 if (fIsNew) {
                     MediaStoreType gst = (MediaStoreType)fView.StoreType.SelectedTag;
@@ -82,7 +70,7 @@ namespace GKCore.Controllers
                 UpdateControls();
 
                 fLocalUndoman.Commit();
-                fBase.NotifyRecord(fMediaRec, RecordAction.raEdit);
+                fBase.NotifyRecord(fModel, RecordAction.raEdit);
 
                 return true;
             } catch (Exception ex) {
@@ -93,15 +81,15 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            fView.NotesList.ListModel.DataOwner = fMediaRec;
-            fView.SourcesList.ListModel.DataOwner = fMediaRec;
+            fView.NotesList.ListModel.DataOwner = fModel;
+            fView.SourcesList.ListModel.DataOwner = fModel;
 
             UpdateControls();
         }
 
         private void UpdateControls()
         {
-            GEDCOMFileReferenceWithTitle fileRef = fMediaRec.FileReferences[0];
+            GEDCOMFileReferenceWithTitle fileRef = fModel.FileReferences[0];
 
             fIsNew = (fileRef.StringValue == "");
 
@@ -167,7 +155,7 @@ namespace GKCore.Controllers
                 Accept();
             }
 
-            fBase.ShowMedia(fMediaRec, true);
+            fBase.ShowMedia(fModel, true);
         }
     }
 }

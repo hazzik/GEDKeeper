@@ -29,22 +29,8 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class ResearchEditDlgController : DialogController<IResearchEditDlg>
+    public sealed class ResearchEditDlgController : EditorController<GEDCOMResearchRecord, IResearchEditDlg>
     {
-        private GEDCOMResearchRecord fResearch;
-
-        public GEDCOMResearchRecord Research
-        {
-            get { return fResearch; }
-            set {
-                if (fResearch != value) {
-                    fResearch = value;
-                    UpdateView();
-                }
-            }
-        }
-
-
         public ResearchEditDlgController(IResearchEditDlg view) : base(view)
         {
             for (GKResearchPriority rp = GKResearchPriority.rpNone; rp <= GKResearchPriority.rpTop; rp++) {
@@ -59,16 +45,16 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                fResearch.ResearchName = fView.Name.Text;
-                fResearch.Priority = (GKResearchPriority)fView.Priority.SelectedIndex;
-                fResearch.Status = (GKResearchStatus)fView.Status.SelectedIndex;
-                fResearch.StartDate.Assign(GEDCOMDate.CreateByFormattedStr(fView.StartDate.Text, true));
-                fResearch.StopDate.Assign(GEDCOMDate.CreateByFormattedStr(fView.StopDate.Text, true));
-                fResearch.Percent = int.Parse(fView.Percent.Text);
+                fModel.ResearchName = fView.Name.Text;
+                fModel.Priority = (GKResearchPriority)fView.Priority.SelectedIndex;
+                fModel.Status = (GKResearchStatus)fView.Status.SelectedIndex;
+                fModel.StartDate.Assign(GEDCOMDate.CreateByFormattedStr(fView.StartDate.Text, true));
+                fModel.StopDate.Assign(GEDCOMDate.CreateByFormattedStr(fView.StopDate.Text, true));
+                fModel.Percent = int.Parse(fView.Percent.Text);
 
                 fLocalUndoman.Commit();
 
-                fBase.NotifyRecord(fResearch, RecordAction.raEdit);
+                fBase.NotifyRecord(fModel, RecordAction.raEdit);
 
                 return true;
             } catch (Exception ex) {
@@ -79,7 +65,7 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            if (fResearch == null) {
+            if (fModel == null) {
                 fView.Name.Text = "";
                 fView.Priority.SelectedIndex = -1;
                 fView.Status.SelectedIndex = -1;
@@ -87,18 +73,18 @@ namespace GKCore.Controllers
                 fView.StopDate.Text = "";
                 fView.Percent.Value = 0;
             } else {
-                fView.Name.Text = fResearch.ResearchName;
-                fView.Priority.SelectedIndex = (int)fResearch.Priority;
-                fView.Status.SelectedIndex = (int)fResearch.Status;
-                fView.StartDate.Text = fResearch.StartDate.GetDisplayString(DateFormat.dfDD_MM_YYYY);
-                fView.StopDate.Text = fResearch.StopDate.GetDisplayString(DateFormat.dfDD_MM_YYYY);
-                fView.Percent.Value = fResearch.Percent;
+                fView.Name.Text = fModel.ResearchName;
+                fView.Priority.SelectedIndex = (int)fModel.Priority;
+                fView.Status.SelectedIndex = (int)fModel.Status;
+                fView.StartDate.Text = fModel.StartDate.GetDisplayString(DateFormat.dfDD_MM_YYYY);
+                fView.StopDate.Text = fModel.StopDate.GetDisplayString(DateFormat.dfDD_MM_YYYY);
+                fView.Percent.Value = fModel.Percent;
             }
 
-            fView.NotesList.ListModel.DataOwner = fResearch;
-            fView.TasksList.ListModel.DataOwner = fResearch;
-            fView.CommunicationsList.ListModel.DataOwner = fResearch;
-            fView.GroupsList.ListModel.DataOwner = fResearch;
+            fView.NotesList.ListModel.DataOwner = fModel;
+            fView.TasksList.ListModel.DataOwner = fModel;
+            fView.CommunicationsList.ListModel.DataOwner = fModel;
+            fView.GroupsList.ListModel.DataOwner = fModel;
         }
 
         public void JumpToRecord(GEDCOMRecord record)

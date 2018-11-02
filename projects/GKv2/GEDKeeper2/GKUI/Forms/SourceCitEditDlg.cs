@@ -34,16 +34,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class SourceCitEditDlg : EditorDialog, ISourceCitEditDlg
+    public sealed partial class SourceCitEditDlg : EditorDialog<GEDCOMSourceCitation, ISourceCitEditDlg, SourceCitEditDlgController>, ISourceCitEditDlg
     {
-        private readonly SourceCitEditDlgController fController;
-
-        public GEDCOMSourceCitation SourceCitation
-        {
-            get { return fController.SourceCitation; }
-            set { fController.SourceCitation = value; }
-        }
-
         #region View Interface
 
         ITextBoxHandler ISourceCitEditDlg.Page
@@ -62,11 +54,6 @@ namespace GKUI.Forms
         }
 
         #endregion
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
-        }
 
         private void btnSourceAdd_Click(object sender, EventArgs e)
         {
@@ -87,6 +74,9 @@ namespace GKUI.Forms
         public SourceCitEditDlg(IBaseWindow baseWin)
         {
             InitializeComponent();
+
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
 
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");

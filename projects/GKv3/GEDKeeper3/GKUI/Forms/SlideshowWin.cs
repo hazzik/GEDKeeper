@@ -34,10 +34,8 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public partial class SlideshowWin : StatusForm, ISlideshowWin
+    public partial class SlideshowWin : StatusForm<ISlideshowWin, SlideshowController>, ISlideshowWin
     {
-        private readonly SlideshowController fController;
-
         private readonly ImageBox fImageCtl;
         private ITimer fTimer;
 

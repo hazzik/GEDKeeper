@@ -35,19 +35,11 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class LocationEditDlg : EditorDialog, ILocationEditDlg
+    public sealed partial class LocationEditDlg : EditorDialog<GEDCOMLocationRecord, ILocationEditDlg, LocationEditDlgController>, ILocationEditDlg
     {
-        private readonly LocationEditDlgController fController;
-
         private readonly GKMapBrowser fMapBrowser;
         private readonly GKSheetList fMediaList;
         private readonly GKSheetList fNotesList;
-
-        public GEDCOMLocationRecord LocationRecord
-        {
-            get { return fController.LocationRecord; }
-            set { fController.LocationRecord = value; }
-        }
 
         #region View Interface
 
@@ -92,6 +84,9 @@ namespace GKUI.Forms
         {
             InitializeComponent();
 
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
+
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");
 
@@ -135,21 +130,6 @@ namespace GKUI.Forms
         {
             if (e.Key == Keys.Down && e.Control) {
                 txtName.Text = txtName.Text.ToLower();
-            }
-        }
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.Ok : DialogResult.None;
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            try {
-                fController.Cancel();
-                CancelClickHandler(sender, e);
-            } catch (Exception ex) {
-                Logger.LogWrite("LocationEditDlg.btnCancel_Click(): " + ex.Message);
             }
         }
 

@@ -53,7 +53,7 @@ namespace GKUI.Forms
             fMultimediaRecord.FileReferences.Add(new GEDCOMFileReferenceWithTitle(fBase.Context.Tree, fMultimediaRecord, "", ""));
 
             fDialog = new MediaEditDlg(fBase);
-            fDialog.MediaRec = fMultimediaRecord;
+            fDialog.Model = fMultimediaRecord;
             fDialog.Show();
         }
 
@@ -72,7 +72,7 @@ namespace GKUI.Forms
         [Test]
         public void Test_EnterDataAndApply()
         {
-            Assert.AreEqual(fMultimediaRecord, fDialog.MediaRec);
+            Assert.AreEqual(fMultimediaRecord, fDialog.Model);
 
             var txtName = new TextBoxTester("txtName");
             txtName.Enter("sample text");

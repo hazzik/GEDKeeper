@@ -154,7 +154,6 @@
 		    this.btnAccept.TabIndex = 2;
 		    this.btnAccept.Text = "btnAccept";
 		    this.btnAccept.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-		    this.btnAccept.Click += new System.EventHandler(this.btnAccept_Click);
 		    // 
 		    // btnCancel
 		    // 
@@ -166,7 +165,6 @@
 		    this.btnCancel.TabIndex = 3;
 		    this.btnCancel.Text = "btnCancel";
 		    this.btnCancel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-		    this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
 		    // 
 		    // tabsData
 		    // 

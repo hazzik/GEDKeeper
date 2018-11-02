@@ -30,22 +30,9 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class EventEditDlgController : DialogController<IEventEditDlg>
+    public sealed class EventEditDlgController : EditorController<GEDCOMCustomEvent, IEventEditDlg>
     {
-        private GEDCOMCustomEvent fEvent;
         private GEDCOMLocationRecord fTempLocation;
-
-
-        public GEDCOMCustomEvent Event
-        {
-            get { return fEvent; }
-            set {
-                if (fEvent != value) {
-                    fEvent = value;
-                    UpdateView();
-                }
-            }
-        }
 
 
         public EventEditDlgController(IEventEditDlg view) : base(view)
@@ -135,34 +122,34 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                fEvent.Place.StringValue = fView.Place.Text;
-                fEvent.Place.Location.Value = fTempLocation;
-                fEvent.Classification = fView.EventName.Text;
-                fEvent.Cause = fView.Cause.Text;
-                fEvent.Agency = fView.Agency.Text;
+                fModel.Place.StringValue = fView.Place.Text;
+                fModel.Place.Location.Value = fTempLocation;
+                fModel.Classification = fView.EventName.Text;
+                fModel.Cause = fView.Cause.Text;
+                fModel.Agency = fView.Agency.Text;
 
                 GEDCOMCustomDate dt = AssembleDate();
                 if (dt == null) throw new ArgumentNullException("dt");
 
-                fEvent.Date.ParseString(dt.StringValue);
+                fModel.Date.ParseString(dt.StringValue);
 
                 int eventType = fView.EventType.SelectedIndex;
-                if (fEvent is GEDCOMFamilyEvent) {
-                    fEvent.SetName(GKData.FamilyEvents[eventType].Sign);
+                if (fModel is GEDCOMFamilyEvent) {
+                    fModel.SetName(GKData.FamilyEvents[eventType].Sign);
                 } else {
-                    fEvent.SetName(GKData.PersonEvents[eventType].Sign);
+                    fModel.SetName(GKData.PersonEvents[eventType].Sign);
                     if (GKData.PersonEvents[eventType].Kind == PersonEventKind.ekFact) {
-                        fEvent.StringValue = fView.Attribute.Text;
+                        fModel.StringValue = fView.Attribute.Text;
                     } else {
-                        fEvent.StringValue = "";
+                        fModel.StringValue = "";
                     }
                 }
 
-                if (fEvent is GEDCOMIndividualEvent) {
+                if (fModel is GEDCOMIndividualEvent) {
                     if (GKData.PersonEvents[eventType].Kind == PersonEventKind.ekFact) {
-                        GEDCOMIndividualAttribute attr = new GEDCOMIndividualAttribute(fEvent.Owner, fEvent.Parent, "", "");
-                        attr.Assign(fEvent);
-                        fEvent = attr;
+                        GEDCOMIndividualAttribute attr = new GEDCOMIndividualAttribute(fModel.Owner, fModel.Parent, "", "");
+                        attr.Assign(fModel);
+                        fModel = attr;
                     }
                 }
 
@@ -186,29 +173,29 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            fView.NotesList.ListModel.DataOwner = fEvent;
-            fView.MediaList.ListModel.DataOwner = fEvent;
-            fView.SourcesList.ListModel.DataOwner = fEvent;
+            fView.NotesList.ListModel.DataOwner = fModel;
+            fView.MediaList.ListModel.DataOwner = fModel;
+            fView.SourcesList.ListModel.DataOwner = fModel;
 
-            if (fEvent is GEDCOMFamilyEvent) {
+            if (fModel is GEDCOMFamilyEvent) {
                 SetEventTypes(GKData.FamilyEvents);
-                int idx = GKUtils.GetFamilyEventIndex(fEvent.Name);
+                int idx = GKUtils.GetFamilyEventIndex(fModel.Name);
                 if (idx < 0) idx = 0;
                 fView.EventType.SelectedIndex = idx;
             } else {
                 SetEventTypes(GKData.PersonEvents);
-                int idx = GKUtils.GetPersonEventIndex(fEvent.Name);
+                int idx = GKUtils.GetPersonEventIndex(fModel.Name);
                 if (idx < 0) idx = 0;
                 fView.EventType.SelectedIndex = idx;
 
                 if (idx >= 0 && GKData.PersonEvents[idx].Kind == PersonEventKind.ekFact) {
-                    fView.Attribute.Text = fEvent.StringValue;
+                    fView.Attribute.Text = fModel.StringValue;
                 }
             }
 
             ChangeEventType();
 
-            GEDCOMCustomDate date = fEvent.Date.Value;
+            GEDCOMCustomDate date = fModel.Date.Value;
 
             if (date is GEDCOMDateRange) {
                 GEDCOMDateRange dtRange = date as GEDCOMDateRange;
@@ -273,11 +260,11 @@ namespace GKCore.Controllers
             }
 
             ChangeDateType();
-            fView.EventName.Text = fEvent.Classification;
-            fView.Cause.Text = fEvent.Cause;
-            fView.Agency.Text = fEvent.Agency;
+            fView.EventName.Text = fModel.Classification;
+            fView.Cause.Text = fModel.Cause;
+            fView.Agency.Text = fModel.Agency;
 
-            fTempLocation = (fEvent.Place.Location.Value as GEDCOMLocationRecord);
+            fTempLocation = (fModel.Place.Location.Value as GEDCOMLocationRecord);
             UpdatePlace();
 
             fView.NotesList.UpdateSheet();
@@ -291,7 +278,7 @@ namespace GKCore.Controllers
                 fView.Place.Text = fTempLocation.LocationName;
                 fView.SetLocationMode(true);
             } else {
-                fView.Place.Text = fEvent.Place.StringValue;
+                fView.Place.Text = fModel.Place.StringValue;
                 fView.SetLocationMode(false);
             }
         }
@@ -310,7 +297,7 @@ namespace GKCore.Controllers
 
         public void ModifyAddress()
         {
-            BaseController.ModifyAddress(fBase, fEvent.Address);
+            BaseController.ModifyAddress(fBase, fModel.Address);
         }
 
         public void ChangeDateType()
@@ -345,7 +332,7 @@ namespace GKCore.Controllers
 
         public void ChangeEventType()
         {
-            if (fEvent is GEDCOMFamilyEvent) {
+            if (fModel is GEDCOMFamilyEvent) {
                 SetAttributeMode(false);
             } else {
                 int idx = fView.EventType.SelectedIndex;
@@ -360,7 +347,7 @@ namespace GKCore.Controllers
 
             string evName;
             int id = fView.EventType.SelectedIndex;
-            if (fEvent is GEDCOMFamilyEvent) {
+            if (fModel is GEDCOMFamilyEvent) {
                 evName = GKData.FamilyEvents[id].Sign;
             } else {
                 evName = GKData.PersonEvents[id].Sign;

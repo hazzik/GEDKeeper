@@ -32,22 +32,8 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class LocationEditDlgController : DialogController<ILocationEditDlg>
+    public sealed class LocationEditDlgController : EditorController<GEDCOMLocationRecord, ILocationEditDlg>
     {
-        private GEDCOMLocationRecord fLocationRecord;
-
-        public GEDCOMLocationRecord LocationRecord
-        {
-            get { return fLocationRecord; }
-            set {
-                if (fLocationRecord != value) {
-                    fLocationRecord = value;
-                    UpdateView();
-                }
-            }
-        }
-
-
         public LocationEditDlgController(ILocationEditDlg view) : base(view)
         {
             fView.Name.Activate();
@@ -56,13 +42,13 @@ namespace GKCore.Controllers
         public override bool Accept()
         {
             try {
-                fLocationRecord.LocationName = fView.Name.Text;
-                fLocationRecord.Map.Lati = ConvertHelper.ParseFloat(fView.Latitude.Text, 0.0);
-                fLocationRecord.Map.Long = ConvertHelper.ParseFloat(fView.Longitude.Text, 0.0);
+                fModel.LocationName = fView.Name.Text;
+                fModel.Map.Lati = ConvertHelper.ParseFloat(fView.Latitude.Text, 0.0);
+                fModel.Map.Long = ConvertHelper.ParseFloat(fView.Longitude.Text, 0.0);
 
                 fLocalUndoman.Commit();
 
-                fBase.NotifyRecord(fLocationRecord, RecordAction.raEdit);
+                fBase.NotifyRecord(fModel, RecordAction.raEdit);
 
                 return true;
             } catch (Exception ex) {
@@ -73,12 +59,12 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            fView.Name.Text = fLocationRecord.LocationName;
-            fView.Latitude.Text = PlacesLoader.CoordToStr(fLocationRecord.Map.Lati);
-            fView.Longitude.Text = PlacesLoader.CoordToStr(fLocationRecord.Map.Long);
+            fView.Name.Text = fModel.LocationName;
+            fView.Latitude.Text = PlacesLoader.CoordToStr(fModel.Map.Lati);
+            fView.Longitude.Text = PlacesLoader.CoordToStr(fModel.Map.Long);
 
-            fView.NotesList.ListModel.DataOwner = fLocationRecord;
-            fView.MediaList.ListModel.DataOwner = fLocationRecord;
+            fView.NotesList.ListModel.DataOwner = fModel;
+            fView.MediaList.ListModel.DataOwner = fModel;
         }
 
         public GeoPoint GetSelectedGeoPoint()

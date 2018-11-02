@@ -30,22 +30,8 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class FamilyEditDlgController : DialogController<IFamilyEditDlg>
+    public sealed class FamilyEditDlgController : EditorController<GEDCOMFamilyRecord, IFamilyEditDlg>
     {
-        private GEDCOMFamilyRecord fFamily;
-
-        public GEDCOMFamilyRecord Family
-        {
-            get { return fFamily; }
-            set {
-                if (fFamily != value) {
-                    fFamily = value;
-                    UpdateView();
-                }
-            }
-        }
-
-
         public FamilyEditDlgController(IFamilyEditDlg view) : base(view)
         {
             for (GEDCOMRestriction res = GEDCOMRestriction.rnNone; res <= GEDCOMRestriction.rnLast; res++) {
@@ -63,9 +49,9 @@ namespace GKCore.Controllers
 
             bool result = false;
             if (targetType == TargetMode.tmFamilySpouse) {
-                result = fLocalUndoman.DoOrdinaryOperation(OperationType.otFamilySpouseAttach, fFamily, target);
+                result = fLocalUndoman.DoOrdinaryOperation(OperationType.otFamilySpouseAttach, fModel, target);
             } else if (targetType == TargetMode.tmFamilyChild) {
-                result = fLocalUndoman.DoOrdinaryOperation(OperationType.otIndividualParentsAttach, target, fFamily);
+                result = fLocalUndoman.DoOrdinaryOperation(OperationType.otIndividualParentsAttach, target, fModel);
             }
 
             if (result) UpdateControls();
@@ -75,15 +61,15 @@ namespace GKCore.Controllers
         {
             try {
                 string stat = GKData.MarriageStatus[fView.MarriageStatus.SelectedIndex].StatSign;
-                fFamily.SetTagStringValue("_STAT", stat);
+                fModel.SetTagStringValue("_STAT", stat);
 
-                fFamily.Restriction = (GEDCOMRestriction)fView.Restriction.SelectedIndex;
+                fModel.Restriction = (GEDCOMRestriction)fView.Restriction.SelectedIndex;
 
-                fFamily.SortChilds();
+                fModel.SortChilds();
 
                 fLocalUndoman.Commit();
 
-                fBase.NotifyRecord(fFamily, RecordAction.raEdit);
+                fBase.NotifyRecord(fModel, RecordAction.raEdit);
 
                 return true;
             } catch (Exception ex) {
@@ -95,22 +81,22 @@ namespace GKCore.Controllers
         public override void UpdateView()
         {
             try {
-                fView.ChildrenList.ListModel.DataOwner = fFamily;
-                fView.EventsList.ListModel.DataOwner = fFamily;
-                fView.NotesList.ListModel.DataOwner = fFamily;
-                fView.MediaList.ListModel.DataOwner = fFamily;
-                fView.SourcesList.ListModel.DataOwner = fFamily;
+                fView.ChildrenList.ListModel.DataOwner = fModel;
+                fView.EventsList.ListModel.DataOwner = fModel;
+                fView.NotesList.ListModel.DataOwner = fModel;
+                fView.MediaList.ListModel.DataOwner = fModel;
+                fView.SourcesList.ListModel.DataOwner = fModel;
 
-                if (fFamily == null) {
+                if (fModel == null) {
                     fView.MarriageStatus.Enabled = false;
                     fView.MarriageStatus.SelectedIndex = 0;
                     fView.Restriction.SelectedIndex = 0;
                 } else {
-                    string stat = fFamily.GetTagStringValue("_STAT");
+                    string stat = fModel.GetTagStringValue("_STAT");
                     int statIdx = GKUtils.GetMarriageStatusIndex(stat);
                     fView.MarriageStatus.Enabled = true;
                     fView.MarriageStatus.SelectedIndex = statIdx;
-                    fView.Restriction.SelectedIndex = (sbyte)fFamily.Restriction;
+                    fView.Restriction.SelectedIndex = (sbyte)fModel.Restriction;
                 }
 
                 UpdateControls();
@@ -123,16 +109,16 @@ namespace GKCore.Controllers
         {
             GEDCOMIndividualRecord husband, wife;
 
-            if (fFamily == null) {
+            if (fModel == null) {
                 husband = null;
                 wife = null;
 
                 fView.LockEditor(true);
             } else {
-                husband = fFamily.GetHusband();
-                wife = fFamily.GetWife();
+                husband = fModel.GetHusband();
+                wife = fModel.GetWife();
 
-                fView.LockEditor(fFamily.Restriction == GEDCOMRestriction.rnLocked);
+                fView.LockEditor(fModel.Restriction == GEDCOMRestriction.rnLocked);
             }
 
             fView.SetHusband((husband != null) ? GKUtils.GetNameString(husband, true, false) : null);
@@ -147,28 +133,28 @@ namespace GKCore.Controllers
 
         public void AddHusband()
         {
-            if (BaseController.AddFamilyHusband(fBase, fLocalUndoman, fFamily)) {
+            if (BaseController.AddFamilyHusband(fBase, fLocalUndoman, fModel)) {
                 UpdateControls();
             }
         }
 
         public void DeleteHusband()
         {
-            if (BaseController.DeleteFamilyHusband(fBase, fLocalUndoman, fFamily)) {
+            if (BaseController.DeleteFamilyHusband(fBase, fLocalUndoman, fModel)) {
                 UpdateControls();
             }
         }
 
         public void AddWife()
         {
-            if (BaseController.AddFamilyWife(fBase, fLocalUndoman, fFamily)) {
+            if (BaseController.AddFamilyWife(fBase, fLocalUndoman, fModel)) {
                 UpdateControls();
             }
         }
 
         public void DeleteWife()
         {
-            if (BaseController.DeleteFamilyWife(fBase, fLocalUndoman, fFamily)) {
+            if (BaseController.DeleteFamilyWife(fBase, fLocalUndoman, fModel)) {
                 UpdateControls();
             }
         }
@@ -183,12 +169,12 @@ namespace GKCore.Controllers
 
         public void JumpToHusband()
         {
-            JumpToRecord(fFamily.GetHusband());
+            JumpToRecord(fModel.GetHusband());
         }
 
         public void JumpToWife()
         {
-            JumpToRecord(fFamily.GetWife());
+            JumpToRecord(fModel.GetWife());
         }
     }
 }

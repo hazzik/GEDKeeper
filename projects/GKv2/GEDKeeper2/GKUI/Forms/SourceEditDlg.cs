@@ -19,7 +19,6 @@
  */
 
 using System;
-using System.Windows.Forms;
 
 using GKCommon.GEDCOM;
 using GKCore;
@@ -36,19 +35,11 @@ namespace GKUI.Forms
     /// <summary>
     /// 
     /// </summary>
-    public sealed partial class SourceEditDlg : EditorDialog, ISourceEditDlg
+    public sealed partial class SourceEditDlg : EditorDialog<GEDCOMSourceRecord, ISourceEditDlg, SourceEditDlgController>, ISourceEditDlg
     {
-        private readonly SourceEditDlgController fController;
-
         private readonly GKSheetList fNotesList;
         private readonly GKSheetList fMediaList;
         private readonly GKSheetList fRepositoriesList;
-
-        public GEDCOMSourceRecord Model
-        {
-            get { return fController.Model; }
-            set { fController.Model = value; }
-        }
 
         #region View Interface
 
@@ -98,6 +89,9 @@ namespace GKUI.Forms
         {
             InitializeComponent();
 
+            btnAccept.Click += AcceptHandler;
+            btnCancel.Click += CancelHandler;
+
             btnAccept.Image = UIHelper.LoadResourceImage("Resources.btn_accept.gif");
             btnCancel.Image = UIHelper.LoadResourceImage("Resources.btn_cancel.gif");
 
@@ -135,20 +129,6 @@ namespace GKUI.Forms
             GEDCOMRepositoryCitation cit = eArgs.ItemData as GEDCOMRepositoryCitation;
             if (eArgs.Action == RecordAction.raJump && cit != null) {
                 fController.JumpToRecord(cit.Value);
-            }
-        }
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            DialogResult = fController.Accept() ? DialogResult.OK : DialogResult.None;
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            try {
-                fController.Cancel();
-            } catch (Exception ex) {
-                Logger.LogWrite("SourceEditDlg.btnCancel_Click(): " + ex.Message);
             }
         }
 

@@ -30,21 +30,9 @@ namespace GKCore.Controllers
     /// <summary>
     /// 
     /// </summary>
-    public sealed class SourceCitEditDlgController : DialogController<ISourceCitEditDlg>
+    public sealed class SourceCitEditDlgController : EditorController<GEDCOMSourceCitation, ISourceCitEditDlg>
     {
-        private GEDCOMSourceCitation fSourceCitation;
         private readonly StringList fSourcesList;
-
-        public GEDCOMSourceCitation SourceCitation
-        {
-            get { return fSourceCitation; }
-            set {
-                if (fSourceCitation != value) {
-                    fSourceCitation = value;
-                    UpdateView();
-                }
-            }
-        }
 
 
         public SourceCitEditDlgController(ISourceCitEditDlg view) : base(view)
@@ -67,9 +55,9 @@ namespace GKCore.Controllers
 
                     return false;
                 } else {
-                    fSourceCitation.Value = src;
-                    fSourceCitation.Page = fView.Page.Text;
-                    fSourceCitation.CertaintyAssessment = fView.Certainty.SelectedIndex;
+                    fModel.Value = src;
+                    fModel.Page = fView.Page.Text;
+                    fModel.CertaintyAssessment = fView.Certainty.SelectedIndex;
 
                     return true;
                 }
@@ -81,11 +69,11 @@ namespace GKCore.Controllers
 
         public override void UpdateView()
         {
-            GEDCOMSourceRecord src = (fSourceCitation.Value as GEDCOMSourceRecord);
+            GEDCOMSourceRecord src = (fModel.Value as GEDCOMSourceRecord);
             if (src != null) fView.Source.Text = src.FiledByEntry;
 
-            fView.Page.Text = fSourceCitation.Page;
-            fView.Certainty.SelectedIndex = fSourceCitation.CertaintyAssessment;
+            fView.Page.Text = fModel.Page;
+            fView.Certainty.SelectedIndex = fModel.CertaintyAssessment;
         }
 
         public void AddSource()
