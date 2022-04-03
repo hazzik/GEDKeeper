@@ -24,7 +24,7 @@ using GDModel;
 
 namespace GKCore.Types
 {
-    public sealed class PatriarchObj : BaseObject
+    public sealed class PatriarchObj
     {
         public GDMIndividualRecord IRec;
         public int BirthYear;

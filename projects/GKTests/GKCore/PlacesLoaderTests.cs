@@ -47,11 +47,10 @@ namespace GKCore
         [Test]
         public void Test_MapPlace()
         {
-            using (var mapPlace = new MapPlace()) {
-                Assert.IsNotNull(mapPlace);
-                Assert.IsNotNull(mapPlace.Points);
-                Assert.IsNotNull(mapPlace.PlaceRefs);
-            }
+            var mapPlace = new MapPlace();
+            Assert.IsNotNull(mapPlace);
+            Assert.IsNotNull(mapPlace.Points);
+            Assert.IsNotNull(mapPlace.PlaceRefs);
         }
 
         [Test]

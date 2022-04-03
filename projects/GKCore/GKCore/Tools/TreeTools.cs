@@ -33,7 +33,7 @@ using GKCore.Types;
 namespace GKCore.Tools
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static class TreeTools
     {
@@ -1177,7 +1177,7 @@ namespace GKCore.Tools
             }
 
             result.Sort(new IndividualRecordComparer());
-            
+
             progress.ProgressDone();
 
             return result;
@@ -1361,7 +1361,6 @@ namespace GKCore.Tools
             if (placesList == null)
                 throw new ArgumentNullException("placesList");
 
-            for (int i = placesList.Count - 1; i >= 0; i--) ((PlaceObj)placesList.GetObject(i)).Dispose();
             placesList.Clear();
         }
 

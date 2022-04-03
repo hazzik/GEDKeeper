@@ -49,29 +49,21 @@ namespace GKCore.Maps
         public double MaxLat;
     }
 
-    public class MapPlace : BaseObject
+    public class MapPlace
     {
         public string Name;
         public readonly List<GeoPoint> Points;
-        public readonly ExtList<PlaceRef> PlaceRefs;
+        public readonly List<PlaceRef> PlaceRefs;
 
         public MapPlace()
         {
             Points = new List<GeoPoint>();
-            PlaceRefs = new ExtList<PlaceRef>(false);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing) {
-                PlaceRefs.Dispose();
-            }
-            base.Dispose(disposing);
+            PlaceRefs = new List<PlaceRef>();
         }
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static class PlacesLoader
     {
