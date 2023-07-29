@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Insall Git
-      run: rpm install git
+      run: dnf install git-all
     - name: Checkout
       uses: actions/checkout@v3
       with:
