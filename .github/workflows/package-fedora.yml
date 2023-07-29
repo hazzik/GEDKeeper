@@ -13,16 +13,12 @@ jobs:
     container: fedora:latest
 
     steps:
-    - name: Insall Git
-      run: dnf install git-all -y
+    - name: Insall Prerequisites
+      run: dnf install git-all dotnet-sdk-6.0 -y
     - name: Checkout
       uses: actions/checkout@v3
       with:
         submodules: recursive
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
-      with:
-        dotnet-version: 6.0.x
     - name: Build
       run: chmod +x ./make_gk3_linux_fedora_pack.sh && ./make_gk3_linux_fedora_pack.sh
       working-directory: deploy
