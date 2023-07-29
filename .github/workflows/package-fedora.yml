@@ -7,7 +7,7 @@ on:
     branches: [ "master" ]
 
 jobs:
-  mac:
+  fedora:
 
     runs-on: ubuntu-latest
     container: fedora:latest
@@ -23,7 +23,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Build
-      run: ./gk_linux_rpm_fedora_package.sh
+      run: sudo ./gk_linux_rpm_fedora_package.sh
       working-directory: deploy
 #    - name: Upload DMG file
 #      uses: actions/upload-artifact@v3
