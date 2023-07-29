@@ -24,7 +24,7 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Build
-      run: ./make_gk3_linux_fedora_pack.sh
+      run: chmod +x ./make_gk3_linux_fedora_pack.sh && ./make_gk3_linux_fedora_pack.sh
       working-directory: deploy
 #    - name: Upload DMG file
 #      uses: actions/upload-artifact@v3
