@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Insall Git
-      run: rpm install git -y
+      run: rpm install git
     - name: Checkout
       uses: actions/checkout@v3
       with:
