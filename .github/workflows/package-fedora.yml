@@ -14,7 +14,7 @@ jobs:
 
     steps:
     - name: Insall Prerequisites
-      run: dnf install git-all dotnet-sdk-6.0 -y
+      run: dnf install git-all dotnet-sdk-6.0 rpm-build -y
     - name: Checkout
       uses: actions/checkout@v3
       with:
