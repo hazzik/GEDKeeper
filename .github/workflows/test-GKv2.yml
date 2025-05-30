@@ -2,9 +2,9 @@ name: Test Suite
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "mac" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "mac" ]
 
 env:
   DOTNET_CLI_TELEMETRY_OPTOUT: true
