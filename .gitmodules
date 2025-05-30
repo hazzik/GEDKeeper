@@ -1,6 +1,6 @@
 [submodule "projects/GKCommunicator"]
 	path = projects/GKCommunicator
-	url = https://github.com/Serg-Norseman/GKCommunicator.git
+	url = https://github.com/hazzik/GKCommunicator.git
 [submodule "projects/GKGenetix"]
 	path = projects/GKGenetix
-	url = https://github.com/Serg-Norseman/GKGenetix.git
+	url = https://github.com/hazzik/GKGenetix.git
