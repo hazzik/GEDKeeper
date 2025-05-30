@@ -23,7 +23,7 @@ jobs:
       run: dotnet build -p:Configuration=Release -p:Platform=MacOS -p:EnableDmgBuild=true
       working-directory: projects/GKv3
     - name: Upload DMG file
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: GEDKeeper3
         path: projects/GKv3/GEDKeeper3/bin/Debug/MacOS/*.dmg
