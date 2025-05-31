@@ -121,5 +121,14 @@
         <Delete Files="$(OutputPath)\..\appdata\*.tmp" />
         <Delete Files="$(OutputPath)\..\appdata\*.log" />
     </Target>
-
+    
+    <Target Name="MacCodeSignApp" AfterTargets="MacBuildAppBundle" Condition="$(GKEnableCodeSigning) == 'True' AND '$(GKMacCodeSigninKey)' != '' AND $(MacIsBuildingBundle) != 'True' AND $(MacBuildBundle) == 'True'">
+        <PropertyGroup>
+            <CodeSignEntitlements>$(MSBuildThisFileDirectory)CodeSign.entitlements</CodeSignEntitlements>
+            <_CodeSignOptions>--entitlements "$(CodeSignEntitlements)"</_CodeSignOptions>
+        </PropertyGroup>
+        
+        <Exec Command='codesign --force --deep --options runtime $(_CodeSignOptions) --sign "$(GKMacCodeSigninKey)" "$(OutputAppPath)"' />
+        <Message Text="Code signed $(OutputAppPath)" Importance="high" />
+    </Target>
 </Project>
