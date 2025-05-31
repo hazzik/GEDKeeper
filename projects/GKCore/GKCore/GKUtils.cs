@@ -1945,10 +1945,14 @@ namespace GKCore
 
         public static string GetBinPath()
         {
+#if NET6_0_OR_GREATER
+            return Path.GetDirectoryName(Environment.ProcessPath);
+#else
             var asm = SysUtils.GetExecutingAssembly();
             Module[] mods = asm.GetModules();
             string fn = mods[0].FullyQualifiedName;
             return Path.GetDirectoryName(fn) + Path.DirectorySeparatorChar;
+#endif
         }
 
         public static string GetAppPath()
