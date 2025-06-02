@@ -2,9 +2,9 @@ name: Package GEDKeeper3 for MacOS
 
 on:
   push:
-    branches: [ "master" ]
+    branches: [ "mac" ]
   pull_request:
-    branches: [ "master" ]
+    branches: [ "mac" ]
 
 jobs:
   mac:
@@ -19,13 +19,21 @@ jobs:
     - uses: actions/checkout@v3
       with:
         submodules: recursive
+
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
+
+    - uses: apple-actions/import-codesign-certs@v3
+      with: 
+        p12-file-base64: ${{ secrets.CERTIFICATES_FILE_BASE64 }}
+        p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
+
     - name: Build
-      run: dotnet build GEDKeeper3.sln -c=Release -p:Platform=MacOS -p:EnableDmgBuild=true
+      run: dotnet build GEDKeeper3.sln -c=Release -p:Platform=MacOS -p:EnableDmgBuild=true -p:GKEnableCodeSigning=true -p:GKMacCodeSigninKey=GEDKeeper2
       working-directory: projects/GKv3
+
     - name: Upload DMG file
       uses: actions/upload-artifact@v4
       with:

@@ -36,7 +36,7 @@
 
     <ItemGroup>
         <PackageReference Include="System.Text.Encoding.CodePages" Version="7.0.0" />
-        <PackageReference Include="Eto.Serialization.Xaml" Version="2.8.3" />
+        <PackageReference Include="Eto.Serialization.Xaml" Version="2.9.0" />
     </ItemGroup>
 
 
@@ -51,7 +51,7 @@
     </PropertyGroup>
 
     <ItemGroup Condition=" $(DefineConstants.Contains('OS_MSWIN')) ">
-        <PackageReference Include="Eto.Platform.Wpf" Version="2.8.3" />
+        <PackageReference Include="Eto.Platform.Wpf" Version="2.9.0" />
     </ItemGroup>
 
     <PropertyGroup Condition=" '$(Platform)' == 'MSWin64' ">
@@ -85,7 +85,7 @@
     </PropertyGroup>
 
     <ItemGroup Condition=" $(DefineConstants.Contains('OS_LINUX')) or $(DefineConstants.Contains('OS_FREEBSD')) ">
-        <PackageReference Include="Eto.Platform.Gtk" Version="2.8.3" />
+        <PackageReference Include="Eto.Platform.Gtk" Version="2.9.0" />
     </ItemGroup>
 
 
@@ -99,7 +99,7 @@
     </PropertyGroup>
 
     <ItemGroup Condition=" $(DefineConstants.Contains('OS_MACOS')) ">
-        <PackageReference Include="Eto.Platform.Mac64" Version="2.8.3" />
+        <PackageReference Include="Eto.Platform.Mac64" Version="2.9.0" />
     </ItemGroup>
 
     <ItemGroup Condition=" $(DefineConstants.Contains('OS_MACOS')) ">
@@ -112,14 +112,25 @@
         <ItemGroup>
             <LocaleFiles Include="..\..\..\locales\**\*" />
             <PluginFiles Include="..\..\..\plugins\**\*" />
+            <ThemeFiles Include="..\..\..\themes\**\*" />
         </ItemGroup>
         <Copy SourceFiles="@(LocaleFiles)" DestinationFolder="$(OutputContents)\locales\%(RecursiveDir)" />
         <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(OutputContents)\PlugIns\%(RecursiveDir)" />
+        <Copy SourceFiles="@(ThemeFiles)" DestinationFolder="$(OutputContents)\themes\%(RecursiveDir)" />
     </Target>
 
     <Target Name="CleanAppTempBeforeRun" AfterTargets="Build">
         <Delete Files="$(OutputPath)\..\appdata\*.tmp" />
         <Delete Files="$(OutputPath)\..\appdata\*.log" />
     </Target>
-
+    
+    <Target Name="MacCodeSignApp" AfterTargets="MacBuildAppBundle" Condition="$(GKEnableCodeSigning) == 'True' AND '$(GKMacCodeSigninKey)' != '' AND $(MacIsBuildingBundle) != 'True' AND $(MacBuildBundle) == 'True'">
+        <PropertyGroup>
+            <CodeSignEntitlements>$(MSBuildThisFileDirectory)CodeSign.entitlements</CodeSignEntitlements>
+            <_CodeSignOptions>--entitlements "$(CodeSignEntitlements)"</_CodeSignOptions>
+        </PropertyGroup>
+        
+        <Exec Command='codesign --force --deep --options runtime $(_CodeSignOptions) --sign "$(GKMacCodeSigninKey)" "$(OutputAppPath)"' />
+        <Message Text="Code signed $(OutputAppPath)" Importance="high" />
+    </Target>
 </Project>
