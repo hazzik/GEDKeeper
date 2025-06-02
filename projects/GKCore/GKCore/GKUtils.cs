@@ -1953,7 +1953,6 @@ namespace GKCore
             string fn = mods[0].FullyQualifiedName;
 #endif
             return Path.GetDirectoryName(fn) + Path.DirectorySeparatorChar;
-#endif
         }
 
         public static string GetAppPath()
