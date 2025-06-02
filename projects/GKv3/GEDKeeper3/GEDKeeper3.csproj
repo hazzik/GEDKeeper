@@ -114,7 +114,7 @@
             <PluginFiles Include="..\..\..\plugins\**\*" />
         </ItemGroup>
         <Copy SourceFiles="@(LocaleFiles)" DestinationFolder="$(OutputContents)\locales\%(RecursiveDir)" />
-        <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(OutputContents)\plugins\%(RecursiveDir)" />
+        <Copy SourceFiles="@(PluginFiles)" DestinationFolder="$(OutputContents)\PlugIns\%(RecursiveDir)" />
     </Target>
 
     <Target Name="CleanAppTempBeforeRun" AfterTargets="Build">
