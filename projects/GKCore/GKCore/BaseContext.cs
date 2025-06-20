@@ -776,7 +776,7 @@ namespace GKCore
         {
             string arcFn = GetArcFileName();
 
-            using (var file = File.OpenWrite(arcFn))
+            using (var file = File.Open(arcFn, FileMode.OpenOrCreate, FileAccess.ReadWrite))
             using (var z = new ZipArchive(file, ZipArchiveMode.Update, false, GetZipEncoding())) {
                 z.CreateEntryFromFile(fileName, sfn, CompressionLevel.Optimal);
             }

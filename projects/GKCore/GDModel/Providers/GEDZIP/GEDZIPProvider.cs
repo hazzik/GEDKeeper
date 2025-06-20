@@ -62,12 +62,20 @@ namespace GDModel.Providers.GEDZIP
             }
         }
 
+        public override void SaveToFile(string fileName, GEDCOMCharacterSet charSet)
+        {
+            using (var fileStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
+                SaveToStreamExt(fileStream, charSet);
+            }
+        }
+
         public override void SaveToStreamExt(Stream fs, GEDCOMCharacterSet charSet)
         {
             using (var zip = new ZipArchive(fs, ZipArchiveMode.Update)) {
                 var entry = GetArchiveEntry(zip, GedcomEntry);
                 using (var stream = entry.Open()) {
                     base.SaveToStreamExt(stream, charSet);
+                    stream.Flush();
                 }
             }
         }
