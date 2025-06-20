@@ -21,6 +21,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -760,11 +761,13 @@ namespace GKCore
         private void ArcFileLoad(string targetFn, Stream toStream)
         {
             targetFn = FileHelper.NormalizeFilename(targetFn);
-
-            using (ZipStorer zip = ZipStorer.Open(GetArcFileName(), FileAccess.Read, GetZipEncoding())) {
-                ZipStorer.ZipFileEntry entry = zip.FindFile(targetFn);
+            using (var file = File.OpenRead(GetArcFileName()))
+            using (var zip = new ZipArchive(file, ZipArchiveMode.Read, false, GetZipEncoding())) {
+                var entry = zip.GetEntry(targetFn);
                 if (entry != null) {
-                    zip.ExtractStream(entry, toStream);
+                    using (var stream = entry.Open()) {
+                        stream.CopyTo(toStream);
+                    }
                 }
             }
         }
@@ -772,17 +775,10 @@ namespace GKCore
         private void ArcFileSave(string fileName, string sfn)
         {
             string arcFn = GetArcFileName();
-            ZipStorer zip = null;
 
-            try {
-                if (File.Exists(arcFn)) {
-                    zip = ZipStorer.Open(arcFn, FileAccess.ReadWrite, GetZipEncoding());
-                } else {
-                    zip = ZipStorer.Create(arcFn, "");
-                }
-                zip.AddFile(ZipStorer.Compression.Deflate, fileName, sfn, null);
-            } finally {
-                if (zip != null) zip.Dispose();
+            using (var file = File.OpenWrite(arcFn))
+            using (var z = new ZipArchive(file, ZipArchiveMode.Update, false, GetZipEncoding())) {
+                z.CreateEntryFromFile(fileName, sfn, CompressionLevel.Optimal);
             }
         }
 
@@ -790,13 +786,11 @@ namespace GKCore
         {
             targetFn = FileHelper.NormalizeFilename(targetFn);
 
-            using (ZipStorer zip = ZipStorer.Open(GetArcFileName(), FileAccess.Read, GetZipEncoding())) {
-                ZipStorer.ZipFileEntry entry = zip.FindFile(targetFn);
+            using (var file = File.OpenWrite(GetArcFileName()))
+            using (var zip = new ZipArchive(file, ZipArchiveMode.Update, false, GetZipEncoding())) {
+                var entry = zip.GetEntry(targetFn);
                 if (entry != null) {
-                    var zfes = new List<ZipStorer.ZipFileEntry>();
-                    zfes.Add(entry);
-                    // TODO: optimize this method!
-                    ZipStorer.RemoveEntries(zip, zfes);
+                    entry.Delete();
                 }
             }
         }
@@ -805,9 +799,9 @@ namespace GKCore
         {
             targetFn = FileHelper.NormalizeFilename(targetFn);
 
-            using (ZipStorer zip = ZipStorer.Open(GetArcFileName(), FileAccess.Read, GetZipEncoding())) {
-                ZipStorer.ZipFileEntry entry = zip.FindFile(targetFn);
-                return (entry != null);
+            using (var file = File.OpenRead(GetArcFileName()))
+            using (var zip = new ZipArchive(file, ZipArchiveMode.Read, false, GetZipEncoding())) {
+                return zip.GetEntry(targetFn) != null;
             }
         }
 
