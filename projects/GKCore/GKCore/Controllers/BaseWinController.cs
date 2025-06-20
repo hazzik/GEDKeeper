@@ -20,7 +20,7 @@
 
 #define GEDML_SUPPORT
 #define FAMX_SUPPORT
-//#define GDZ_SUPPORT
+#define GDZ_SUPPORT
 
 using System;
 using System.Collections.Generic;
@@ -58,7 +58,7 @@ namespace GKCore.Controllers
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public sealed class BaseWinController : FormController<IBaseWindowView>
     {
@@ -149,7 +149,7 @@ namespace GKCore.Controllers
         {
             homePath = AppHost.Instance.GetUserFilesPath("");
 
-            filters = LangMan.LS(LSID.GEDCOMFilter);
+            filters = FileFilters();
 
 #if GEDML_SUPPORT
             filters += "|" + LangMan.LS(LSID.GedMLFilter);
@@ -158,10 +158,17 @@ namespace GKCore.Controllers
 #if FAMX_SUPPORT
             filters += "|" + "Family.Show files (*.familyx)|*.familyx";
 #endif
+        }
+
+        private static string FileFilters()
+        {
+            string filters = LangMan.LS(LSID.GEDCOMFilter);
 
 #if GDZ_SUPPORT
             filters += "|" + "GEDZIP files (*.gdz,*.zip)|*.gdz,*.zip";
 #endif
+
+            return filters;
         }
 
         public async Task LoadFileEx()
@@ -194,7 +201,7 @@ namespace GKCore.Controllers
             } else {
                 string homePath = AppHost.Instance.GetUserFilesPath(Path.GetDirectoryName(oldFileName));
                 string proposedFileName = Path.GetFileName(oldFileName);
-                string newFileName = await AppHost.StdDialogs.GetSaveFile("", homePath, LangMan.LS(LSID.GEDCOMFilter), 1, GKData.GEDCOM_EXT, proposedFileName, GlobalOptions.Instance.FilesOverwriteWarn);
+                string newFileName = await AppHost.StdDialogs.GetSaveFile("", homePath, FileFilters(), 1, GKData.GEDCOM_EXT, proposedFileName, GlobalOptions.Instance.FilesOverwriteWarn);
                 if (!string.IsNullOrEmpty(newFileName)) {
                     SaveFile(newFileName);
                     if (!isUnknown && !string.Equals(oldFileName, newFileName)) {
@@ -241,7 +248,7 @@ namespace GKCore.Controllers
             }
         }
 
-        public void SetExternalFilter(ExternalFilterHandler filterHandler, 
+        public void SetExternalFilter(ExternalFilterHandler filterHandler,
                                       GDMRecordType recType = GDMRecordType.rtNone)
         {
             for (var rt = GDMRecordType.rtIndividual; rt <= GDMRecordType.rtLocation; rt++) {

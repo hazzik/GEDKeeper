@@ -733,6 +733,11 @@ namespace GKCore
         public string GetArcFileName()
         {
             string treeName = fFileName;
+            var extension = Path.GetExtension(treeName);
+            if (extension == ".zip" || extension == ".gdz") {
+                return treeName;
+            }
+
             string result = GetTreePath(treeName) + Path.GetFileNameWithoutExtension(treeName) + ".zip";
             return result;
         }
@@ -1491,10 +1496,10 @@ namespace GKCore
             bool result = false;
 
             try {
-                FileProvider fileProvider;
 
                 string pw = null;
                 string ext = FileHelper.GetFileExtension(fileName);
+                FileProvider fileProvider;
                 if (ext == ".ged") {
                     fileProvider = new GEDCOMProvider(fTree);
                 } else if (ext == ".geds") {

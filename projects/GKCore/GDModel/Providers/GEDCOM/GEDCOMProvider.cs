@@ -603,12 +603,12 @@ namespace GDModel.Providers.GEDCOM
         public virtual void SaveToFile(string fileName, GEDCOMCharacterSet charSet)
         {
             // Attention: processing of Header moved to BaseContext!
-            using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write)) {
+            using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite)) {
                 SaveToStreamExt(fileStream, charSet);
             }
         }
 
-        public void SaveToStreamExt(Stream outputStream, GEDCOMCharacterSet charSet)
+        public virtual void SaveToStreamExt(Stream outputStream, GEDCOMCharacterSet charSet)
         {
             // Attention: processing of Header moved to BaseContext!
 
