@@ -79,7 +79,7 @@ namespace GKCore.Types
 
                 if (!File.Exists(fileName)) {
                     string xFileName = FileHelper.NormalizeFilename(fileName);
-                    if (string.IsNullOrEmpty(xFileName)) {
+                    if (!File.Exists(xFileName)) {
                         result = MediaStoreStatus.mssFileNotFound;
                     } else {
                         result = MediaStoreStatus.mssExists;
