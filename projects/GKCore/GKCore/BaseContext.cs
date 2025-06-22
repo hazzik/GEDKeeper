@@ -734,7 +734,7 @@ namespace GKCore
         public string GetArcFileName()
         {
             string treeName = fFileName;
-            var extension = Path.GetExtension(treeName);
+            var extension = FileHelper.GetFileExtension(treeName);
             if (extension == ".zip" || extension == ".gdz") {
                 return treeName;
             }
@@ -761,8 +761,7 @@ namespace GKCore
         private void ArcFileLoad(string targetFn, Stream toStream)
         {
             targetFn = FileHelper.NormalizeFilename(targetFn);
-            using (var file = File.OpenRead(GetArcFileName()))
-            using (var zip = new ZipArchive(file, ZipArchiveMode.Read, false, GetZipEncoding())) {
+            using (var zip = ZipFile.Open(GetArcFileName(), ZipArchiveMode.Read, GetZipEncoding())) {
                 var entry = zip.GetEntry(targetFn);
                 if (entry != null) {
                     using (var stream = entry.Open()) {
@@ -786,21 +785,16 @@ namespace GKCore
         {
             targetFn = FileHelper.NormalizeFilename(targetFn);
 
-            using (var file = File.OpenWrite(GetArcFileName()))
-            using (var zip = new ZipArchive(file, ZipArchiveMode.Update, false, GetZipEncoding())) {
+            using (var zip = ZipFile.Open(GetArcFileName(), ZipArchiveMode.Update, GetZipEncoding())) {
                 var entry = zip.GetEntry(targetFn);
-                if (entry != null) {
-                    entry.Delete();
-                }
+                entry?.Delete();
             }
         }
 
         private bool ArcFileExists(string targetFn)
         {
             targetFn = FileHelper.NormalizeFilename(targetFn);
-
-            using (var file = File.OpenRead(GetArcFileName()))
-            using (var zip = new ZipArchive(file, ZipArchiveMode.Read, false, GetZipEncoding())) {
+            using (var zip = ZipFile.Open(GetArcFileName(), ZipArchiveMode.Read, GetZipEncoding())) {
                 return zip.GetEntry(targetFn) != null;
             }
         }

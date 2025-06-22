@@ -48,33 +48,26 @@ namespace GDModel.Providers.GEDZIP
             return "GEDZIP files (*.gdz,*.zip)|*.gdz,*.zip";
         }
 
-        public override void LoadFromStreamExt(Stream fs, Stream inputStream, bool charsetDetection = false)
+        public override void LoadFromFile(string fileName, bool charsetDetection = false)
         {
-            using (var zip = new ZipArchive(fs, ZipArchiveMode.Read)) {
+            using (var zip = ZipFile.Open(fileName, ZipArchiveMode.Read)) {
                 var entry = GetArchiveEntry(zip, GedcomEntry);
                 using (var stream = entry.Open())
                 using (var ms = new MemoryStream()) {
                     // wrap to MemoryStream to support encoding detection
                     stream.CopyTo(ms);
                     ms.Position = 0;
-                    base.LoadFromStreamExt(fs, ms, charsetDetection);
+                    LoadFromStreamExt(ms, ms, charsetDetection);
                 }
             }
         }
 
         public override void SaveToFile(string fileName, GEDCOMCharacterSet charSet)
         {
-            using (var fileStream = new FileStream(fileName, FileMode.OpenOrCreate, FileAccess.ReadWrite)) {
-                SaveToStreamExt(fileStream, charSet);
-            }
-        }
-
-        public override void SaveToStreamExt(Stream fs, GEDCOMCharacterSet charSet)
-        {
-            using (var zip = new ZipArchive(fs, ZipArchiveMode.Update)) {
+            using (var zip = ZipFile.Open(fileName, ZipArchiveMode.Update)) {
                 var entry = GetArchiveEntry(zip, GedcomEntry);
                 using (var stream = entry.Open()) {
-                    base.SaveToStreamExt(stream, charSet);
+                    SaveToStreamExt(stream, charSet);
                     stream.Flush();
                 }
             }
