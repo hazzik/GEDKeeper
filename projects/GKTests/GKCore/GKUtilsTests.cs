@@ -469,7 +469,7 @@ namespace GKCore
         [Test]
         public void Test_GetStoreType()
         {
-            Assert.Throws(typeof(ArgumentNullException), () => { GKUtils.GetStoreType(null); });
+            Assert.Throws(typeof(ArgumentNullException), () => { fContext.GetMediaStore((GDMFileReference)null); });
         }
 
         [Test]

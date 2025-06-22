@@ -399,10 +399,9 @@ namespace GDModel.Providers.GEDCOM
                 if (fFormat == GEDCOMFormat.Native && fileVer == 39) {
                     // the transition to normalized names after GKv39
                     // only for not direct references AND not relative references (platform specific paths)
-
-                    var mediaStore = GKUtils.GetStoreType(fileRef.StringValue);
-                    if (mediaStore.StoreType != MediaStoreType.mstReference
-                        && mediaStore.StoreType != MediaStoreType.mstRelativeReference) {
+                    var storeType = GKUtils.GetStoreTypeEx(fileRef.StringValue);
+                    if (storeType != MediaStoreType.mstReference
+                        && storeType != MediaStoreType.mstRelativeReference) {
                         fileRef.StringValue = FileHelper.NormalizeFilename(fileRef.StringValue);
                     }
                 }

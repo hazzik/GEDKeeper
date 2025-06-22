@@ -18,20 +18,19 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+using System;
+using System.IO;
+using System.Threading.Tasks;
+
 namespace GKCore.Types
 {
-    /// <summary>
-    /// 
-    /// </summary>
-    public sealed class MediaStore
+    /// <summary />
+    public interface IMediaStore
     {
-        public readonly MediaStoreType StoreType;
-        public readonly string FileName;
-        
-        public MediaStore(MediaStoreType storeType, string fileName)
-        {
-            StoreType = storeType;
-            FileName = fileName;
-        }
+        Stream MediaLoad(bool throwException);
+        string MediaLoad();
+        Task<bool> MediaDelete();
+        MediaStoreStatus VerifyMediaFile(out string fileName);
+        bool MediaSave(BaseContext baseContext, out string refPath);
     }
 }

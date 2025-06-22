@@ -187,30 +187,30 @@ namespace GKCore
         {
             Assert.Throws(typeof(ArgumentNullException), () => {
                 string strFileRef = null;
-                fContext.GetStoreType(strFileRef);
+                fContext.GetMediaStore(strFileRef);
             });
 
             Assert.Throws(typeof(ArgumentNullException), () => {
                 GDMFileReference fileRefX = null;
-                fContext.GetStoreType(fileRefX);
+                fContext.GetMediaStore(fileRefX);
             });
 
             var fileRef = new GDMFileReference();
             fileRef.ParseString("file.txt");
-            var mediaStore = fContext.GetStoreType(fileRef);
-            Assert.AreEqual(MediaStoreType.mstReference, mediaStore.StoreType);
+             var storeType = GKUtils.GetStoreTypeEx(fileRef.StringValue);
+            Assert.AreEqual(MediaStoreType.mstReference, storeType);
 
             fileRef.ParseString("stg:file.txt");
-            mediaStore = fContext.GetStoreType(fileRef);
-            Assert.AreEqual(MediaStoreType.mstStorage, mediaStore.StoreType);
+            storeType = GKUtils.GetStoreTypeEx(fileRef.StringValue);
+            Assert.AreEqual(MediaStoreType.mstStorage, storeType);
 
             fileRef.ParseString("arc:file.txt");
-            mediaStore = fContext.GetStoreType(fileRef);
-            Assert.AreEqual(MediaStoreType.mstArchive, mediaStore.StoreType);
+            storeType = GKUtils.GetStoreTypeEx(fileRef.StringValue);
+            Assert.AreEqual(MediaStoreType.mstArchive, storeType);
 
             fileRef.ParseString("rel:file.txt");
-            mediaStore = fContext.GetStoreType(fileRef);
-            Assert.AreEqual(MediaStoreType.mstRelativeReference, mediaStore.StoreType);
+            storeType = GKUtils.GetStoreTypeEx(fileRef.StringValue);
+            Assert.AreEqual(MediaStoreType.mstRelativeReference, storeType);
         }
 
         [Test]

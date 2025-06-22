@@ -3506,34 +3506,20 @@ namespace GKCore
             }
         }
 
-        public static MediaStoreType GetStoreTypeEx(string fileRef)
+        public static MediaStoreType GetStoreTypeEx(string fileReference)
         {
-            if (fileRef == null)
+            if (fileReference == null)
                 throw new ArgumentNullException("fileReference");
 
             MediaStoreType result = MediaStoreType.mstReference;
             for (int i = 1; i <= 4; i++) {
-                if (fileRef.StartsWith(GKData.GKStoreTypes[i].Sign, StringComparison.Ordinal)) {
+                if (fileReference.StartsWith(GKData.GKStoreTypes[i].Sign, StringComparison.Ordinal)) {
                     result = (MediaStoreType)i;
                     break;
                 }
             }
+
             return result;
-        }
-
-        public static MediaStore GetStoreType(string fileReference)
-        {
-            if (string.IsNullOrEmpty(fileReference))
-                throw new ArgumentNullException("fileReference");
-
-            string fileName = fileReference;
-            MediaStoreType storeType = GetStoreTypeEx(fileName);
-
-            if (storeType != MediaStoreType.mstReference && storeType != MediaStoreType.mstURL) {
-                fileName = fileName.Remove(0, 4);
-            }
-
-            return new MediaStore(storeType, fileName);
         }
 
         public static bool UseEmbeddedViewer(GDMMultimediaFormat format)
@@ -3619,25 +3605,6 @@ namespace GKCore
                 // crash on WinXP (.NET <= 4.0.3), TLS 1.2 not supported
                 Logger.WriteError("GKUtils.InitSecurityProtocol()", ex);
             }
-        }
-
-        public static byte[] GetWebData(string uri)
-        {
-            InitSecurityProtocol();
-
-            using (var webClient = new WebClient()) {
-                webClient.Headers["User-Agent"] = string.Format("{0}/{1}", GKData.APP_TITLE, GKData.APP_VERSION);
-                byte[] dataBytes = webClient.DownloadData(uri);
-                return dataBytes;
-            }
-        }
-
-        public static Stream GetWebStream(string uri)
-        {
-            byte[] dataBytes = GetWebData(uri);
-            var ms = new MemoryStream();
-            ms.Write(dataBytes, 0, dataBytes.Length);
-            return ms;
         }
 
         #endregion
