@@ -5,7 +5,7 @@ namespace GKCore.Types
     public sealed class RelativeReferenceMediaStore : FileSystemMediaStore
     {
         public RelativeReferenceMediaStore(BaseContext baseContext, string fileName, bool allowDelete)
-            : base(BaseContext.GetTreePath(baseContext.FileName), fileName, allowDelete)
+            : base(baseContext.GetTreePath(), fileName, allowDelete)
         {
         }
 

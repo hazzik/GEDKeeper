@@ -720,20 +720,19 @@ namespace GKCore
 
         #region Private media support
 
-        internal static string GetTreePath(string treeName)
+        public string GetTreePath()
         {
-            return Path.GetDirectoryName(treeName) + Path.DirectorySeparatorChar;
+            return Path.GetDirectoryName(fFileName) + Path.DirectorySeparatorChar;
         }
 
         public string GetTreeRelativePath(string fileName)
         {
-            string result = GKUtils.GetRelativePath(GetTreePath(fFileName), fileName);
-            return result;
+            return GKUtils.GetRelativePath(GetTreePath(), fileName);
         }
 
         public string GetStgFolder()
         {
-            return GetTreePath(fFileName) + Path.GetFileNameWithoutExtension(fFileName) + Path.DirectorySeparatorChar;
+            return GetTreePath() + Path.GetFileNameWithoutExtension(fFileName) + Path.DirectorySeparatorChar;
         }
 
         // TODO: Controlling the version of the GK GEDCOM file to determine the zip archive encoding!
@@ -1681,7 +1680,7 @@ namespace GKCore
                 return treeName;
             }
 
-            string result = BaseContext.GetTreePath(treeName) + Path.GetFileNameWithoutExtension(treeName) + ".zip";
+            string result = GetTreePath() + Path.GetFileNameWithoutExtension(treeName) + ".zip";
             return result;
         }
     }
