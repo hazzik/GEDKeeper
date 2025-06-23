@@ -119,17 +119,7 @@ namespace GKCore.Types
 
         public override bool MediaSave(BaseContext baseContext, out string refPath)
         {
-            string storeFile = Path.GetFileName(fFileName);
-            string storePath =
-                GKUtils.GetStoreFolder(GKUtils.GetMultimediaKind(GDMFileReference.RecognizeFormat(fFileName)));
-
-            refPath = string.Empty;
-
-            // set paths and links
-            var targetFile = storePath + storeFile;
-            refPath = GKData.GKStoreTypes[(int)MediaStoreType.mstArchive].Sign + targetFile;
-
-            refPath = FileHelper.NormalizeFilename(refPath);
+            refPath = NormalizeFilename(out var targetFile);
 
             // verify existence
             bool alreadyExists = baseContext.MediaExists(refPath);
@@ -144,6 +134,19 @@ namespace GKCore.Types
             return true;
         }
 
+        private string NormalizeFilename(out string targetFile)
+        {
+            string storeFile = Path.GetFileName(fFileName);
+            string storePath =
+                GKUtils.GetStoreFolder(GKUtils.GetMultimediaKind(GDMFileReference.RecognizeFormat(fFileName)));
+
+            targetFile = storePath + storeFile;
+
+            // set paths and links
+            var refPath = GKData.GKStoreTypes[(int)MediaStoreType.mstArchive].Sign + targetFile;
+
+            return FileHelper.NormalizeFilename(refPath);
+        }
 
         private void ExtractToFile(string archiveFileName, string targetFileName)
         {
