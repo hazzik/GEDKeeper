@@ -41,14 +41,14 @@ namespace GDModel.Providers
         public void LoadFromString(string strText, bool charsetDetection = false)
         {
             using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(strText))) {
-                LoadFromStreamExt(stream, stream, charsetDetection);
+                LoadFromStreamExt(fTree, stream, stream, charsetDetection);
             }
         }
 
         public virtual void LoadFromFile(string fileName, bool charsetDetection = false)
         {
             using (FileStream fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read)) {
-                LoadFromStreamExt(fileStream, fileStream, charsetDetection);
+                LoadFromStreamExt(fTree, fileStream, fileStream, charsetDetection);
             }
         }
 
@@ -57,12 +57,12 @@ namespace GDModel.Providers
             return Encoding.UTF8;
         }
 
-        public virtual void LoadFromStreamExt(Stream fileStream, Stream inputStream, bool charsetDetection = false)
+        public virtual void LoadFromStreamExt(GDMTree tree, Stream fileStream, Stream inputStream, bool charsetDetection = false)
         {
-            fTree.Clear();
-            ReadStream(fileStream, inputStream, charsetDetection);
+            tree.Clear();
+            ReadStream(tree, fileStream, inputStream, charsetDetection);
         }
 
-        protected abstract void ReadStream(Stream fileStream, Stream inputStream, bool charsetDetection = false);
+        protected abstract void ReadStream(GDMTree tree, Stream fileStream, Stream inputStream, bool charsetDetection = false);
     }
 }

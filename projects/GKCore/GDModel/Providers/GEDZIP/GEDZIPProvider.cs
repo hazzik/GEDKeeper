@@ -57,7 +57,7 @@ namespace GDModel.Providers.GEDZIP
                     // wrap to MemoryStream to support encoding detection
                     stream.CopyTo(ms);
                     ms.Position = 0;
-                    LoadFromStreamExt(ms, ms, charsetDetection);
+                    LoadFromStreamExt(fTree, ms, ms, charsetDetection);
                 }
             }
         }

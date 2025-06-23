@@ -64,7 +64,7 @@ namespace GDModel.Providers.GEDCOM
 
                 using (var cryptic = CreateCSP(gsMajVer, gsMinVer)) {
                     using (CryptoStream crStream = new CryptoStream(fileStream, cryptic.CreateDecryptor(), CryptoStreamMode.Read)) {
-                        LoadFromStreamExt(fileStream, crStream, charsetDetection);
+                        LoadFromStreamExt(fTree, fileStream, crStream, charsetDetection);
                     }
                 }
             }

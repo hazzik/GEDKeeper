@@ -40,7 +40,7 @@ namespace GDModel.Providers.FamilyShow
 
         static FamilyXProvider()
         {
-            // Static initialization of the GEDCOMProvider is needed, 
+            // Static initialization of the GEDCOMProvider is needed,
             // otherwise the standard tag identifiers are out of sync
             SysUtils.DoNotInline(GEDCOMProvider.GEDCOMFormats);
         }
@@ -54,7 +54,8 @@ namespace GDModel.Providers.FamilyShow
             return "Family.Show files (*.familyx)|*.familyx";
         }
 
-        public override void LoadFromStreamExt(Stream fileStream, Stream inputStream, bool charsetDetection = false)
+        public override void LoadFromStreamExt(GDMTree tree, Stream fileStream, Stream inputStream,
+            bool charsetDetection = false)
         {
             using (Package package = Package.Open(inputStream, FileMode.Open, FileAccess.Read)) {
                 PackagePart documentPart = package.GetPart(new Uri(@"/" + OPCContentFileName, UriKind.Relative));
@@ -62,7 +63,7 @@ namespace GDModel.Providers.FamilyShow
                 //using (MemoryStream memStream = new MemoryStream()) {
                 //OPCUtility.CopyStream(docPartStream, memStream);
                 //memStream.Position = 0;
-                ReadStream(inputStream, docPartStream, charsetDetection);
+                ReadStream(tree, inputStream, docPartStream, charsetDetection);
                 //}
             }
         }
@@ -88,11 +89,11 @@ namespace GDModel.Providers.FamilyShow
 
         private enum RelationshipType { None, Spouse, Child }
 
-        protected override void ReadStream(Stream fileStream, Stream inputStream, bool charsetDetection = false)
+        protected override void ReadStream(GDMTree tree, Stream fileStream, Stream inputStream, bool charsetDetection = false)
         {
-            fTree.State = GDMTreeState.osLoading;
+            tree.State = GDMTreeState.osLoading;
             try {
-                var progressCallback = fTree.ProgressCallback;
+                var progressCallback = tree.ProgressCallback;
 
                 long fileSize = fileStream.Length;
                 int progress = 0;
@@ -111,7 +112,7 @@ namespace GDModel.Providers.FamilyShow
                         if (xr.NodeType == XmlNodeType.Element && !xr.IsEmptyElement) {
                             string nodeType = xr.Name;
                             if (nodeType == "Person") {
-                                lastIndividual = fTree.CreateIndividual();
+                                lastIndividual = tree.CreateIndividual();
                                 var persName = new GDMPersonalName();
                                 lastIndividual.AddPersonalName(persName);
 
@@ -257,7 +258,7 @@ namespace GDModel.Providers.FamilyShow
                     GDMIndividualRecord wifeRec;
                     indiIdents.TryGetValue(fam.WifeId, out wifeRec);
 
-                    GDMFamilyRecord famRec = fTree.CreateFamily();
+                    GDMFamilyRecord famRec = tree.CreateFamily();
                     famRec.AddSpouse(husbRec);
                     famRec.AddSpouse(wifeRec);
                 }
@@ -276,7 +277,7 @@ namespace GDModel.Providers.FamilyShow
                     famRec.AddChild(childRec);
                 }
             } finally {
-                fTree.State = GDMTreeState.osReady;
+                tree.State = GDMTreeState.osReady;
             }
         }
 

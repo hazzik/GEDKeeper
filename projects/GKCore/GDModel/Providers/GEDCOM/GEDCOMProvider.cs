@@ -325,7 +325,8 @@ namespace GDModel.Providers.GEDCOM
 
         #region Loading functions
 
-        protected override void ReadStream(Stream fileStream, Stream inputStream, bool charsetDetection = false)
+        protected override void ReadStream(GDMTree tree, Stream fileStream, Stream inputStream,
+            bool charsetDetection = false)
         {
             fTree.State = GDMTreeState.osLoading;
             try {
