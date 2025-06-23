@@ -15,18 +15,18 @@ namespace GDModel.Providers.GEDCOM
         private readonly string fPassword;
 
         public SecGEDCOMProvider(GDMTree tree, string password)
-            : base(tree)
+            : base()
         {
             fPassword = password;
         }
 
         public SecGEDCOMProvider(GDMTree tree, string password, bool keepRichNames, bool strict)
-            : base(tree, keepRichNames, strict)
+            : base(keepRichNames, strict)
         {
             fPassword = password;
         }
 
-        public override void SaveToFile(string fileName, GEDCOMCharacterSet charSet)
+        public override void SaveToFile(GDMTree tree, string fileName, GEDCOMCharacterSet charSet)
         {
             // Attention: processing of Header moved to BaseContext!
             using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write)) {
@@ -37,13 +37,13 @@ namespace GDModel.Providers.GEDCOM
 
                 using (var cryptic = CreateCSP(GS_MAJOR_VER, GS_MINOR_VER))
                 using (CryptoStream crStream = new CryptoStream(fileStream, cryptic.CreateEncryptor(), CryptoStreamMode.Write)) {
-                    SaveToStreamExt(crStream, charSet);
+                    SaveToStreamExt(tree, crStream, charSet);
                     crStream.Flush();
                 }
             }
         }
 
-        public override void LoadFromFile(string fileName, bool charsetDetection = false)
+        public override void LoadFromFile(GDMTree tree, string fileName, bool charsetDetection = false)
         {
             using (var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read)) {
                 byte[] gsHeader = new byte[8];
@@ -64,7 +64,7 @@ namespace GDModel.Providers.GEDCOM
 
                 using (var cryptic = CreateCSP(gsMajVer, gsMinVer)) {
                     using (CryptoStream crStream = new CryptoStream(fileStream, cryptic.CreateDecryptor(), CryptoStreamMode.Read)) {
-                        LoadFromStreamExt(fTree, fileStream, crStream, charsetDetection);
+                        LoadFromStreamExt(tree, fileStream, crStream, charsetDetection);
                     }
                 }
             }

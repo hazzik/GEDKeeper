@@ -33,7 +33,7 @@ using GKUI.Themes;
 namespace GKCore.Controllers
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class TreeSplitController : DialogController<ITreeSplitDlg>
     {
@@ -139,14 +139,14 @@ namespace GKCore.Controllers
             string fileName = await AppHost.StdDialogs.GetSaveFile("", "", LangMan.LS(LSID.GEDCOMFilter), 1, GKData.GEDCOM_EXT, "");
             if (string.IsNullOrEmpty(fileName)) return;
 
-            TreeTools.CheckRelations(fBase.Context.Tree, fSplitList);
-
             var tree = fBase.Context.Tree;
+            TreeTools.CheckRelations(tree, fSplitList);
+
             GKUtils.PrepareHeader(tree, fileName, GlobalOptions.Instance.DefCharacterSet, true);
 
             using (StreamWriter fs = new StreamWriter(fileName, false, GEDCOMUtils.GetEncodingByCharacterSet(tree.Header.CharacterSet.Value))) {
-                var gedcomProvider = new GEDCOMProvider(tree);
-                gedcomProvider.SaveToStream(fs, fSplitList);
+                var gedcomProvider = new GEDCOMProvider();
+                gedcomProvider.SaveToStream(tree, fs, fSplitList);
             }
         }
 

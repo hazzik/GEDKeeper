@@ -32,10 +32,6 @@ namespace GDModel.Providers.GedML
     /// </summary>
     public class GedMLProvider : GEDCOMProvider
     {
-        public GedMLProvider(GDMTree tree) : base(tree)
-        {
-        }
-
         public override string GetFilesFilter()
         {
             return LangMan.LS(LSID.GedMLFilter);

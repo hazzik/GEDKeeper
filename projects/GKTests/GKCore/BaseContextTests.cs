@@ -317,7 +317,7 @@ namespace GKCore
         {
             using (BaseContext ctx = new BaseContext(null)) {
                 using (Stream stmGed1 = TestUtils.LoadResourceStream("test1.ged")) {
-                    var gedcomProvider = new GEDCOMProvider(ctx.Tree);
+                    var gedcomProvider = new GEDCOMProvider();
                     gedcomProvider.LoadFromStreamExt(ctx.Tree, stmGed1, stmGed1);
 
                     string tempFileName = TestUtils.GetTempFilePath("test.geds");
@@ -326,11 +326,11 @@ namespace GKCore
                         const string password = "test";
                         var provider1 = new SecGEDCOMProvider(ctx.Tree, password, GlobalOptions.Instance.KeepRichNames, false);
                         GKUtils.PrepareHeader(ctx.Tree, tempFileName, GEDCOMCharacterSet.csASCII, false);
-                        provider1.SaveToFile(tempFileName, GEDCOMCharacterSet.csASCII);
+                        provider1.SaveToFile(ctx.Tree, tempFileName, GEDCOMCharacterSet.csASCII);
 
                         using (var ctx2 = new BaseContext(null)) {
                             var provider2 = new SecGEDCOMProvider(ctx2.Tree, password);
-                            provider2.LoadFromFile(tempFileName);
+                            provider2.LoadFromFile(ctx2.Tree, tempFileName);
                         }
                     } finally {
                         TestUtils.RemoveTestFile(tempFileName);

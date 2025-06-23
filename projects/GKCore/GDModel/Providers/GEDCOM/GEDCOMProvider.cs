@@ -133,11 +133,11 @@ namespace GDModel.Providers.GEDCOM
         public static bool Strict = false;
 
 
-        public GEDCOMProvider(GDMTree tree) : base(tree)
+        public GEDCOMProvider() : base()
         {
         }
 
-        public GEDCOMProvider(GDMTree tree, bool keepRichNames, bool strict) : base(tree)
+        public GEDCOMProvider(bool keepRichNames, bool strict) : base()
         {
             KeepRichNames = keepRichNames;
             Strict = strict;
@@ -162,9 +162,9 @@ namespace GDModel.Providers.GEDCOM
             fEncoding = encoding;
         }
 
-        private void DefineEncoding(Stream inputStream, GEDCOMFormat format, string streamCharset)
+        private void DefineEncoding(GDMTree tree, GEDCOMFormat format, string streamCharset)
         {
-            GEDCOMCharacterSet charSet = fTree.Header.CharacterSet.Value;
+            GEDCOMCharacterSet charSet = tree.Header.CharacterSet.Value;
             switch (charSet)
             {
                 case GEDCOMCharacterSet.csUTF8:
@@ -208,12 +208,12 @@ namespace GDModel.Providers.GEDCOM
                         if (fmtProps.PredefCharset > -1) {
                             SetEncoding(Encoding.GetEncoding(fmtProps.PredefCharset));
                         } else {
-                            string cpVers = fTree.Header.CharacterSet.Version;
+                            string cpVers = tree.Header.CharacterSet.Version;
                             if (!string.IsNullOrEmpty(cpVers)) {
                                 int sourceCodepage = ConvertHelper.ParseInt(cpVers, DEF_CODEPAGE);
                                 SetEncoding(Encoding.GetEncoding(sourceCodepage));
                             } else {
-                                if (fTree.Header.Language == GDMLanguageID.Russian) {
+                                if (tree.Header.Language == GDMLanguageID.Russian) {
                                     SetEncoding(Encoding.GetEncoding(1251));
                                 } else {
                                     if (streamCharset == null) {
@@ -325,10 +325,9 @@ namespace GDModel.Providers.GEDCOM
 
         #region Loading functions
 
-        protected override void ReadStream(GDMTree tree, Stream fileStream, Stream inputStream,
-            bool charsetDetection = false)
+        protected override void ReadStream(GDMTree tree, Stream fileStream, Stream inputStream, bool charsetDetection = false)
         {
-            fTree.State = GDMTreeState.osLoading;
+            tree.State = GDMTreeState.osLoading;
             try {
                 // encoding variables
                 string streamCharset = DetectCharset(inputStream, charsetDetection);
@@ -336,7 +335,7 @@ namespace GDModel.Providers.GEDCOM
                 fEncodingState = EncodingState.esUnchecked;
 
                 // reading variables
-                var progressCallback = fTree.ProgressCallback;
+                var progressCallback = tree.ProgressCallback;
                 long fileSize = fileStream.Length;
                 int progress = 0;
                 InitBuffers();
@@ -347,7 +346,7 @@ namespace GDModel.Providers.GEDCOM
                 GDMTag curRecord = null;
                 GDMTag curTag = null;
                 var stack = new Stack<StackTuple>(9);
-                var header = fTree.Header;
+                var header = tree.Header;
                 bool ilb = false;
 
                 // check the integrity of utf8 the lines
@@ -402,7 +401,7 @@ namespace GDModel.Providers.GEDCOM
                         // line with text but not in standard tag format
                         if (lineRes == -1) {
                             if (ilb) {
-                                FixBreakedLine(fTree, curRecord, curTag, lineNum, tagValue);
+                                FixBreakedLine(tree, curRecord, curTag, lineNum, tagValue);
                                 continue;
                             } else {
                                 throw new GEDCOMInvalidFormatException(string.Format("The string {0} doesn't start with a valid number", lineNum));
@@ -427,20 +426,20 @@ namespace GDModel.Providers.GEDCOM
                         if (curRecord == header && fEncodingState == EncodingState.esUnchecked) {
                             // beginning recognition of the first is not header record
                             // to check for additional versions of the code page
-                            var format = GetGEDCOMFormat(fTree, out ilb);
-                            fTree.Format = format;
-                            DefineEncoding(inputStream, format, streamCharset);
+                            var format = GetGEDCOMFormat(tree, out ilb);
+                            tree.Format = format;
+                            DefineEncoding(tree, format, streamCharset);
                             checkLI = (format == GEDCOMFormat.FTB && Encoding.UTF8.Equals(fEncoding));
                         }
 
-                        StackTuple stackTuple = AddTreeTag(fTree, tagLevel, tagId, tagValue);
+                        StackTuple stackTuple = AddTreeTag(tree, tagLevel, tagId, tagValue);
                         if (stackTuple.Level >= 0) {
                             stack.Clear();
                             stack.Push(stackTuple);
 
                             curRecord = stackTuple.Tag;
                             if (!string.IsNullOrEmpty(tagXRef)) {
-                                ((GDMRecord)curRecord).SetXRef(fTree, tagXRef, false);
+                                ((GDMRecord)curRecord).SetXRef(tree, tagXRef, false);
                             }
                             curTag = null;
                         } else {
@@ -449,7 +448,7 @@ namespace GDModel.Providers.GEDCOM
                         }
                     } else {
                         if (curRecord != null) {
-                            curTag = ProcessTag(fTree, stack, tagLevel, tagId, tagValue);
+                            curTag = ProcessTag(tree, stack, tagLevel, tagId, tagValue);
                         }
                     }
 
@@ -468,7 +467,7 @@ namespace GDModel.Providers.GEDCOM
                     throw new GEDCOMEmptyFileException();
                 }
             } finally {
-                fTree.State = GDMTreeState.osReady;
+                tree.State = GDMTreeState.osReady;
             }
         }
 
@@ -601,28 +600,28 @@ namespace GDModel.Providers.GEDCOM
 
         #region Saving functions
 
-        public virtual void SaveToFile(string fileName, GEDCOMCharacterSet charSet)
+        public virtual void SaveToFile(GDMTree tree, string fileName, GEDCOMCharacterSet charSet)
         {
             // Attention: processing of Header moved to BaseContext!
             using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite)) {
-                SaveToStreamExt(fileStream, charSet);
+                SaveToStreamExt(tree, fileStream, charSet);
             }
         }
 
-        public virtual void SaveToStreamExt(Stream outputStream, GEDCOMCharacterSet charSet)
+        public virtual void SaveToStreamExt(GDMTree tree, Stream outputStream, GEDCOMCharacterSet charSet)
         {
             // Attention: processing of Header moved to BaseContext!
 
             StreamWriter writer = new StreamWriter(outputStream, GEDCOMUtils.GetEncodingByCharacterSet(charSet));
-            IList<GDMRecord> records = fTree.GetRecords().GetList();
-            SaveToStream(writer, records);
+            IList<GDMRecord> records = tree.GetRecords().GetList();
+            SaveToStream(tree, writer, records);
             writer.Flush();
         }
 
-        public void SaveToStream(StreamWriter writer, IList<GDMRecord> list)
+        public void SaveToStream(GDMTree tree, StreamWriter writer, IList<GDMRecord> list)
         {
             // write header
-            WriteHeader(writer, 0, fTree.Header);
+            WriteHeader(writer, 0, tree.Header);
 
             if (list != null) {
                 for (int i = 0, num = list.Count; i < num; i++) {

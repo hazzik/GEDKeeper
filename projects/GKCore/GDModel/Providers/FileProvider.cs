@@ -28,27 +28,23 @@ namespace GDModel.Providers
     /// </summary>
     public abstract class FileProvider
     {
-        protected readonly GDMTree fTree;
-
-
-        protected FileProvider(GDMTree tree)
+        protected FileProvider()
         {
-            fTree = tree;
         }
 
         public abstract string GetFilesFilter();
 
-        public void LoadFromString(string strText, bool charsetDetection = false)
+        public void LoadFromString(GDMTree tree, string strText, bool charsetDetection = false)
         {
             using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(strText))) {
-                LoadFromStreamExt(fTree, stream, stream, charsetDetection);
+                LoadFromStreamExt(tree, stream, stream, charsetDetection);
             }
         }
 
-        public virtual void LoadFromFile(string fileName, bool charsetDetection = false)
+        public virtual void LoadFromFile(GDMTree tree, string fileName, bool charsetDetection = false)
         {
             using (FileStream fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read)) {
-                LoadFromStreamExt(fTree, fileStream, fileStream, charsetDetection);
+                LoadFromStreamExt(tree, fileStream, fileStream, charsetDetection);
             }
         }
 

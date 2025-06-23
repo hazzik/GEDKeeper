@@ -1,4 +1,5 @@
 using BSLib;
+using GKCore.Interfaces;
 
 namespace GKCore.Types
 {
@@ -9,7 +10,7 @@ namespace GKCore.Types
         {
         }
 
-        protected override string NormalizeFileName(BaseContext baseContext)
+        protected override string NormalizeFileName(IBaseContext baseContext)
         {
             return FileHelper.NormalizeFilename(FileName);
         }
