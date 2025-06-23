@@ -46,9 +46,10 @@ namespace GKCore.Types
 
         private static string FileExists(MediaStoreStatus storeStatus, string fileName)
         {
+            if (storeStatus == MediaStoreStatus.mssExists)
+                return fileName;
+
             switch (storeStatus) {
-                case MediaStoreStatus.mssExists:
-                    return fileName;
                 case MediaStoreStatus.mssFileNotFound:
                     AppHost.StdDialogs.ShowError(LangMan.LS(LSID.FileNotFound, fileName));
                     break;
