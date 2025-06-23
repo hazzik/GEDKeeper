@@ -728,6 +728,11 @@ namespace GKCore
             return GKUtils.GetRelativePath(GetTreePath(), fileName);
         }
 
+        public string GetStgFolder()
+        {
+            return GetTreePath() + Path.GetFileNameWithoutExtension(fFileName) + Path.DirectorySeparatorChar;
+        }
+
         public string GetArcFileName()
         {
             string treeName = fFileName;
@@ -737,11 +742,6 @@ namespace GKCore
             }
 
             return GetTreePath() + Path.GetFileNameWithoutExtension(treeName) + ".zip";
-        }
-
-        public string GetStgFolder()
-        {
-            return GetTreePath() + Path.GetFileNameWithoutExtension(fFileName) + Path.DirectorySeparatorChar;
         }
 
         // TODO: Controlling the version of the GK GEDCOM file to determine the zip archive encoding!
