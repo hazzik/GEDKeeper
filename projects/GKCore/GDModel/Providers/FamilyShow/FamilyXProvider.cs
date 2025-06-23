@@ -40,7 +40,7 @@ namespace GDModel.Providers.FamilyShow
 
         static FamilyXProvider()
         {
-            // Static initialization of the GEDCOMProvider is needed,
+            // Static initialization of the GEDCOMProvider is needed, 
             // otherwise the standard tag identifiers are out of sync
             SysUtils.DoNotInline(GEDCOMProvider.GEDCOMFormats);
         }
@@ -54,8 +54,7 @@ namespace GDModel.Providers.FamilyShow
             return "Family.Show files (*.familyx)|*.familyx";
         }
 
-        public override void LoadFromStreamExt(Stream fileStream, Stream inputStream,
-            bool charsetDetection = false)
+        public override void LoadFromStreamExt(Stream fileStream, Stream inputStream, bool charsetDetection = false)
         {
             using (Package package = Package.Open(inputStream, FileMode.Open, FileAccess.Read)) {
                 PackagePart documentPart = package.GetPart(new Uri(@"/" + OPCContentFileName, UriKind.Relative));

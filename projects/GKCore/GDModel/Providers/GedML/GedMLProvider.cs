@@ -36,17 +36,12 @@ namespace GDModel.Providers.GedML
         {
         }
 
-        public GedMLProvider(GDMTree tree, bool keepRichNames, bool strict) : base(tree, keepRichNames, strict)
-        {
-        }
-
         public override string GetFilesFilter()
         {
             return LangMan.LS(LSID.GedMLFilter);
         }
 
-        protected override void ReadStream(Stream fileStream, Stream inputStream,
-            bool charsetDetection = false)
+        protected override void ReadStream(Stream fileStream, Stream inputStream, bool charsetDetection = false)
         {
             fTree.State = GDMTreeState.osLoading;
             try {

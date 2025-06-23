@@ -162,7 +162,7 @@ namespace GDModel.Providers.GEDCOM
             fEncoding = encoding;
         }
 
-        private void DefineEncoding(GEDCOMFormat format, string streamCharset)
+        private void DefineEncoding(Stream inputStream, GEDCOMFormat format, string streamCharset)
         {
             GEDCOMCharacterSet charSet = fTree.Header.CharacterSet.Value;
             switch (charSet)
@@ -428,7 +428,7 @@ namespace GDModel.Providers.GEDCOM
                             // to check for additional versions of the code page
                             var format = GetGEDCOMFormat(fTree, out ilb);
                             fTree.Format = format;
-                            DefineEncoding(format, streamCharset);
+                            DefineEncoding(inputStream, format, streamCharset);
                             checkLI = (format == GEDCOMFormat.FTB && Encoding.UTF8.Equals(fEncoding));
                         }
 
@@ -603,7 +603,7 @@ namespace GDModel.Providers.GEDCOM
         public virtual void SaveToFile(string fileName, GEDCOMCharacterSet charSet)
         {
             // Attention: processing of Header moved to BaseContext!
-            using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite)) {
+            using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write)) {
                 SaveToStreamExt(fileStream, charSet);
             }
         }
