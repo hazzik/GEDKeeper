@@ -731,12 +731,9 @@ namespace GKCore
             return result;
         }
 
-        public string GetStgFolder(bool create)
+        public string GetStgFolder()
         {
-            string treeName = fFileName;
-            string result = GetTreePath(treeName) + Path.GetFileNameWithoutExtension(treeName) + Path.DirectorySeparatorChar;
-            if (!Directory.Exists(result) && create) Directory.CreateDirectory(result);
-            return result;
+            return GetTreePath(fFileName) + Path.GetFileNameWithoutExtension(fFileName) + Path.DirectorySeparatorChar;
         }
 
         // TODO: Controlling the version of the GK GEDCOM file to determine the zip archive encoding!
@@ -747,7 +744,7 @@ namespace GKCore
             if (string.IsNullOrEmpty(oldFileName) || string.Equals(oldFileName, newFileName)) return;
 
             bool hasArc = File.Exists(GetArcFileName());
-            bool hasStg = Directory.Exists(GetStgFolder(false));
+            bool hasStg = Directory.Exists(GetStgFolder());
 
             string newPath = Path.GetDirectoryName(newFileName);
             string newName = Path.GetFileName(newFileName);
@@ -765,7 +762,7 @@ namespace GKCore
             if (hasStg) {
                 string newStg = newPath + Path.DirectorySeparatorChar + GKUtils.GetContainerName(newName, false);
                 if (!createCopy) {
-                    Directory.Move(GetStgFolder(false), newStg);
+                    Directory.Move(GetStgFolder(), newStg);
                 } else {
                     // TODO!
                 }

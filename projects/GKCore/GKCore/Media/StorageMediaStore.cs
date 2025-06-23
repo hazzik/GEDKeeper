@@ -10,18 +10,15 @@ namespace GKCore.Types
     public sealed class StorageMediaStore : FileSystemMediaStore, IMediaStore
     {
         public StorageMediaStore(BaseContext baseContext, string fileName) :
-            base(baseContext.GetStgFolder(false), fileName)
+            base(baseContext.GetStgFolder(), fileName)
         {
         }
 
         public async Task<bool> MediaDelete()
         {
             try {
-                string fileName = FileName;
-
-
-                MediaStoreStatus storeStatus = VerifyMediaFile(out fileName);
-                bool result = false;
+                var storeStatus = VerifyMediaFile(out var fileName);
+                var result = false;
 
                 switch (storeStatus) {
                     case MediaStoreStatus.mssExists:
