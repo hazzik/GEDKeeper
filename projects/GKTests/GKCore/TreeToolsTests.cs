@@ -77,7 +77,7 @@ namespace GKCore
 
                 using (var ctx2 = new BaseContext(null)) {
                     using (Stream stmGed2 = TestUtils.LoadResourceStream("test2.ged")) {
-                        var gedcomProvider = new GEDCOMProvider(ctx1.Tree);
+                        var gedcomProvider = new GEDCOMProvider(ctx2.Tree);
                         gedcomProvider.LoadFromStreamExt(stmGed2, stmGed2);
                     }
 
