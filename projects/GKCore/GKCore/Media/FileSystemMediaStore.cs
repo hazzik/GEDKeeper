@@ -13,19 +13,9 @@ namespace GKCore.Types
             FileName = fileName;
         }
 
-        public override Stream MediaLoad(bool throwException)
+        protected override Stream LoadStreamCore(string fileName)
         {
-            string targetFn = BasePath + FileName;
-            if (!File.Exists(targetFn)) {
-                if (throwException) {
-                    throw new MediaFileNotFoundException(targetFn);
-                }
-
-                AppHost.StdDialogs.ShowError(LangMan.LS(LSID.MediaFileNotLoaded));
-                return null;
-            }
-
-            return File.OpenRead(targetFn);
+            return File.OpenRead(fileName);
         }
 
         protected override string LoadFileCore(string fileName)

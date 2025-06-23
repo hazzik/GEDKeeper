@@ -35,9 +35,7 @@ namespace GKCore.Types
             fAllowDelete = allowDelete;
         }
 
-        public abstract Stream MediaLoad(bool throwException);
-
-        public virtual string MediaLoad()
+        public string MediaLoad()
         {
             try {
                 var storeStatus = VerifyMediaFile(out var fileName);
@@ -54,6 +52,25 @@ namespace GKCore.Types
             }
 
             return string.Empty;
+        }
+
+        public Stream MediaLoad(bool throwException)
+        {
+            var status = VerifyMediaFile(out var fileName);
+            if (status == MediaStoreStatus.mssExists) {
+                return LoadStreamCore(fileName);
+            }
+
+            if (throwException) {
+                throw new MediaFileNotFoundException(fileName);
+            }
+
+            var errorMessage = ErrorMessage(status, fileName);
+            if (errorMessage != null) {
+                AppHost.StdDialogs.ShowError(errorMessage);
+            }
+
+            return null;
         }
 
         public abstract MediaStoreStatus VerifyMediaFile(out string fileName);
@@ -93,7 +110,7 @@ namespace GKCore.Types
             return await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.MediaFileDeleteQuery));
         }
 
-        protected static string ErrorMessage(MediaStoreStatus storeStatus, string fileName)
+        private static string ErrorMessage(MediaStoreStatus storeStatus, string fileName)
         {
             switch (storeStatus) {
                 case MediaStoreStatus.mssFileNotFound:
@@ -107,7 +124,6 @@ namespace GKCore.Types
             return null;
         }
 
-        protected abstract bool DeleteCore(string fileName);
 
         public virtual bool MediaSave(BaseContext baseContext, out string refPath)
         {
@@ -126,5 +142,7 @@ namespace GKCore.Types
 
         protected abstract string NormalizeFileName(BaseContext baseContext);
         protected abstract string LoadFileCore(string fileName);
+        protected abstract Stream LoadStreamCore(string fileName);
+        protected abstract bool DeleteCore(string fileName);
     }
 }

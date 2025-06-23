@@ -18,21 +18,22 @@ namespace GKCore.Types
             fArcFileName = baseContext.GetArcFileName();
         }
 
-        public override Stream MediaLoad(bool throwException)
+        protected override Stream LoadStreamCore(string fileName)
         {
-            Stream stream = new MemoryStream();
-            if (!File.Exists(fArcFileName)) {
-                if (throwException) {
-                    throw new MediaFileNotFoundException(fArcFileName);
+            var targetFn = FileHelper.NormalizeFilename(fileName);
+            using (var zip = ZipFile.Open(fArcFileName, ZipArchiveMode.Read, GetZipEncoding())) {
+                var entry = zip.GetEntry(targetFn);
+                if (entry != null) {
+                    using (var archStream = entry.Open()) {
+                        var memoryStream = new MemoryStream();
+                        archStream.CopyTo(memoryStream);
+                        memoryStream.Seek(0, SeekOrigin.Begin);
+                        return memoryStream;
+                    }
                 }
-
-                AppHost.StdDialogs.ShowError(LangMan.LS(LSID.MediaFileNotLoaded));
-            } else {
-                ArcFileLoad(fFileName, stream);
-                stream.Seek(0, SeekOrigin.Begin);
             }
 
-            return stream;
+            return null;
         }
 
         protected override string LoadFileCore(string fileName)
@@ -49,7 +50,12 @@ namespace GKCore.Types
 
         protected override bool DeleteCore(string fileName)
         {
-            ArcFileDelete(fileName);
+            var targetFn = FileHelper.NormalizeFilename(fileName);
+            using (var zip = ZipFile.Open(fArcFileName, ZipArchiveMode.Update, GetZipEncoding())) {
+                var entry = zip.GetEntry(targetFn);
+                entry?.Delete();
+            }
+
             return true;
         }
 
@@ -57,8 +63,7 @@ namespace GKCore.Types
         {
             var result = MediaStoreStatus.mssBadData;
             try {
-                fileName = fFileName;
-
+                fileName = FileHelper.NormalizeFilename(fFileName);
                 if (!File.Exists(fArcFileName)) {
                     result = MediaStoreStatus.mssArcNotFound;
                 } else {
@@ -104,19 +109,6 @@ namespace GKCore.Types
             return GKData.GKStoreTypes[(int)MediaStoreType.mstArchive].Sign + targetFile;
         }
 
-        private void ArcFileLoad(string targetFn, Stream toStream)
-        {
-            targetFn = FileHelper.NormalizeFilename(targetFn);
-            using (var zip = ZipFile.Open(fArcFileName, ZipArchiveMode.Read, GetZipEncoding())) {
-                var entry = zip.GetEntry(targetFn);
-                if (entry != null) {
-                    using (var stream = entry.Open()) {
-                        stream.CopyTo(toStream);
-                    }
-                }
-            }
-        }
-
         private void ArcFileSave(string fileName, string sfn)
         {
             using (var file = File.Open(fArcFileName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
@@ -129,16 +121,6 @@ namespace GKCore.Types
         {
             int treeVer = 0;
             return (treeVer == 0) ? Encoding.GetEncoding("CP866") : Encoding.UTF8;
-        }
-
-        private void ArcFileDelete(string targetFn)
-        {
-            targetFn = FileHelper.NormalizeFilename(targetFn);
-
-            using (var zip = ZipFile.Open(fArcFileName, ZipArchiveMode.Update, GetZipEncoding())) {
-                var entry = zip.GetEntry(targetFn);
-                entry?.Delete();
-            }
         }
 
         private bool ArcFileExists(string targetFn)

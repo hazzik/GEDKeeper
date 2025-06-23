@@ -14,11 +14,13 @@ namespace GKCore.Types
             fUrl = fileName;
         }
 
-        public override Stream MediaLoad(bool throwException)
+        protected override Stream LoadStreamCore(string fileName)
         {
             using (var webClient = CreateWebClient()) {
                 var dataBytes = webClient.DownloadData(fUrl);
-                return new MemoryStream(dataBytes);
+                var memoryStream = new MemoryStream(dataBytes);
+                memoryStream.Seek(0, SeekOrigin.Begin);
+                return memoryStream;
             }
         }
 
