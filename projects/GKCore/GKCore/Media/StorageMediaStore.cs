@@ -1,70 +1,15 @@
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using BSLib;
 using GDModel;
-using GKCore.Options;
 
 namespace GKCore.Types
 {
     public sealed class StorageMediaStore : FileSystemMediaStore, IMediaStore
     {
-        private readonly bool fAllowDelete;
-
         public StorageMediaStore(BaseContext baseContext, string fileName, bool allowDelete) :
-            base(baseContext.GetStgFolder(), fileName)
+            base(baseContext.GetStgFolder(), fileName, allowDelete)
         {
-            fAllowDelete = allowDelete;
-        }
-
-        public async Task<bool> MediaDelete()
-        {
-            try {
-                var storeStatus = VerifyMediaFile(out var fileName);
-                var result = false;
-
-                switch (storeStatus) {
-                    case MediaStoreStatus.mssExists:
-                        if (!fAllowDelete) {
-                            return true;
-                        }
-
-                        if (!GlobalOptions.Instance.DeleteMediaFileWithoutConfirm) {
-                            string msg = string.Format(LangMan.LS(LSID.MediaFileDeleteQuery));
-                            // TODO: may be Yes/No/Cancel?
-                            var res = await AppHost.StdDialogs.ShowQuestion(msg);
-                            if (!res) {
-                                return false;
-                            }
-                        }
-
-                        File.Delete(fileName);
-                        result = true;
-                        break;
-
-                    case MediaStoreStatus.mssFileNotFound:
-                        result = await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.FileNotFound, fileName)));
-                        break;
-
-                    case MediaStoreStatus.mssStgNotFound:
-                        result = await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.StgNotFound)));
-                        break;
-
-                    case MediaStoreStatus.mssArcNotFound:
-                        result = await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.ArcNotFound)));
-                        break;
-
-                    case MediaStoreStatus.mssBadData:
-                        // can be deleted
-                        result = true;
-                        break;
-                }
-
-                return result;
-            } catch (Exception ex) {
-                Logger.WriteError("BaseContext.MediaDelete()", ex);
-                return false;
-            }
         }
 
         public override MediaStoreStatus VerifyMediaFile(out string fileName)
@@ -99,10 +44,9 @@ namespace GKCore.Types
             string storePath = GKUtils.GetStoreFolder(GKUtils.GetMultimediaKind(GDMFileReference.RecognizeFormat(FileName)));
 
             refPath = string.Empty;
-            string targetFile = string.Empty;
 
             // set paths and links
-            targetFile = storePath + storeFile;
+            var targetFile = storePath + storeFile;
             refPath = GKData.GKStoreTypes[(int)MediaStoreType.mstStorage].Sign + targetFile;
 
             refPath = FileHelper.NormalizeFilename(refPath);

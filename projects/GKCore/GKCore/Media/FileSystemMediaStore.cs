@@ -1,5 +1,7 @@
 using System;
 using System.IO;
+using System.Threading.Tasks;
+using GKCore.Options;
 
 namespace GKCore.Types
 {
@@ -7,11 +9,13 @@ namespace GKCore.Types
     {
         protected readonly string BasePath;
         protected readonly string FileName;
+        private readonly bool fAllowDelete;
 
-        protected FileSystemMediaStore(string basePath, string fileName)
+        protected FileSystemMediaStore(string basePath, string fileName, bool allowDelete)
         {
             BasePath = basePath;
             FileName = fileName;
+            fAllowDelete = allowDelete;
         }
 
         public Stream MediaLoad(bool throwException)
@@ -60,6 +64,56 @@ namespace GKCore.Types
             }
 
             return string.Empty;
+        }
+
+        public async Task<bool> MediaDelete()
+        {
+            try {
+                var storeStatus = VerifyMediaFile(out var fileName);
+                var result = false;
+
+                switch (storeStatus) {
+                    case MediaStoreStatus.mssExists:
+                        if (!fAllowDelete) {
+                            return true;
+                        }
+
+                        if (!GlobalOptions.Instance.DeleteMediaFileWithoutConfirm) {
+                            string msg = string.Format(LangMan.LS(LSID.MediaFileDeleteQuery));
+                            // TODO: may be Yes/No/Cancel?
+                            var res = await AppHost.StdDialogs.ShowQuestion(msg);
+                            if (!res) {
+                                return false;
+                            }
+                        }
+
+                        File.Delete(fileName);
+                        result = true;
+                        break;
+
+                    case MediaStoreStatus.mssFileNotFound:
+                        result = await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.FileNotFound, fileName)));
+                        break;
+
+                    case MediaStoreStatus.mssStgNotFound:
+                        result = await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.StgNotFound)));
+                        break;
+
+                    case MediaStoreStatus.mssArcNotFound:
+                        result = await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.ArcNotFound)));
+                        break;
+
+                    case MediaStoreStatus.mssBadData:
+                        // can be deleted
+                        result = true;
+                        break;
+                }
+
+                return result;
+            } catch (Exception ex) {
+                Logger.WriteError("BaseContext.MediaDelete()", ex);
+                return false;
+            }
         }
     }
 }
