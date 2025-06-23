@@ -72,9 +72,13 @@ namespace GKCore.Interfaces
         IList<ISearchResult> FindAll(GDMRecordType recordType, string searchPattern);
 
         // Multimedia support
+        string GetArcFileName();
+        string GetStgFolder();
+        string GetTreePath();
+        string GetTreeRelativePath(string fileName);
+        bool MediaExists(string refPath);
         bool CheckBasePath();
         bool CheckNewMedia(string fileName, MediaStoreType storeType);
-        MediaStore GetMediaStore(GDMFileReference fileReference);
         bool MoveMediaFile(GDMMultimediaRecord mediaRec, MediaStoreType newStoreType);
         Stream MediaLoad(GDMFileReference fileReference, bool throwException);
         string MediaLoad(GDMFileReference fileReference);

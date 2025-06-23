@@ -21,6 +21,7 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using GKCore.Interfaces;
 using GKCore.Options;
 
 namespace GKCore.Types
@@ -124,7 +125,7 @@ namespace GKCore.Types
             return null;
         }
 
-        public bool MediaSave(BaseContext baseContext, out string refPath)
+        public bool MediaSave(IBaseContext baseContext, out string refPath)
         {
             // set paths and links
             var targetFile = NormalizeFileName(baseContext);
@@ -140,12 +141,12 @@ namespace GKCore.Types
             return SaveCopy(baseContext, targetFile);
         }
 
-        protected virtual bool SaveCopy(BaseContext baseContext, string targetFile)
+        protected virtual bool SaveCopy(IBaseContext baseContext, string targetFile)
         {
             return true;
         }
 
-        protected abstract string NormalizeFileName(BaseContext baseContext);
+        protected abstract string NormalizeFileName(IBaseContext baseContext);
         protected abstract string LoadFileCore(string fileName);
         protected abstract Stream LoadStreamCore(string fileName);
         protected abstract bool DeleteCore(string fileName);

@@ -4,6 +4,7 @@ using System.IO.Compression;
 using System.Text;
 using BSLib;
 using GDModel;
+using GKCore.Interfaces;
 
 namespace GKCore.Types
 {
@@ -12,7 +13,7 @@ namespace GKCore.Types
         private readonly string fArcFileName;
         private readonly string fFileName;
 
-        public ArchiveMediaStore(BaseContext baseContext, string fileName, bool allowDelete) : base(allowDelete)
+        public ArchiveMediaStore(IBaseContext baseContext, string fileName, bool allowDelete) : base(allowDelete)
         {
             fFileName = fileName;
             fArcFileName = baseContext.GetArcFileName();
@@ -81,7 +82,7 @@ namespace GKCore.Types
             return result;
         }
 
-        protected override bool SaveCopy(BaseContext baseContext, string targetFile)
+        protected override bool SaveCopy(IBaseContext baseContext, string targetFile)
         {
             // save a copy to archive
             using (var file = File.Open(fArcFileName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
@@ -97,7 +98,7 @@ namespace GKCore.Types
             return GKData.GKStoreTypes[(int)MediaStoreType.mstArchive].Sign + fileName;
         }
 
-        protected override string NormalizeFileName(BaseContext baseContext)
+        protected override string NormalizeFileName(IBaseContext baseContext)
         {
             var storeFile = Path.GetFileName(fFileName);
             var storePath = GKUtils.GetStoreFolder(GKUtils.GetMultimediaKind(GDMFileReference.RecognizeFormat(fFileName)));

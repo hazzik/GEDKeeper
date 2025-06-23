@@ -2,17 +2,18 @@ using System;
 using System.IO;
 using BSLib;
 using GDModel;
+using GKCore.Interfaces;
 
 namespace GKCore.Types
 {
     public sealed class StorageMediaStore : FileSystemMediaStore
     {
-        public StorageMediaStore(BaseContext baseContext, string fileName, bool allowDelete) :
+        public StorageMediaStore(IBaseContext baseContext, string fileName, bool allowDelete) :
             base(baseContext.GetStgFolder(), fileName, allowDelete)
         {
         }
 
-        protected override bool SaveCopy(BaseContext baseContext, string targetFile)
+        protected override bool SaveCopy(IBaseContext baseContext, string targetFile)
         {
             // save a copy to storage
             var targetFn = BasePath + targetFile;
@@ -25,7 +26,7 @@ namespace GKCore.Types
             }
         }
 
-        protected override string NormalizeFileName(BaseContext baseContext)
+        protected override string NormalizeFileName(IBaseContext baseContext)
         {
             var storeFile = Path.GetFileName(FileName);
             var storePath = GKUtils.GetStoreFolder(GKUtils.GetMultimediaKind(GDMFileReference.RecognizeFormat(FileName)));

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
+using GKCore.Interfaces;
 
 namespace GKCore.Types
 {
@@ -50,7 +51,7 @@ namespace GKCore.Types
             return targetFile;
         }
 
-        protected override string NormalizeFileName(BaseContext baseContext)
+        protected override string NormalizeFileName(IBaseContext baseContext)
         {
             return fUrl;
         }
