@@ -22,26 +22,20 @@ namespace GKCore.Types
             }
         }
 
-        public override string MediaLoad()
+        protected override string LoadFileCore(string fileName)
         {
-            string fileName;
-            try {
-                fileName = GKUtils.GetTempDir() + Path.GetFileName(fUrl);
-                using (var webClient = CreateWebClient()) {
-                    webClient.DownloadFile(fUrl, fileName);
-                }
-            } catch (Exception ex) {
-                Logger.WriteError("BaseContext.MediaLoad_fn()", ex);
-                return "";
+            var tempFile = GKUtils.GetTempDir() + Path.GetFileName(fileName);
+            using (var webClient = CreateWebClient()) {
+                webClient.DownloadFile(fUrl, tempFile);
             }
 
-            return fileName;
+            return tempFile;
         }
 
         public override MediaStoreStatus VerifyMediaFile(out string fileName)
         {
             fileName = fUrl;
-            return MediaStoreStatus.mssBadData;
+            return MediaStoreStatus.mssExists;
         }
 
         protected override bool DeleteCore(string fileName)

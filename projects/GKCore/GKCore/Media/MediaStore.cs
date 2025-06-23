@@ -36,7 +36,26 @@ namespace GKCore.Types
         }
 
         public abstract Stream MediaLoad(bool throwException);
-        public abstract string MediaLoad();
+
+        public virtual string MediaLoad()
+        {
+            try {
+                var storeStatus = VerifyMediaFile(out var fileName);
+                if (storeStatus == MediaStoreStatus.mssExists) {
+                    return LoadFileCore(fileName);
+                }
+
+                var errorMessage = ErrorMessage(storeStatus, fileName);
+                if (errorMessage != null) {
+                    AppHost.StdDialogs.ShowError(errorMessage);
+                }
+            } catch (Exception ex) {
+                Logger.WriteError("BaseContext.MediaLoad_fn()", ex);
+            }
+
+            return string.Empty;
+        }
+
         public abstract MediaStoreStatus VerifyMediaFile(out string fileName);
 
         public async Task<bool> MediaDelete()
@@ -74,7 +93,7 @@ namespace GKCore.Types
             return await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.MediaFileDeleteQuery));
         }
 
-        private static string ErrorMessage(MediaStoreStatus storeStatus, string fileName)
+        protected static string ErrorMessage(MediaStoreStatus storeStatus, string fileName)
         {
             switch (storeStatus) {
                 case MediaStoreStatus.mssFileNotFound:
@@ -106,5 +125,6 @@ namespace GKCore.Types
         }
 
         protected abstract string NormalizeFileName(BaseContext baseContext);
+        protected abstract string LoadFileCore(string fileName);
     }
 }

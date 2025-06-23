@@ -35,56 +35,16 @@ namespace GKCore.Types
             return stream;
         }
 
-        public override string MediaLoad()
+        protected override string LoadFileCore(string fileName)
         {
-            string fileName;
-            try {
-                bool ret;
-                MediaStoreStatus storeStatus = VerifyMediaFile(out var fileName1);
-                if (storeStatus != MediaStoreStatus.mssExists)
-                {
-                    switch (storeStatus) {
-                        case MediaStoreStatus.mssFileNotFound:
-                            AppHost.StdDialogs.ShowError(LangMan.LS(LSID.FileNotFound, fileName1));
-                            break;
+            var tempFile = GKUtils.GetTempDir() + Path.GetFileName(fileName);
 
-                        case MediaStoreStatus.mssStgNotFound:
-                            AppHost.StdDialogs.ShowError(LangMan.LS(LSID.StgNotFound));
-                            break;
-
-                        case MediaStoreStatus.mssArcNotFound:
-                            AppHost.StdDialogs.ShowError(LangMan.LS(LSID.ArcNotFound));
-                            break;
-
-                        case MediaStoreStatus.mssBadData:
-                            break;
-                    }
-
-                    ret = false;
-                }
-                else
-                {
-                    ret = true;
-                }
-
-                if (!ret) {
-                    return string.Empty;
-                }
-
-                if (!File.Exists(fArcFileName)) {
-                    AppHost.StdDialogs.ShowError(LangMan.LS(LSID.MediaFileNotLoaded));
-                    return string.Empty;
-                }
-
-                fileName = GKUtils.GetTempDir() + Path.GetFileName(fFileName);
-                var targetFn = FileHelper.NormalizeFilename(fFileName);
-                ExtractToFile(fileName, targetFn);
-            } catch (Exception ex) {
-                Logger.WriteError("BaseContext.MediaLoad_fn()", ex);
-                return string.Empty;
+            using (var zip = ZipFile.Open(fArcFileName, ZipArchiveMode.Read, GetZipEncoding())) {
+                var entry = zip.GetEntry(fileName);
+                entry?.ExtractToFile(tempFile, true);
             }
 
-            return fileName;
+            return tempFile;
         }
 
         protected override bool DeleteCore(string fileName)
@@ -95,8 +55,7 @@ namespace GKCore.Types
 
         public override MediaStoreStatus VerifyMediaFile(out string fileName)
         {
-            MediaStoreStatus result = MediaStoreStatus.mssBadData;
-
+            var result = MediaStoreStatus.mssBadData;
             try {
                 fileName = fFileName;
 
@@ -137,23 +96,12 @@ namespace GKCore.Types
         private string NormalizeFilename(out string targetFile)
         {
             string storeFile = Path.GetFileName(fFileName);
-            string storePath =
-                GKUtils.GetStoreFolder(GKUtils.GetMultimediaKind(GDMFileReference.RecognizeFormat(fFileName)));
+            string storePath = GKUtils.GetStoreFolder(GKUtils.GetMultimediaKind(GDMFileReference.RecognizeFormat(fFileName)));
 
-            targetFile = storePath + storeFile;
+            targetFile = FileHelper.NormalizeFilename(storePath + storeFile);
 
             // set paths and links
-            var refPath = GKData.GKStoreTypes[(int)MediaStoreType.mstArchive].Sign + targetFile;
-
-            return FileHelper.NormalizeFilename(refPath);
-        }
-
-        private void ExtractToFile(string archiveFileName, string targetFileName)
-        {
-            using (var zip = ZipFile.Open(fArcFileName, ZipArchiveMode.Read, GetZipEncoding())) {
-                var entry = zip.GetEntry(targetFileName);
-                entry?.ExtractToFile(archiveFileName, true);
-            }
+            return GKData.GKStoreTypes[(int)MediaStoreType.mstArchive].Sign + targetFile;
         }
 
         private void ArcFileLoad(string targetFn, Stream toStream)
@@ -205,6 +153,5 @@ namespace GKCore.Types
         {
             throw new NotImplementedException();
         }
-
     }
 }
