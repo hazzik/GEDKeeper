@@ -73,10 +73,12 @@ namespace GKCore.Interfaces
 
         // Multimedia support
         string GetArcFileName();
-        string GetStgFolder(bool create);
+        string GetStgFolder();
+        string GetTreePath();
+        string GetTreeRelativePath(string fileName);
+        bool MediaExists(string refPath);
         bool CheckBasePath();
         bool CheckNewMedia(string fileName, MediaStoreType storeType);
-        MediaStore GetStoreType(GDMFileReference fileReference);
         bool MoveMediaFile(GDMMultimediaRecord mediaRec, MediaStoreType newStoreType);
         Stream MediaLoad(GDMFileReference fileReference, bool throwException);
         string MediaLoad(GDMFileReference fileReference);

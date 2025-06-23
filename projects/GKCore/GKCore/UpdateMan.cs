@@ -27,7 +27,7 @@ using System.Xml;
 namespace GKCore
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static class UpdateMan
     {
@@ -120,7 +120,9 @@ namespace GKCore
 #endif
 
                 Thread worker = new Thread(WorkerMethod);
+#if OS_WINDOWS
                 worker.SetApartmentState(ApartmentState.STA);
+#endif
                 worker.IsBackground = true;
                 worker.Start();
             } catch (Exception ex) {

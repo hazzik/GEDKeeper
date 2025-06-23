@@ -213,7 +213,7 @@ namespace GKUI.Platform
 #endif
             }*/
 
-            efModal.ShowModal(owner as Control);
+            await efModal.ShowModalAsync(owner as Control);
             return await efModal.DialogResultTask;
         }
 

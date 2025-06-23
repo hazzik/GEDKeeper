@@ -34,7 +34,7 @@ using GKUI.Themes;
 namespace GKCore.Controllers
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public sealed class MediaEditDlgController : DialogController<IMediaEditDlg>
     {
@@ -150,8 +150,7 @@ namespace GKCore.Controllers
                                       storeType);
                 }
             } else {
-                var mediaStore = fBase.Context.GetStoreType(fileRef);
-                storeType = mediaStore.StoreType;
+                storeType = GKUtils.GetStoreTypeEx(fileRef.StringValue);
                 RefreshStoreTypes((storeType == MediaStoreType.mstReference),
                                   (storeType == MediaStoreType.mstArchive),
                                   (storeType == MediaStoreType.mstRelativeReference),

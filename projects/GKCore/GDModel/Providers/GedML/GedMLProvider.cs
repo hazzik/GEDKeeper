@@ -68,7 +68,7 @@ namespace GDModel.Providers.GedML
                     while (xr.Read()) {
                         if (xr.NodeType == XmlNodeType.Element) {
                             if (tagOpened) {
-                                curTag = GEDCOMProvider.ProcessTag(fTree, stack, tagLevel, tagId, tagValue);
+                                curTag = ProcessTag(fTree, stack, tagLevel, tagId, tagValue);
                                 tagOpened = false;
                             }
 
@@ -93,9 +93,9 @@ namespace GDModel.Providers.GedML
                                 }
                             } else if (tagLevel > 0) {
                                 if (!string.IsNullOrEmpty(xrefPtr)) {
-                                    // since the default method of the GEDCOM provider is used, 
+                                    // since the default method of the GEDCOM provider is used,
                                     // a standard character `@` is expected
-                                    curTag = GEDCOMProvider.ProcessTag(fTree, stack, tagLevel, tagId, "@" + xrefPtr + "@");
+                                    curTag = ProcessTag(fTree, stack, tagLevel, tagId, "@" + xrefPtr + "@");
                                 } else {
                                     tagOpened = true;
                                 }
@@ -104,7 +104,7 @@ namespace GDModel.Providers.GedML
                             tagValue = xr.Value;
 
                             if (tagLevel > 0 && curRecord != null) {
-                                curTag = GEDCOMProvider.ProcessTag(fTree, stack, tagLevel, tagId, tagValue);
+                                curTag = ProcessTag(fTree, stack, tagLevel, tagId, tagValue);
                             }
                         }
 
