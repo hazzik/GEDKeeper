@@ -21,16 +21,90 @@
 using System;
 using System.IO;
 using System.Threading.Tasks;
+using GKCore.Options;
 
 namespace GKCore.Types
 {
     /// <summary />
     public abstract class MediaStore
     {
+        private readonly bool fAllowDelete;
+
+        protected MediaStore(bool allowDelete)
+        {
+            fAllowDelete = allowDelete;
+        }
+
         public abstract Stream MediaLoad(bool throwException);
         public abstract string MediaLoad();
-        public abstract Task<bool> MediaDelete();
         public abstract MediaStoreStatus VerifyMediaFile(out string fileName);
-        public abstract bool MediaSave(BaseContext baseContext, out string refPath);
+
+        public async Task<bool> MediaDelete()
+        {
+            if (!fAllowDelete) {
+                return true;
+            }
+
+            try {
+                var storeStatus = VerifyMediaFile(out var fileName);
+
+                switch (storeStatus) {
+                    case MediaStoreStatus.mssExists:
+                        return await ConfirmDelete() && DeleteCore(fileName);
+                    case MediaStoreStatus.mssBadData:
+                        return true;
+                    default:
+                        var errorMessage = ErrorMessage(storeStatus, fileName);
+                        return errorMessage != null &&
+                               await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, errorMessage));
+                }
+            } catch (Exception ex) {
+                Logger.WriteError("BaseContext.MediaDelete()", ex);
+                return false;
+            }
+        }
+
+        private static async Task<bool> ConfirmDelete()
+        {
+            if (GlobalOptions.Instance.DeleteMediaFileWithoutConfirm) {
+                return true;
+            }
+
+            // TODO: may be Yes/No/Cancel?
+            return await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.MediaFileDeleteQuery));
+        }
+
+        private static string ErrorMessage(MediaStoreStatus storeStatus, string fileName)
+        {
+            switch (storeStatus) {
+                case MediaStoreStatus.mssFileNotFound:
+                    return LangMan.LS(LSID.FileNotFound, fileName);
+                case MediaStoreStatus.mssStgNotFound:
+                    return LangMan.LS(LSID.StgNotFound);
+                case MediaStoreStatus.mssArcNotFound:
+                    return LangMan.LS(LSID.ArcNotFound);
+            }
+
+            return null;
+        }
+
+        protected abstract bool DeleteCore(string fileName);
+
+        public virtual bool MediaSave(BaseContext baseContext, out string refPath)
+        {
+            // set paths and links
+            refPath = NormalizeFileName(baseContext);
+
+            // verify existence
+            bool alreadyExists = baseContext.MediaExists(refPath);
+            if (alreadyExists) {
+                AppHost.StdDialogs.ShowError(LangMan.LS(LSID.FileWithSameNameAlreadyExists));
+                return false;
+            }
+
+            return true;
+        }
+
+        protected abstract string NormalizeFileName(BaseContext baseContext);
     }
 }

@@ -38,24 +38,12 @@ namespace GKCore.Types
             return result;
         }
 
-        public override bool MediaSave(BaseContext baseContext, out string refPath)
+        protected override string NormalizeFileName(BaseContext baseContext)
         {
-            refPath = string.Empty;
-
-            // set paths and links
             var targetFile = baseContext.GetTreeRelativePath(FileName);
-            refPath = GKData.GKStoreTypes[(int)MediaStoreType.mstRelativeReference].Sign + targetFile;
+            var refPath = GKData.GKStoreTypes[(int)MediaStoreType.mstRelativeReference].Sign + targetFile;
 
-            refPath = FileHelper.NormalizeFilename(refPath);
-
-            // verify existence
-            bool alreadyExists = baseContext.MediaExists(refPath);
-            if (alreadyExists) {
-                AppHost.StdDialogs.ShowError(LangMan.LS(LSID.FileWithSameNameAlreadyExists));
-                return false;
-            }
-
-            return true;
+            return FileHelper.NormalizeFilename(refPath);
         }
     }
 }

@@ -1,8 +1,6 @@
 using System;
 using System.IO;
-using System.Threading.Tasks;
 using BSLib;
-using GKCore.Options;
 
 namespace GKCore.Types
 {
@@ -38,18 +36,9 @@ namespace GKCore.Types
             return result;
         }
 
-        public override bool MediaSave(BaseContext baseContext, out string refPath)
+        protected override string NormalizeFileName(BaseContext baseContext)
         {
-            // set paths and links
-            refPath = FileHelper.NormalizeFilename(FileName);
-
-            // verify existence
-            if (baseContext.MediaExists(refPath)) {
-                AppHost.StdDialogs.ShowError(LangMan.LS(LSID.FileWithSameNameAlreadyExists));
-                return false;
-            }
-
-            return true;
+            return FileHelper.NormalizeFilename(FileName);
         }
     }
 }

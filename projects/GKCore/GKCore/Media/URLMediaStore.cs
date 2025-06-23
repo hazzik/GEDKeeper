@@ -9,7 +9,7 @@ namespace GKCore.Types
     {
         private readonly string fUrl;
 
-        public URLMediaStore(string fileName)
+        public URLMediaStore(string fileName) : base(false)
         {
             fUrl = fileName;
         }
@@ -38,15 +38,20 @@ namespace GKCore.Types
             return fileName;
         }
 
-        public override Task<bool> MediaDelete()
-        {
-            return Task.FromResult(true);
-        }
-
         public override MediaStoreStatus VerifyMediaFile(out string fileName)
         {
             fileName = fUrl;
             return MediaStoreStatus.mssBadData;
+        }
+
+        protected override bool DeleteCore(string fileName)
+        {
+            throw new NotSupportedException();
+        }
+
+        protected override string NormalizeFileName(BaseContext baseContext)
+        {
+            return fUrl;
         }
 
         private static WebClient CreateWebClient()
@@ -61,21 +66,6 @@ namespace GKCore.Types
                 webClient?.Dispose();
                 throw;
             }
-        }
-
-        public override bool MediaSave(BaseContext baseContext, out string refPath)
-        {
-            // set paths and links
-            refPath = fUrl;
-
-            // verify existence
-            var alreadyExists = baseContext.MediaExists(refPath);
-            if (alreadyExists) {
-                AppHost.StdDialogs.ShowError(LangMan.LS(LSID.FileWithSameNameAlreadyExists));
-                return false;
-            }
-
-            return true;
         }
     }
 }

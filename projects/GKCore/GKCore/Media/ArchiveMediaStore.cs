@@ -2,10 +2,8 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
-using System.Threading.Tasks;
 using BSLib;
 using GDModel;
-using GKCore.Options;
 
 namespace GKCore.Types
 {
@@ -13,12 +11,10 @@ namespace GKCore.Types
     {
         private readonly string fArcFileName;
         private readonly string fFileName;
-        private readonly bool fAllowDelete;
 
-        public ArchiveMediaStore(BaseContext baseContext, string fileName, bool allowDelete)
+        public ArchiveMediaStore(BaseContext baseContext, string fileName, bool allowDelete) : base(allowDelete)
         {
             fFileName = fileName;
-            fAllowDelete = allowDelete;
             fArcFileName = baseContext.GetArcFileName();
         }
 
@@ -43,7 +39,35 @@ namespace GKCore.Types
         {
             string fileName;
             try {
-                if (!VerifyMediaFileWM()) {
+                bool ret;
+                MediaStoreStatus storeStatus = VerifyMediaFile(out var fileName1);
+                if (storeStatus != MediaStoreStatus.mssExists)
+                {
+                    switch (storeStatus) {
+                        case MediaStoreStatus.mssFileNotFound:
+                            AppHost.StdDialogs.ShowError(LangMan.LS(LSID.FileNotFound, fileName1));
+                            break;
+
+                        case MediaStoreStatus.mssStgNotFound:
+                            AppHost.StdDialogs.ShowError(LangMan.LS(LSID.StgNotFound));
+                            break;
+
+                        case MediaStoreStatus.mssArcNotFound:
+                            AppHost.StdDialogs.ShowError(LangMan.LS(LSID.ArcNotFound));
+                            break;
+
+                        case MediaStoreStatus.mssBadData:
+                            break;
+                    }
+
+                    ret = false;
+                }
+                else
+                {
+                    ret = true;
+                }
+
+                if (!ret) {
                     return string.Empty;
                 }
 
@@ -63,57 +87,10 @@ namespace GKCore.Types
             return fileName;
         }
 
-        public override async Task<bool> MediaDelete()
+        protected override bool DeleteCore(string fileName)
         {
-            if (!fAllowDelete) {
-                return true;
-            }
-
-            try {
-                MediaStoreStatus storeStatus = VerifyMediaFile(out var fileName);
-                bool result = false;
-
-                switch (storeStatus) {
-                    case MediaStoreStatus.mssExists:
-
-
-                        if (!GlobalOptions.Instance.DeleteMediaFileWithoutConfirm) {
-                            string msg = string.Format(LangMan.LS(LSID.MediaFileDeleteQuery));
-                            // TODO: may be Yes/No/Cancel?
-                            var res = await AppHost.StdDialogs.ShowQuestion(msg);
-                            if (!res) {
-                                return false;
-                            }
-                        }
-
-                        ArcFileDelete(fileName);
-
-                        result = true;
-                        break;
-
-                    case MediaStoreStatus.mssFileNotFound:
-                        result = await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.FileNotFound, fileName)));
-                        break;
-
-                    case MediaStoreStatus.mssStgNotFound:
-                        result = await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.StgNotFound)));
-                        break;
-
-                    case MediaStoreStatus.mssArcNotFound:
-                        result = await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.ArcNotFound)));
-                        break;
-
-                    case MediaStoreStatus.mssBadData:
-                        // can be deleted
-                        result = true;
-                        break;
-                }
-
-                return result;
-            } catch (Exception ex) {
-                Logger.WriteError("BaseContext.MediaDelete()", ex);
-                return false;
-            }
+            ArcFileDelete(fileName);
+            return true;
         }
 
         public override MediaStoreStatus VerifyMediaFile(out string fileName)
@@ -167,32 +144,6 @@ namespace GKCore.Types
             return true;
         }
 
-        private bool VerifyMediaFileWM()
-        {
-            MediaStoreStatus storeStatus = VerifyMediaFile(out var fileName);
-            if (storeStatus != MediaStoreStatus.mssExists) {
-                switch (storeStatus) {
-                    case MediaStoreStatus.mssFileNotFound:
-                        AppHost.StdDialogs.ShowError(LangMan.LS(LSID.FileNotFound, fileName));
-                        break;
-
-                    case MediaStoreStatus.mssStgNotFound:
-                        AppHost.StdDialogs.ShowError(LangMan.LS(LSID.StgNotFound));
-                        break;
-
-                    case MediaStoreStatus.mssArcNotFound:
-                        AppHost.StdDialogs.ShowError(LangMan.LS(LSID.ArcNotFound));
-                        break;
-
-                    case MediaStoreStatus.mssBadData:
-                        break;
-                }
-
-                return false;
-            }
-
-            return true;
-        }
 
         private void ExtractToFile(string archiveFileName, string targetFileName)
         {
@@ -246,5 +197,11 @@ namespace GKCore.Types
                 return zip.GetEntry(targetFn) != null;
             }
         }
+
+        protected override string NormalizeFileName(BaseContext baseContext)
+        {
+            throw new NotImplementedException();
+        }
+
     }
 }

@@ -9,13 +9,11 @@ namespace GKCore.Types
     {
         protected readonly string BasePath;
         protected readonly string FileName;
-        private readonly bool fAllowDelete;
 
-        protected FileSystemMediaStore(string basePath, string fileName, bool allowDelete)
+        protected FileSystemMediaStore(string basePath, string fileName, bool allowDelete) : base(allowDelete)
         {
             BasePath = basePath;
             FileName = fileName;
-            fAllowDelete = allowDelete;
         }
 
         public override Stream MediaLoad(bool throwException)
@@ -64,56 +62,10 @@ namespace GKCore.Types
             return string.Empty;
         }
 
-        public override async Task<bool> MediaDelete()
-        {
-            if (!fAllowDelete) {
-                return true;
-            }
-
-            try {
-                var storeStatus = VerifyMediaFile(out var fileName);
-
-                switch (storeStatus) {
-                    case MediaStoreStatus.mssExists:
-                        if (!await ConfirmDelete()) {
-                            return false;
-                        }
-
-                        return DeleteCore(fileName);
-
-                    case MediaStoreStatus.mssFileNotFound:
-                        return await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.FileNotFound, fileName)));
-
-                    case MediaStoreStatus.mssStgNotFound:
-                        return await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.StgNotFound)));
-
-                    case MediaStoreStatus.mssArcNotFound:
-                        return await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.ArcNotFound)));
-                    case MediaStoreStatus.mssBadData:
-                        return true;
-                }
-
-                return false;
-            } catch (Exception ex) {
-                Logger.WriteError("BaseContext.MediaDelete()", ex);
-                return false;
-            }
-        }
-
-        protected virtual bool DeleteCore(string fileName)
+        protected override bool DeleteCore(string fileName)
         {
             File.Delete(fileName);
             return true;
-        }
-
-        private static async Task<bool> ConfirmDelete()
-        {
-            if (GlobalOptions.Instance.DeleteMediaFileWithoutConfirm) {
-                return true;
-            }
-
-            // TODO: may be Yes/No/Cancel?
-            return await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.MediaFileDeleteQuery));
         }
     }
 }

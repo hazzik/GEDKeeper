@@ -77,5 +77,10 @@ namespace GKCore.Types
 
             return result;
         }
+
+        protected override string NormalizeFileName(BaseContext baseContext)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
