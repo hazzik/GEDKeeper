@@ -1288,14 +1288,14 @@ namespace GKCore
                     : new SecGEDCOMProvider(fTree, password, GlobalOptions.Instance.KeepRichNames, false);
 
                 GKUtils.PrepareHeader(fTree, fileName, defaultCharacterSet, false);
-                gedcomProvider.SaveToFile(fTree, fileName, defaultCharacterSet);
+                gedcomProvider.SaveToFile(fileName, defaultCharacterSet);
 
                 fFileName = fileName;
             } else {
                 var gedcomProvider = new GEDCOMProvider(fTree, GlobalOptions.Instance.KeepRichNames, true);
 
                 GKUtils.PrepareHeader(fTree, fileName, defaultCharacterSet, false);
-                gedcomProvider.SaveToFile(fTree, fileName, defaultCharacterSet);
+                gedcomProvider.SaveToFile(fileName, defaultCharacterSet);
             }
         }
 
@@ -1340,7 +1340,7 @@ namespace GKCore
                 GKUtils.PrepareHeader(fTree, rfn, charSet, false);
 
                 var gedcomProvider = new GEDCOMProvider(fTree, GlobalOptions.Instance.KeepRichNames, false);
-                gedcomProvider.SaveToFile(fTree, rfn, charSet);
+                gedcomProvider.SaveToFile(rfn, charSet);
             } catch (Exception ex) {
                 Logger.WriteError("BaseContext.CriticalSave()", ex);
             }

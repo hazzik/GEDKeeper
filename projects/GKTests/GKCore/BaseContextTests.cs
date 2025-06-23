@@ -326,7 +326,7 @@ namespace GKCore
                         const string password = "test";
                         var provider1 = new SecGEDCOMProvider(ctx.Tree, password, GlobalOptions.Instance.KeepRichNames, false);
                         GKUtils.PrepareHeader(ctx.Tree, tempFileName, GEDCOMCharacterSet.csASCII, false);
-                        provider1.SaveToFile(ctx.Tree, tempFileName, GEDCOMCharacterSet.csASCII);
+                        provider1.SaveToFile(tempFileName, GEDCOMCharacterSet.csASCII);
 
                         using (var ctx2 = new BaseContext(null)) {
                             var provider2 = new SecGEDCOMProvider(ctx2.Tree, password);

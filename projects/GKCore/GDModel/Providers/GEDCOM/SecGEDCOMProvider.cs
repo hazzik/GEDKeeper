@@ -26,7 +26,7 @@ namespace GDModel.Providers.GEDCOM
             fPassword = password;
         }
 
-        public override void SaveToFile(GDMTree tree, string fileName, GEDCOMCharacterSet charSet)
+        public override void SaveToFile(string fileName, GEDCOMCharacterSet charSet)
         {
             // Attention: processing of Header moved to BaseContext!
             using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write)) {
@@ -37,7 +37,7 @@ namespace GDModel.Providers.GEDCOM
 
                 using (var cryptic = CreateCSP(GS_MAJOR_VER, GS_MINOR_VER))
                 using (CryptoStream crStream = new CryptoStream(fileStream, cryptic.CreateEncryptor(), CryptoStreamMode.Write)) {
-                    SaveToStreamExt(tree, crStream, charSet);
+                    SaveToStreamExt(crStream, charSet);
                     crStream.Flush();
                 }
             }

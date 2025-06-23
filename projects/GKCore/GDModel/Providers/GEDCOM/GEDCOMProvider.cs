@@ -162,9 +162,9 @@ namespace GDModel.Providers.GEDCOM
             fEncoding = encoding;
         }
 
-        private void DefineEncoding(GDMTree tree, GEDCOMFormat format, string streamCharset)
+        private void DefineEncoding(GEDCOMFormat format, string streamCharset)
         {
-            GEDCOMCharacterSet charSet = tree.Header.CharacterSet.Value;
+            GEDCOMCharacterSet charSet = fTree.Header.CharacterSet.Value;
             switch (charSet)
             {
                 case GEDCOMCharacterSet.csUTF8:
@@ -208,12 +208,12 @@ namespace GDModel.Providers.GEDCOM
                         if (fmtProps.PredefCharset > -1) {
                             SetEncoding(Encoding.GetEncoding(fmtProps.PredefCharset));
                         } else {
-                            string cpVers = tree.Header.CharacterSet.Version;
+                            string cpVers = fTree.Header.CharacterSet.Version;
                             if (!string.IsNullOrEmpty(cpVers)) {
                                 int sourceCodepage = ConvertHelper.ParseInt(cpVers, DEF_CODEPAGE);
                                 SetEncoding(Encoding.GetEncoding(sourceCodepage));
                             } else {
-                                if (tree.Header.Language == GDMLanguageID.Russian) {
+                                if (fTree.Header.Language == GDMLanguageID.Russian) {
                                     SetEncoding(Encoding.GetEncoding(1251));
                                 } else {
                                     if (streamCharset == null) {
@@ -428,7 +428,7 @@ namespace GDModel.Providers.GEDCOM
                             // to check for additional versions of the code page
                             var format = GetGEDCOMFormat(fTree, out ilb);
                             fTree.Format = format;
-                            DefineEncoding(fTree, format, streamCharset);
+                            DefineEncoding(format, streamCharset);
                             checkLI = (format == GEDCOMFormat.FTB && Encoding.UTF8.Equals(fEncoding));
                         }
 
@@ -600,28 +600,28 @@ namespace GDModel.Providers.GEDCOM
 
         #region Saving functions
 
-        public virtual void SaveToFile(GDMTree tree, string fileName, GEDCOMCharacterSet charSet)
+        public virtual void SaveToFile(string fileName, GEDCOMCharacterSet charSet)
         {
             // Attention: processing of Header moved to BaseContext!
             using (var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite)) {
-                SaveToStreamExt(tree, fileStream, charSet);
+                SaveToStreamExt(fileStream, charSet);
             }
         }
 
-        public virtual void SaveToStreamExt(GDMTree tree, Stream outputStream, GEDCOMCharacterSet charSet)
+        public void SaveToStreamExt(Stream outputStream, GEDCOMCharacterSet charSet)
         {
             // Attention: processing of Header moved to BaseContext!
 
             StreamWriter writer = new StreamWriter(outputStream, GEDCOMUtils.GetEncodingByCharacterSet(charSet));
-            IList<GDMRecord> records = tree.GetRecords().GetList();
-            SaveToStream(tree, writer, records);
+            IList<GDMRecord> records = fTree.GetRecords().GetList();
+            SaveToStream(writer, records);
             writer.Flush();
         }
 
-        public void SaveToStream(GDMTree tree, StreamWriter writer, IList<GDMRecord> list)
+        public void SaveToStream(StreamWriter writer, IList<GDMRecord> list)
         {
             // write header
-            WriteHeader(writer, 0, tree.Header);
+            WriteHeader(writer, 0, fTree.Header);
 
             if (list != null) {
                 for (int i = 0, num = list.Count; i < num; i++) {

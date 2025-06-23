@@ -58,7 +58,7 @@ namespace GDModel.Providers
 
                     using (MemoryStream outStream = new MemoryStream()) {
                         gedcomProvider = new GEDCOMProvider(tree);
-                        gedcomProvider.SaveToStreamExt(tree, outStream, GEDCOMCharacterSet.csUTF8);
+                        gedcomProvider.SaveToStreamExt(outStream, GEDCOMCharacterSet.csUTF8);
 
                         outStream.Position = 0;
                         byte[] outArray = outStream.ToArray();
@@ -102,7 +102,7 @@ namespace GDModel.Providers
 
                     using (MemoryStream outStream = new MemoryStream()) {
                         gedcomProvider = new GEDCOMProvider(tree);
-                        gedcomProvider.SaveToStreamExt(tree, outStream, GEDCOMCharacterSet.csASCII);
+                        gedcomProvider.SaveToStreamExt(outStream, GEDCOMCharacterSet.csASCII);
                     }
                 }
             }

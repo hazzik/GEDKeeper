@@ -218,7 +218,7 @@ namespace GDModel.Providers.FamilyShow
                                         break;
 
                                     case FXTag.Note:
-                                        AddNote(fTree, lastIndividual, nodeValue);
+                                        AddNote(lastIndividual, nodeValue);
                                         break;
 
                                     case FXTag.Relationship:
@@ -273,7 +273,7 @@ namespace GDModel.Providers.FamilyShow
                     GDMIndividualRecord childRec;
                     indiIdents.TryGetValue(child.ChildId, out childRec);
 
-                    GDMFamilyRecord famRec = GetParentsFamily(fTree, fathRec, mothRec);
+                    GDMFamilyRecord famRec = GetParentsFamily(fathRec, mothRec);
                     famRec.AddChild(childRec);
                 }
             } finally {
@@ -281,14 +281,14 @@ namespace GDModel.Providers.FamilyShow
             }
         }
 
-        private static GDMFamilyRecord GetParentsFamily(GDMTree tree, GDMIndividualRecord father, GDMIndividualRecord mother)
+        private GDMFamilyRecord GetParentsFamily(GDMIndividualRecord father, GDMIndividualRecord mother)
         {
             GDMFamilyRecord result = null;
 
             string fatherXRef = (father == null) ? string.Empty : father.XRef;
             string motherXRef = (mother == null) ? string.Empty : mother.XRef;
 
-            var famEnum = tree.GetEnumerator<GDMFamilyRecord>();
+            var famEnum = fTree.GetEnumerator<GDMFamilyRecord>();
             GDMFamilyRecord famRec;
             while (famEnum.MoveNext(out famRec)) {
                 if (famRec.Husband.XRef == fatherXRef && famRec.Wife.XRef == motherXRef) {
@@ -298,7 +298,7 @@ namespace GDModel.Providers.FamilyShow
             }
 
             if (result == null) {
-                result = tree.CreateFamily();
+                result = fTree.CreateFamily();
                 result.AddSpouse(father);
                 result.AddSpouse(mother);
             }
@@ -355,9 +355,9 @@ namespace GDModel.Providers.FamilyShow
             return result;
         }
 
-        private static void AddNote(GDMTree tree, GDMRecord indiRec, string noteText)
+        private void AddNote(GDMRecord indiRec, string noteText)
         {
-            var noteRec = tree.CreateNote();
+            var noteRec = fTree.CreateNote();
             noteRec.Lines.Text = noteText;
             var notes = new GDMNotes();
             notes.XRef = noteRec.XRef;
