@@ -32,17 +32,25 @@ namespace GDModel.Providers.GedML
     /// </summary>
     public class GedMLProvider : GEDCOMProvider
     {
+        public GedMLProvider(GDMTree tree) : base(tree)
+        {
+        }
+
+        public GedMLProvider(GDMTree tree, bool keepRichNames, bool strict) : base(tree, keepRichNames, strict)
+        {
+        }
+
         public override string GetFilesFilter()
         {
             return LangMan.LS(LSID.GedMLFilter);
         }
 
-        protected override void ReadStream(GDMTree tree, Stream fileStream, Stream inputStream,
+        protected override void ReadStream(Stream fileStream, Stream inputStream,
             bool charsetDetection = false)
         {
-            tree.State = GDMTreeState.osLoading;
+            fTree.State = GDMTreeState.osLoading;
             try {
-                var progressCallback = tree.ProgressCallback;
+                var progressCallback = fTree.ProgressCallback;
 
                 long fileSize = fileStream.Length;
                 int progress = 0;
@@ -65,7 +73,7 @@ namespace GDModel.Providers.GedML
                     while (xr.Read()) {
                         if (xr.NodeType == XmlNodeType.Element) {
                             if (tagOpened) {
-                                curTag = ProcessTag(tree, stack, tagLevel, tagId, tagValue);
+                                curTag = ProcessTag(fTree, stack, tagLevel, tagId, tagValue);
                                 tagOpened = false;
                             }
 
@@ -78,21 +86,21 @@ namespace GDModel.Providers.GedML
                             tagValue = StringSpan.Empty;
 
                             if (tagLevel == 0) {
-                                StackTuple stackTuple = AddTreeTag(tree, tagLevel, tagId, StringSpan.Empty);
+                                StackTuple stackTuple = AddTreeTag(fTree, tagLevel, tagId, StringSpan.Empty);
                                 if (stackTuple.Level >= 0) {
                                     stack.Clear();
                                     stack.Push(stackTuple);
 
                                     curRecord = stackTuple.Tag;
                                     if (!string.IsNullOrEmpty(xrefId)) {
-                                        ((GDMRecord)curRecord).SetXRef(tree, xrefId, false);
+                                        ((GDMRecord)curRecord).SetXRef(fTree, xrefId, false);
                                     }
                                 }
                             } else if (tagLevel > 0) {
                                 if (!string.IsNullOrEmpty(xrefPtr)) {
                                     // since the default method of the GEDCOM provider is used,
                                     // a standard character `@` is expected
-                                    curTag = ProcessTag(tree, stack, tagLevel, tagId, "@" + xrefPtr + "@");
+                                    curTag = ProcessTag(fTree, stack, tagLevel, tagId, "@" + xrefPtr + "@");
                                 } else {
                                     tagOpened = true;
                                 }
@@ -101,7 +109,7 @@ namespace GDModel.Providers.GedML
                             tagValue = xr.Value;
 
                             if (tagLevel > 0 && curRecord != null) {
-                                curTag = ProcessTag(tree, stack, tagLevel, tagId, tagValue);
+                                curTag = ProcessTag(fTree, stack, tagLevel, tagId, tagValue);
                             }
                         }
 
@@ -117,7 +125,7 @@ namespace GDModel.Providers.GedML
 
                 stack.Clear();
             } finally {
-                tree.State = GDMTreeState.osReady;
+                fTree.State = GDMTreeState.osReady;
             }
         }
     }

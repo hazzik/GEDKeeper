@@ -354,8 +354,8 @@ namespace GKCore.Tools
                 throw new ArgumentNullException("fileName");
 
             using (var extTree = new GDMTree()) {
-                var gedcomProvider = new GEDCOMProvider();
-                gedcomProvider.LoadFromFile(extTree, fileName);
+                var gedcomProvider = new GEDCOMProvider(extTree);
+                gedcomProvider.LoadFromFile(fileName);
 
                 MergeTree(mainTree, extTree, logBox, selfTest);
             }
@@ -770,8 +770,8 @@ namespace GKCore.Tools
                 throw new ArgumentNullException("logBox");
 
             using (var tempTree = new GDMTree()) {
-                var gedcomProvider = new GEDCOMProvider();
-                gedcomProvider.LoadFromFile(tempTree, fileName);
+                var gedcomProvider = new GEDCOMProvider(tempTree);
+                gedcomProvider.LoadFromFile(fileName);
 
                 CompareTree(context, tempTree, logBox);
             }

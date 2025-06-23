@@ -53,11 +53,11 @@ namespace GDModel.Providers
                         inArray = inMem.ToArray();
                     }
 
-                    var gedcomProvider = new GEDCOMProvider(true, false);
-                    gedcomProvider.LoadFromStreamExt(tree, inStream, inStream);
+                    var gedcomProvider = new GEDCOMProvider(tree, true, false);
+                    gedcomProvider.LoadFromStreamExt(inStream, inStream);
 
                     using (MemoryStream outStream = new MemoryStream()) {
-                        gedcomProvider = new GEDCOMProvider();
+                        gedcomProvider = new GEDCOMProvider(tree);
                         gedcomProvider.SaveToStreamExt(tree, outStream, GEDCOMCharacterSet.csUTF8);
 
                         outStream.Position = 0;
@@ -79,8 +79,8 @@ namespace GDModel.Providers
         {
             using (Stream inStream = TestUtils.LoadResourceStream("TGC55CLF.GED")) {
                 using (GDMTree tree = new GDMTree()) {
-                    var gedcomProvider = new GEDCOMProvider();
-                    gedcomProvider.LoadFromStreamExt(tree, inStream, inStream);
+                    var gedcomProvider = new GEDCOMProvider(tree);
+                    gedcomProvider.LoadFromStreamExt(inStream, inStream);
 
                     Assert.AreEqual(GEDCOMFormat.Unknown, tree.Format);
 
@@ -101,7 +101,7 @@ namespace GDModel.Providers
                     }*/
 
                     using (MemoryStream outStream = new MemoryStream()) {
-                        gedcomProvider = new GEDCOMProvider();
+                        gedcomProvider = new GEDCOMProvider(tree);
                         gedcomProvider.SaveToStreamExt(tree, outStream, GEDCOMCharacterSet.csASCII);
                     }
                 }
@@ -117,8 +117,8 @@ namespace GDModel.Providers
                     Assert.AreEqual("utf-8", charsetRes.Charset);
                     Assert.AreEqual(1.0f, charsetRes.Confidence);
 
-                    var gedcomProvider = new GEDCOMProvider();
-                    gedcomProvider.LoadFromStreamExt(ctx.Tree, stmGed1, stmGed1);
+                    var gedcomProvider = new GEDCOMProvider(ctx.Tree);
+                    gedcomProvider.LoadFromStreamExt(stmGed1, stmGed1);
 
                     Assert.AreEqual(GEDCOMFormat.Native, ctx.Tree.Format);
 
@@ -139,8 +139,8 @@ namespace GDModel.Providers
                     Assert.AreEqual("utf-8", charsetRes.Charset);
                     Assert.AreEqual(1.0f, charsetRes.Confidence);
 
-                    var gedcomProvider = new GEDCOMProvider();
-                    gedcomProvider.LoadFromStreamExt(ctx.Tree, stmGed1, stmGed1, true);
+                    var gedcomProvider = new GEDCOMProvider(ctx.Tree);
+                    gedcomProvider.LoadFromStreamExt(stmGed1, stmGed1, true);
 
                     Assert.AreEqual(GEDCOMFormat.gedcom4j, ctx.Tree.Format);
 
@@ -160,8 +160,8 @@ namespace GDModel.Providers
                     Assert.AreEqual("windows-1250", charsetRes.Charset);
                     Assert.GreaterOrEqual(charsetRes.Confidence, 0.77f);
 
-                    var gedcomProvider = new GEDCOMProvider();
-                    gedcomProvider.LoadFromStreamExt(ctx.Tree, stmGed1, stmGed1);
+                    var gedcomProvider = new GEDCOMProvider(ctx.Tree);
+                    gedcomProvider.LoadFromStreamExt(stmGed1, stmGed1);
 
                     Assert.AreEqual(GEDCOMFormat.Ahnenblatt, ctx.Tree.Format);
 
@@ -182,8 +182,8 @@ namespace GDModel.Providers
                     Assert.AreEqual("windows-1251", charsetRes.Charset);
                     Assert.GreaterOrEqual(charsetRes.Confidence, 0.46f);
 
-                    var gedcomProvider = new GEDCOMProvider();
-                    gedcomProvider.LoadFromStreamExt(ctx.Tree, stmGed1, stmGed1);
+                    var gedcomProvider = new GEDCOMProvider(ctx.Tree);
+                    gedcomProvider.LoadFromStreamExt(stmGed1, stmGed1);
 
                     Assert.AreEqual(GEDCOMFormat.ALTREE, ctx.Tree.Format);
 
@@ -204,8 +204,8 @@ namespace GDModel.Providers
                     Assert.AreEqual("windows-1251", charsetRes.Charset);
                     Assert.GreaterOrEqual(charsetRes.Confidence, 0.69f);
 
-                    var gedcomProvider = new GEDCOMProvider();
-                    gedcomProvider.LoadFromStreamExt(ctx.Tree, stmGed1, stmGed1);
+                    var gedcomProvider = new GEDCOMProvider(ctx.Tree);
+                    gedcomProvider.LoadFromStreamExt(stmGed1, stmGed1);
 
                     Assert.AreEqual(GEDCOMFormat.FTB, ctx.Tree.Format);
 
@@ -260,8 +260,8 @@ namespace GDModel.Providers
 
                     Assert.AreEqual(GEDCOMFormat.Unknown, ctx.Tree.Format);
 
-                    var gedcomProvider = new GEDCOMProvider();
-                    gedcomProvider.LoadFromStreamExt(ctx.Tree, stmGed1, stmGed1);
+                    var gedcomProvider = new GEDCOMProvider(ctx.Tree);
+                    gedcomProvider.LoadFromStreamExt(stmGed1, stmGed1);
                 }
             }
         }
@@ -649,8 +649,8 @@ namespace GDModel.Providers
         {
             using (BaseContext ctx = new BaseContext(null)) {
                 using (Stream stmGed1 = TestUtils.LoadResourceStream("test_gedml.xml")) {
-                    var gedmlProvider = new GedMLProvider();
-                    gedmlProvider.LoadFromStreamExt(ctx.Tree, stmGed1, stmGed1);
+                    var gedmlProvider = new GedMLProvider(ctx.Tree);
+                    gedmlProvider.LoadFromStreamExt(stmGed1, stmGed1);
                 }
 
                 GDMSubmitterRecord submRec = ctx.Tree.XRefIndex_Find("SUB1") as GDMSubmitterRecord;
@@ -669,7 +669,7 @@ namespace GDModel.Providers
             using (Stream inStream = TestUtils.LoadResourceStream("test_windsor.familyx")) {
                 using (GDMTree tree = new GDMTree()) {
                     var fxProvider = new FamilyXProvider(tree);
-                    fxProvider.LoadFromStreamExt(tree, inStream, inStream);
+                    fxProvider.LoadFromStreamExt(inStream, inStream);
 
                     Assert.AreEqual(118, tree.RecordsCount);
                 }

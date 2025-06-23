@@ -145,7 +145,7 @@ namespace GKCore.Controllers
             GKUtils.PrepareHeader(tree, fileName, GlobalOptions.Instance.DefCharacterSet, true);
 
             using (StreamWriter fs = new StreamWriter(fileName, false, GEDCOMUtils.GetEncodingByCharacterSet(tree.Header.CharacterSet.Value))) {
-                var gedcomProvider = new GEDCOMProvider();
+                var gedcomProvider = new GEDCOMProvider(tree);
                 gedcomProvider.SaveToStream(tree, fs, fSplitList);
             }
         }

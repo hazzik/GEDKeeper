@@ -28,23 +28,26 @@ namespace GDModel.Providers
     /// </summary>
     public abstract class FileProvider
     {
-        protected FileProvider()
+        protected readonly GDMTree fTree;
+
+        protected FileProvider(GDMTree tree)
         {
+            fTree = tree;
         }
 
         public abstract string GetFilesFilter();
 
-        public void LoadFromString(GDMTree tree, string strText, bool charsetDetection = false)
+        public void LoadFromString(string strText, bool charsetDetection = false)
         {
             using (MemoryStream stream = new MemoryStream(Encoding.UTF8.GetBytes(strText))) {
-                LoadFromStreamExt(tree, stream, stream, charsetDetection);
+                LoadFromStreamExt(stream, stream, charsetDetection);
             }
         }
 
-        public virtual void LoadFromFile(GDMTree tree, string fileName, bool charsetDetection = false)
+        public virtual void LoadFromFile(string fileName, bool charsetDetection = false)
         {
             using (FileStream fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read)) {
-                LoadFromStreamExt(tree, fileStream, fileStream, charsetDetection);
+                LoadFromStreamExt(fileStream, fileStream, charsetDetection);
             }
         }
 
@@ -53,12 +56,12 @@ namespace GDModel.Providers
             return Encoding.UTF8;
         }
 
-        public virtual void LoadFromStreamExt(GDMTree tree, Stream fileStream, Stream inputStream, bool charsetDetection = false)
+        public virtual void LoadFromStreamExt(Stream fileStream, Stream inputStream, bool charsetDetection = false)
         {
-            tree.Clear();
-            ReadStream(tree, fileStream, inputStream, charsetDetection);
+            fTree.Clear();
+            ReadStream(fileStream, inputStream, charsetDetection);
         }
 
-        protected abstract void ReadStream(GDMTree tree, Stream fileStream, Stream inputStream, bool charsetDetection = false);
+        protected abstract void ReadStream(Stream fileStream, Stream inputStream, bool charsetDetection = false);
     }
 }

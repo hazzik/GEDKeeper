@@ -48,8 +48,8 @@ namespace GKCore.Tools
             fMainTree = mainTree;
 
             fOtherTree = new GDMTree();
-            var gedcomProvider = new GEDCOMProvider();
-            gedcomProvider.LoadFromFile(fOtherTree, fileName);
+            var gedcomProvider = new GEDCOMProvider(fOtherTree);
+            gedcomProvider.LoadFromFile(fileName);
         }
 
         public void CompareRecords(GDMRecordType recordType)

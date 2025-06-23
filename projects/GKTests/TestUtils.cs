@@ -272,8 +272,8 @@ namespace GKTests
             BaseContext ctx = new BaseContext(null);
 
             using (Stream stream = TestUtils.LoadResourceStream(resName)) {
-                var gedcomProvider = new GEDCOMProvider();
-                gedcomProvider.LoadFromStreamExt(ctx.Tree, stream, stream);
+                var gedcomProvider = new GEDCOMProvider(ctx.Tree);
+                gedcomProvider.LoadFromStreamExt(stream, stream);
             }
 
             return ctx;
@@ -285,9 +285,9 @@ namespace GKTests
         public static GDMIndividualRecord ParseIndiRec(string text)
         {
             GDMTree tree = new GDMTree();
-            GEDCOMProvider gp = new GEDCOMProvider();
+            GEDCOMProvider gp = new GEDCOMProvider(tree);
             try {
-                gp.LoadFromString(tree, text);
+                gp.LoadFromString(text);
             } catch (Exception) {
             }
             Assert.AreEqual(1, tree.RecordsCount);

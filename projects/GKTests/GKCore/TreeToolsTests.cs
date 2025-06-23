@@ -66,8 +66,8 @@ namespace GKCore
                 IBaseWindow baseWin = new BaseWindowStub(ctx1);
 
                 using (Stream stmGed1 = TestUtils.LoadResourceStream("test1.ged")) {
-                    var gedcomProvider = new GEDCOMProvider();
-                    gedcomProvider.LoadFromStreamExt(ctx1.Tree, stmGed1, stmGed1);
+                    var gedcomProvider = new GEDCOMProvider(ctx1.Tree);
+                    gedcomProvider.LoadFromStreamExt(stmGed1, stmGed1);
                 }
 
                 treeFragments = TreeTools.SearchTreeFragments(ctx1.Tree, null);
@@ -77,8 +77,8 @@ namespace GKCore
 
                 using (var ctx2 = new BaseContext(null)) {
                     using (Stream stmGed2 = TestUtils.LoadResourceStream("test2.ged")) {
-                        var gedcomProvider = new GEDCOMProvider();
-                        gedcomProvider.LoadFromStreamExt(ctx1.Tree, stmGed2, stmGed2);
+                        var gedcomProvider = new GEDCOMProvider(ctx1.Tree);
+                        gedcomProvider.LoadFromStreamExt(stmGed2, stmGed2);
                     }
 
                     treeFragments = TreeTools.SearchTreeFragments(ctx2.Tree, null);
@@ -119,14 +119,14 @@ namespace GKCore
                 //IBaseWindow baseWin = new BaseWindowStub(ctx1);
 
                 using (Stream stmGed1 = TestUtils.LoadResourceStream("test1.ged")) {
-                    var gedcomProvider = new GEDCOMProvider();
-                    gedcomProvider.LoadFromStreamExt(ctx1.Tree, stmGed1, stmGed1);
+                    var gedcomProvider = new GEDCOMProvider(ctx1.Tree);
+                    gedcomProvider.LoadFromStreamExt(stmGed1, stmGed1);
                 }
 
                 using (var ctx2 = new BaseContext(null)) {
                     using (Stream stmGed2 = TestUtils.LoadResourceStream("test2.ged")) {
-                        var gedcomProvider = new GEDCOMProvider();
-                        gedcomProvider.LoadFromStreamExt(ctx2.Tree, stmGed2, stmGed2);
+                        var gedcomProvider = new GEDCOMProvider(ctx2.Tree);
+                        gedcomProvider.LoadFromStreamExt(stmGed2, stmGed2);
                     }
 
                     TreeTools.MergeTree(ctx1.Tree, ctx2.Tree, null, true);
@@ -148,8 +148,8 @@ namespace GKCore
                 IBaseWindow baseWin = new BaseWindowStub(ctx1);
 
                 using (Stream stmGed1 = TestUtils.LoadResourceStream("test_mergerec.ged")) {
-                    var gedcomProvider = new GEDCOMProvider();
-                    gedcomProvider.LoadFromStreamExt(ctx1.Tree, stmGed1, stmGed1);
+                    var gedcomProvider = new GEDCOMProvider(ctx1.Tree);
+                    gedcomProvider.LoadFromStreamExt(stmGed1, stmGed1);
                 }
 
                 GDMIndividualRecord iRec1 = ctx1.Tree.XRefIndex_Find("I1") as GDMIndividualRecord;
@@ -169,8 +169,8 @@ namespace GKCore
                 IBaseWindow baseWin = new BaseWindowStub(ctx1);
 
                 using (Stream stmGed1 = TestUtils.LoadResourceStream("test_mergerec.ged")) {
-                    var gedcomProvider = new GEDCOMProvider();
-                    gedcomProvider.LoadFromStreamExt(ctx1.Tree, stmGed1, stmGed1);
+                    var gedcomProvider = new GEDCOMProvider(ctx1.Tree);
+                    gedcomProvider.LoadFromStreamExt(stmGed1, stmGed1);
                 }
 
                 GDMFamilyRecord famRec1 = ctx1.Tree.XRefIndex_Find("F1") as GDMFamilyRecord;
@@ -317,14 +317,14 @@ namespace GKCore
                 //IBaseWindow baseWin = new BaseWindowStub(ctx1);
 
                 using (Stream stmGed1 = TestUtils.LoadResourceStream("test1.ged")) {
-                    var gedcomProvider = new GEDCOMProvider();
-                    gedcomProvider.LoadFromStreamExt(ctx1.Tree, stmGed1, stmGed1);
+                    var gedcomProvider = new GEDCOMProvider(ctx1.Tree);
+                    gedcomProvider.LoadFromStreamExt(stmGed1, stmGed1);
                 }
 
                 using (var ctx2 = new BaseContext(null)) {
                     using (Stream stmGed2 = TestUtils.LoadResourceStream("test2.ged")) {
-                        var gedcomProvider = new GEDCOMProvider();
-                        gedcomProvider.LoadFromStreamExt(ctx2.Tree, stmGed2, stmGed2);
+                        var gedcomProvider = new GEDCOMProvider(ctx2.Tree);
+                        gedcomProvider.LoadFromStreamExt(stmGed2, stmGed2);
 
                         TreeTools.CompareTree(ctx1, ctx2.Tree, logBox);
                     }

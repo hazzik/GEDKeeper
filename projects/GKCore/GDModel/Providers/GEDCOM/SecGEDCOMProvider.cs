@@ -15,13 +15,13 @@ namespace GDModel.Providers.GEDCOM
         private readonly string fPassword;
 
         public SecGEDCOMProvider(GDMTree tree, string password)
-            : base()
+            : base(tree)
         {
             fPassword = password;
         }
 
         public SecGEDCOMProvider(GDMTree tree, string password, bool keepRichNames, bool strict)
-            : base(keepRichNames, strict)
+            : base(tree, keepRichNames, strict)
         {
             fPassword = password;
         }
@@ -43,7 +43,7 @@ namespace GDModel.Providers.GEDCOM
             }
         }
 
-        public override void LoadFromFile(GDMTree tree, string fileName, bool charsetDetection = false)
+        public override void LoadFromFile(string fileName, bool charsetDetection = false)
         {
             using (var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read)) {
                 byte[] gsHeader = new byte[8];
@@ -64,7 +64,7 @@ namespace GDModel.Providers.GEDCOM
 
                 using (var cryptic = CreateCSP(gsMajVer, gsMinVer)) {
                     using (CryptoStream crStream = new CryptoStream(fileStream, cryptic.CreateDecryptor(), CryptoStreamMode.Read)) {
-                        LoadFromStreamExt(tree, fileStream, crStream, charsetDetection);
+                        LoadFromStreamExt(fileStream, crStream, charsetDetection);
                     }
                 }
             }

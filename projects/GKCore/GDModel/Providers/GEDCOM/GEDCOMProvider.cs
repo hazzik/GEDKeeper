@@ -133,11 +133,11 @@ namespace GDModel.Providers.GEDCOM
         public static bool Strict = false;
 
 
-        public GEDCOMProvider() : base()
+        public GEDCOMProvider(GDMTree tree) : base(tree)
         {
         }
 
-        public GEDCOMProvider(bool keepRichNames, bool strict) : base()
+        public GEDCOMProvider(GDMTree tree, bool keepRichNames, bool strict) : base(tree)
         {
             KeepRichNames = keepRichNames;
             Strict = strict;
@@ -325,9 +325,9 @@ namespace GDModel.Providers.GEDCOM
 
         #region Loading functions
 
-        protected override void ReadStream(GDMTree tree, Stream fileStream, Stream inputStream, bool charsetDetection = false)
+        protected override void ReadStream(Stream fileStream, Stream inputStream, bool charsetDetection = false)
         {
-            tree.State = GDMTreeState.osLoading;
+            fTree.State = GDMTreeState.osLoading;
             try {
                 // encoding variables
                 string streamCharset = DetectCharset(inputStream, charsetDetection);
@@ -335,7 +335,7 @@ namespace GDModel.Providers.GEDCOM
                 fEncodingState = EncodingState.esUnchecked;
 
                 // reading variables
-                var progressCallback = tree.ProgressCallback;
+                var progressCallback = fTree.ProgressCallback;
                 long fileSize = fileStream.Length;
                 int progress = 0;
                 InitBuffers();
@@ -346,7 +346,7 @@ namespace GDModel.Providers.GEDCOM
                 GDMTag curRecord = null;
                 GDMTag curTag = null;
                 var stack = new Stack<StackTuple>(9);
-                var header = tree.Header;
+                var header = fTree.Header;
                 bool ilb = false;
 
                 // check the integrity of utf8 the lines
@@ -401,7 +401,7 @@ namespace GDModel.Providers.GEDCOM
                         // line with text but not in standard tag format
                         if (lineRes == -1) {
                             if (ilb) {
-                                FixBreakedLine(tree, curRecord, curTag, lineNum, tagValue);
+                                FixBreakedLine(fTree, curRecord, curTag, lineNum, tagValue);
                                 continue;
                             } else {
                                 throw new GEDCOMInvalidFormatException(string.Format("The string {0} doesn't start with a valid number", lineNum));
@@ -426,20 +426,20 @@ namespace GDModel.Providers.GEDCOM
                         if (curRecord == header && fEncodingState == EncodingState.esUnchecked) {
                             // beginning recognition of the first is not header record
                             // to check for additional versions of the code page
-                            var format = GetGEDCOMFormat(tree, out ilb);
-                            tree.Format = format;
-                            DefineEncoding(tree, format, streamCharset);
+                            var format = GetGEDCOMFormat(fTree, out ilb);
+                            fTree.Format = format;
+                            DefineEncoding(fTree, format, streamCharset);
                             checkLI = (format == GEDCOMFormat.FTB && Encoding.UTF8.Equals(fEncoding));
                         }
 
-                        StackTuple stackTuple = AddTreeTag(tree, tagLevel, tagId, tagValue);
+                        StackTuple stackTuple = AddTreeTag(fTree, tagLevel, tagId, tagValue);
                         if (stackTuple.Level >= 0) {
                             stack.Clear();
                             stack.Push(stackTuple);
 
                             curRecord = stackTuple.Tag;
                             if (!string.IsNullOrEmpty(tagXRef)) {
-                                ((GDMRecord)curRecord).SetXRef(tree, tagXRef, false);
+                                ((GDMRecord)curRecord).SetXRef(fTree, tagXRef, false);
                             }
                             curTag = null;
                         } else {
@@ -448,7 +448,7 @@ namespace GDModel.Providers.GEDCOM
                         }
                     } else {
                         if (curRecord != null) {
-                            curTag = ProcessTag(tree, stack, tagLevel, tagId, tagValue);
+                            curTag = ProcessTag(fTree, stack, tagLevel, tagId, tagValue);
                         }
                     }
 
@@ -467,7 +467,7 @@ namespace GDModel.Providers.GEDCOM
                     throw new GEDCOMEmptyFileException();
                 }
             } finally {
-                tree.State = GDMTreeState.osReady;
+                fTree.State = GDMTreeState.osReady;
             }
         }
 

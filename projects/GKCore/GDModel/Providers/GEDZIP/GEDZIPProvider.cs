@@ -39,12 +39,16 @@ namespace GDModel.Providers.GEDZIP
             SysUtils.DoNotInline(GEDCOMProvider.GEDCOMFormats);
         }
 
+        public GEDZIPProvider(GDMTree tree) : base(tree)
+        {
+        }
+
         public override string GetFilesFilter()
         {
             return "GEDZIP files (*.gdz,*.zip)|*.gdz,*.zip";
         }
 
-        public override void LoadFromFile(GDMTree tree, string fileName, bool charsetDetection = false)
+        public override void LoadFromFile(string fileName, bool charsetDetection = false)
         {
             using (var zip = ZipFile.Open(fileName, ZipArchiveMode.Read)) {
                 var entry = GetArchiveEntry(zip, GedcomEntry);
@@ -53,7 +57,7 @@ namespace GDModel.Providers.GEDZIP
                     // wrap to MemoryStream to support encoding detection
                     stream.CopyTo(ms);
                     ms.Position = 0;
-                    LoadFromStreamExt(tree, ms, ms, charsetDetection);
+                    LoadFromStreamExt(ms, ms, charsetDetection);
                 }
             }
         }

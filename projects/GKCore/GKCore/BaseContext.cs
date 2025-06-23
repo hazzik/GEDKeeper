@@ -1133,7 +1133,7 @@ namespace GKCore
                 string ext = FileHelper.GetFileExtension(fileName);
                 FileProvider fileProvider;
                 if (ext == ".ged") {
-                    fileProvider = new GEDCOMProvider();
+                    fileProvider = new GEDCOMProvider(fTree);
                 } else if (ext == ".geds") {
                     if (loadSecure) {
                         pw = await AppHost.StdDialogs.GetPassword(LangMan.LS(LSID.Password));
@@ -1147,11 +1147,11 @@ namespace GKCore
 
                     fileProvider = new SecGEDCOMProvider(fTree, pw);
                 } else if (ext == ".xml") {
-                    fileProvider = new GedMLProvider();
+                    fileProvider = new GedMLProvider(fTree);
                 } else if (ext == ".familyx") {
                     fileProvider = new FamilyXProvider(fTree);
                 } else if (ext == ".gdz" || ext == ".zip") {
-                    fileProvider = new GEDZIPProvider();
+                    fileProvider = new GEDZIPProvider(fTree);
                 } else {
                     // TODO: message?
                     return false;
@@ -1194,7 +1194,7 @@ namespace GKCore
         {
             fTree.ProgressCallback = progress;
 
-            fileProvider.LoadFromFile(fTree, fileName, GlobalOptions.Instance.CharsetDetection);
+            fileProvider.LoadFromFile(fileName, GlobalOptions.Instance.CharsetDetection);
 
             fTree.ProgressCallback = null;
 
@@ -1284,7 +1284,7 @@ namespace GKCore
                 MoveMediaContainers(oldFileName, fileName);
 
                 var gedcomProvider = string.IsNullOrEmpty(password)
-                    ? new GEDCOMProvider(GlobalOptions.Instance.KeepRichNames, false)
+                    ? new GEDCOMProvider(fTree, GlobalOptions.Instance.KeepRichNames, false)
                     : new SecGEDCOMProvider(fTree, password, GlobalOptions.Instance.KeepRichNames, false);
 
                 GKUtils.PrepareHeader(fTree, fileName, defaultCharacterSet, false);
@@ -1292,7 +1292,7 @@ namespace GKCore
 
                 fFileName = fileName;
             } else {
-                var gedcomProvider = new GEDCOMProvider(GlobalOptions.Instance.KeepRichNames, true);
+                var gedcomProvider = new GEDCOMProvider(fTree, GlobalOptions.Instance.KeepRichNames, true);
 
                 GKUtils.PrepareHeader(fTree, fileName, defaultCharacterSet, false);
                 gedcomProvider.SaveToFile(fTree, fileName, defaultCharacterSet);
@@ -1339,7 +1339,7 @@ namespace GKCore
                 GEDCOMCharacterSet charSet = GlobalOptions.Instance.DefCharacterSet;
                 GKUtils.PrepareHeader(fTree, rfn, charSet, false);
 
-                var gedcomProvider = new GEDCOMProvider(GlobalOptions.Instance.KeepRichNames, false);
+                var gedcomProvider = new GEDCOMProvider(fTree, GlobalOptions.Instance.KeepRichNames, false);
                 gedcomProvider.SaveToFile(fTree, rfn, charSet);
             } catch (Exception ex) {
                 Logger.WriteError("BaseContext.CriticalSave()", ex);
