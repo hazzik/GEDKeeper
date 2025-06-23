@@ -12,32 +12,6 @@ namespace GKCore.Types
         {
         }
 
-        public override MediaStoreStatus VerifyMediaFile(out string fileName)
-        {
-            var result = MediaStoreStatus.mssBadData;
-
-            try {
-                fileName = FileName;
-
-                if (!Directory.Exists(BasePath)) {
-                    result = MediaStoreStatus.mssStgNotFound;
-                } else {
-                    fileName = BasePath + fileName;
-                    if (!File.Exists(fileName)) {
-                        result = MediaStoreStatus.mssFileNotFound;
-                    } else {
-                        result = MediaStoreStatus.mssExists;
-                    }
-                }
-            } catch (Exception ex) {
-                Logger.WriteError("BaseContext.VerifyMediaFile()", ex);
-                fileName = string.Empty;
-                return result;
-            }
-
-            return result;
-        }
-
         public override bool MediaSave(BaseContext baseContext, out string refPath)
         {
             string storeFile = Path.GetFileName(FileName);
