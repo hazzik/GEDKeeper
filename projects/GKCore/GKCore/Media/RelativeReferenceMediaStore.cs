@@ -8,9 +8,12 @@ namespace GKCore.Types
 {
     public sealed class RelativeReferenceMediaStore :FileSystemMediaStore,IMediaStore
     {
-        public RelativeReferenceMediaStore(BaseContext baseContext, string fileName)
+        private readonly bool fAllowDelete;
+
+        public RelativeReferenceMediaStore(BaseContext baseContext, string fileName, bool allowDelete)
             : base(BaseContext.GetTreePath(baseContext.FileName), fileName)
         {
+            fAllowDelete = allowDelete;
         }
 
         public async Task<bool> MediaDelete()
@@ -21,7 +24,7 @@ namespace GKCore.Types
 
                 switch (storeStatus) {
                     case MediaStoreStatus.mssExists:
-                        if (!GlobalOptions.Instance.AllowDeleteMediaFileFromRefs) {
+                        if (!fAllowDelete) {
                             return true;
                         }
 

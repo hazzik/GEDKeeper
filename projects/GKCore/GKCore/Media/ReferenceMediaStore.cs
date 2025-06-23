@@ -8,22 +8,23 @@ namespace GKCore.Types
 {
     public sealed class ReferenceMediaStore : FileSystemMediaStore, IMediaStore
     {
-        public ReferenceMediaStore(string fileName) : base(string.Empty, fileName)
+        private readonly bool fAllowDelete;
+
+        public ReferenceMediaStore(string fileName, bool allowDelete)
+            : base(string.Empty, fileName)
         {
+            fAllowDelete = allowDelete;
         }
 
         public async Task<bool> MediaDelete()
         {
             try {
-                string fileName = FileName;
-
-
-                MediaStoreStatus storeStatus = VerifyMediaFile(out fileName);
-                bool result = false;
+                var storeStatus = VerifyMediaFile(out var fileName);
+                var result = false;
 
                 switch (storeStatus) {
-                    case MediaStoreStatus.mssExists: {
-                        if (!GlobalOptions.Instance.AllowDeleteMediaFileFromRefs) {
+                    case MediaStoreStatus.mssExists:
+                        if (!fAllowDelete) {
                             return true;
                         }
 
@@ -36,14 +37,9 @@ namespace GKCore.Types
                             }
                         }
 
-                        switch (MediaStoreType.mstReference)
-                        {
-                            default:
-                                File.Delete(fileName);
-                                break;
-                        }
+                        File.Delete(fileName);
+
                         result = true;
-                    }
                         break;
 
                     case MediaStoreStatus.mssFileNotFound:

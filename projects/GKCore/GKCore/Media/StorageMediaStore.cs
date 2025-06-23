@@ -9,9 +9,12 @@ namespace GKCore.Types
 {
     public sealed class StorageMediaStore : FileSystemMediaStore, IMediaStore
     {
-        public StorageMediaStore(BaseContext baseContext, string fileName) :
+        private readonly bool fAllowDelete;
+
+        public StorageMediaStore(BaseContext baseContext, string fileName, bool allowDelete) :
             base(baseContext.GetStgFolder(), fileName)
         {
+            fAllowDelete = allowDelete;
         }
 
         public async Task<bool> MediaDelete()
@@ -22,7 +25,7 @@ namespace GKCore.Types
 
                 switch (storeStatus) {
                     case MediaStoreStatus.mssExists:
-                        if (!GlobalOptions.Instance.AllowDeleteMediaFileFromStgArc) {
+                        if (!fAllowDelete) {
                             return true;
                         }
 

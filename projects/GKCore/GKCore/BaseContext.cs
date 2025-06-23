@@ -829,13 +829,13 @@ namespace GKCore
                 case MediaStoreType.mstURL:
                     return new URLMediaStore(fileName);
                 case MediaStoreType.mstArchive:
-                    return new ArchiveMediaStore(this, fileName);
+                    return new ArchiveMediaStore(this, fileName, GlobalOptions.Instance.AllowDeleteMediaFileFromStgArc);
                 case MediaStoreType.mstReference:
-                    return new ReferenceMediaStore(fileName);
+                    return new ReferenceMediaStore(fileName, GlobalOptions.Instance.AllowDeleteMediaFileFromRefs);
                 case MediaStoreType.mstStorage:
-                    return new StorageMediaStore(this, fileName);
+                    return new StorageMediaStore(this, fileName, GlobalOptions.Instance.AllowDeleteMediaFileFromStgArc);
                 case MediaStoreType.mstRelativeReference:
-                    return new RelativeReferenceMediaStore(this, fileName);
+                    return new RelativeReferenceMediaStore(this, fileName, GlobalOptions.Instance.AllowDeleteMediaFileFromRefs);
                 default:
                     throw new InvalidOperationException("Unknown store type");
             }

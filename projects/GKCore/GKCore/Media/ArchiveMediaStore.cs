@@ -13,10 +13,12 @@ namespace GKCore.Types
     {
         private readonly string fArcFileName;
         private readonly string fFileName;
+        private readonly bool fAllowDelete;
 
-        public ArchiveMediaStore(BaseContext baseContext, string fileName)
+        public ArchiveMediaStore(BaseContext baseContext, string fileName, bool allowDelete)
         {
             fFileName = fileName;
+            fAllowDelete = allowDelete;
             fArcFileName = baseContext.GetArcFileName();
         }
 
@@ -69,7 +71,7 @@ namespace GKCore.Types
 
                 switch (storeStatus) {
                     case MediaStoreStatus.mssExists:
-                        if (!GlobalOptions.Instance.AllowDeleteMediaFileFromStgArc) {
+                        if (!fAllowDelete) {
                             return true;
                         }
 
