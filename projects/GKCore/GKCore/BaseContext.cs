@@ -735,6 +735,17 @@ namespace GKCore
             return GetTreePath() + Path.GetFileNameWithoutExtension(fFileName) + Path.DirectorySeparatorChar;
         }
 
+        public string GetArcFileName()
+        {
+            string treeName = fFileName;
+            var extension = FileHelper.GetFileExtension(treeName);
+            if (extension == ".zip" || extension == ".gdz") {
+                return treeName;
+            }
+
+            return GetTreePath() + Path.GetFileNameWithoutExtension(treeName) + ".zip";
+        }
+
         // TODO: Controlling the version of the GK GEDCOM file to determine the zip archive encoding!
 
         public void MoveMediaContainers(string oldFileName, string newFileName, bool createCopy = false)
@@ -1672,16 +1683,5 @@ namespace GKCore
 
         #endregion
 
-        public string GetArcFileName()
-        {
-            string treeName = FileName;
-            var extension = FileHelper.GetFileExtension(treeName);
-            if (extension == ".zip" || extension == ".gdz") {
-                return treeName;
-            }
-
-            string result = GetTreePath() + Path.GetFileNameWithoutExtension(treeName) + ".zip";
-            return result;
-        }
     }
 }
