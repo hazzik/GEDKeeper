@@ -81,40 +81,28 @@ namespace GKCore.Types
             return result;
         }
 
-        public override bool MediaSave(BaseContext baseContext, out string refPath)
+        protected override bool SaveCopy(BaseContext baseContext, string targetFile)
         {
-            refPath = NormalizeFilename(out var targetFile);
-
-            // verify existence
-            bool alreadyExists = baseContext.MediaExists(refPath);
-            if (alreadyExists) {
-                AppHost.StdDialogs.ShowError(LangMan.LS(LSID.FileWithSameNameAlreadyExists));
-                return false;
-            }
-
             // save a copy to archive
-            ArcFileSave(fFileName, targetFile);
+            using (var file = File.Open(fArcFileName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
+            using (var z = new ZipArchive(file, ZipArchiveMode.Update, false, GetZipEncoding())) {
+                z.CreateEntryFromFile(fFileName, targetFile, CompressionLevel.Optimal);
+            }
 
             return true;
         }
 
-        private string NormalizeFilename(out string targetFile)
+        protected override string CreateRefPath(string fileName)
         {
-            string storeFile = Path.GetFileName(fFileName);
-            string storePath = GKUtils.GetStoreFolder(GKUtils.GetMultimediaKind(GDMFileReference.RecognizeFormat(fFileName)));
-
-            targetFile = FileHelper.NormalizeFilename(storePath + storeFile);
-
-            // set paths and links
-            return GKData.GKStoreTypes[(int)MediaStoreType.mstArchive].Sign + targetFile;
+            return GKData.GKStoreTypes[(int)MediaStoreType.mstArchive].Sign + fileName;
         }
 
-        private void ArcFileSave(string fileName, string sfn)
+        protected override string NormalizeFileName(BaseContext baseContext)
         {
-            using (var file = File.Open(fArcFileName, FileMode.OpenOrCreate, FileAccess.ReadWrite))
-            using (var z = new ZipArchive(file, ZipArchiveMode.Update, false, GetZipEncoding())) {
-                z.CreateEntryFromFile(fileName, sfn, CompressionLevel.Optimal);
-            }
+            var storeFile = Path.GetFileName(fFileName);
+            var storePath = GKUtils.GetStoreFolder(GKUtils.GetMultimediaKind(GDMFileReference.RecognizeFormat(fFileName)));
+
+            return FileHelper.NormalizeFilename(storePath + storeFile);
         }
 
         private static Encoding GetZipEncoding()
@@ -129,11 +117,6 @@ namespace GKCore.Types
             using (var zip = ZipFile.Open(fArcFileName, ZipArchiveMode.Read, GetZipEncoding())) {
                 return zip.GetEntry(targetFn) != null;
             }
-        }
-
-        protected override string NormalizeFileName(BaseContext baseContext)
-        {
-            throw new NotImplementedException();
         }
     }
 }

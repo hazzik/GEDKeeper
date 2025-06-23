@@ -12,49 +12,32 @@ namespace GKCore.Types
         {
         }
 
-        public override bool MediaSave(BaseContext baseContext, out string refPath)
+        protected override bool SaveCopy(BaseContext baseContext, string targetFile)
         {
-            string storeFile = Path.GetFileName(FileName);
-            string storePath = GKUtils.GetStoreFolder(GKUtils.GetMultimediaKind(GDMFileReference.RecognizeFormat(FileName)));
-
-            refPath = string.Empty;
-
-            // set paths and links
-            var targetFile = storePath + storeFile;
-            refPath = GKData.GKStoreTypes[(int)MediaStoreType.mstStorage].Sign + targetFile;
-
-            refPath = FileHelper.NormalizeFilename(refPath);
-
-            // verify existence
-            bool alreadyExists = baseContext.MediaExists(refPath);
-            if (alreadyExists) {
-                AppHost.StdDialogs.ShowError(LangMan.LS(LSID.FileWithSameNameAlreadyExists));
-                return false;
-            }
-
-            bool result;
-
-            // save a copy to archive or storage
-            string targetFn = string.Empty;
+            // save a copy to storage
+            var targetFn = BasePath + targetFile;
             try {
-                string targetDir = BasePath + storePath;
-                if (!Directory.Exists(BasePath)) Directory.CreateDirectory(BasePath);
-                if (!Directory.Exists(targetDir)) Directory.CreateDirectory(targetDir);
-
-                targetFn = targetDir + storeFile;
-                result = baseContext.CopyFile(FileName, targetFn, !AppHost.TEST_MODE);
+                return baseContext.CopyFile(FileName, targetFn, !AppHost.TEST_MODE);
             } catch (IOException ex) {
                 Logger.WriteError(string.Format("BaseContext.MediaSave({0}, {1})", FileName, targetFn), ex);
                 AppHost.StdDialogs.ShowError(LangMan.LS(LSID.FileWithSameNameAlreadyExists));
-                result = false;
+                return false;
             }
-
-            return result;
         }
 
         protected override string NormalizeFileName(BaseContext baseContext)
         {
-            throw new NotImplementedException();
+            var storeFile = Path.GetFileName(FileName);
+            var storePath = GKUtils.GetStoreFolder(GKUtils.GetMultimediaKind(GDMFileReference.RecognizeFormat(FileName)));
+            var targetDir = BasePath + storePath;
+            if (!Directory.Exists(targetDir)) Directory.CreateDirectory(targetDir);
+
+            return FileHelper.NormalizeFilename(storePath + storeFile);
+        }
+
+        protected override string CreateRefPath(string targetFile)
+        {
+            return GKData.GKStoreTypes[(int)MediaStoreType.mstStorage].Sign + targetFile;
         }
     }
 }

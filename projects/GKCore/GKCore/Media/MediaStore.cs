@@ -124,19 +124,24 @@ namespace GKCore.Types
             return null;
         }
 
-
-        public virtual bool MediaSave(BaseContext baseContext, out string refPath)
+        public bool MediaSave(BaseContext baseContext, out string refPath)
         {
             // set paths and links
-            refPath = NormalizeFileName(baseContext);
+            var targetFile = NormalizeFileName(baseContext);
+            refPath = CreateRefPath(targetFile);
 
             // verify existence
-            bool alreadyExists = baseContext.MediaExists(refPath);
+            var alreadyExists = baseContext.MediaExists(refPath);
             if (alreadyExists) {
                 AppHost.StdDialogs.ShowError(LangMan.LS(LSID.FileWithSameNameAlreadyExists));
                 return false;
             }
 
+            return SaveCopy(baseContext, targetFile);
+        }
+
+        protected virtual bool SaveCopy(BaseContext baseContext, string targetFile)
+        {
             return true;
         }
 
@@ -144,5 +149,9 @@ namespace GKCore.Types
         protected abstract string LoadFileCore(string fileName);
         protected abstract Stream LoadStreamCore(string fileName);
         protected abstract bool DeleteCore(string fileName);
+        protected virtual string CreateRefPath(string targetFile)
+        {
+            return targetFile;
+        }
     }
 }

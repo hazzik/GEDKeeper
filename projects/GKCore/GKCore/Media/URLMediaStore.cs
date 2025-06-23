@@ -45,6 +45,11 @@ namespace GKCore.Types
             throw new NotSupportedException();
         }
 
+        protected override string CreateRefPath(string targetFile)
+        {
+            return targetFile;
+        }
+
         protected override string NormalizeFileName(BaseContext baseContext)
         {
             return fUrl;

@@ -1,5 +1,3 @@
-using System;
-using System.IO;
 using BSLib;
 
 namespace GKCore.Types
@@ -14,9 +12,12 @@ namespace GKCore.Types
         protected override string NormalizeFileName(BaseContext baseContext)
         {
             var targetFile = baseContext.GetTreeRelativePath(FileName);
-            var refPath = GKData.GKStoreTypes[(int)MediaStoreType.mstRelativeReference].Sign + targetFile;
+            return FileHelper.NormalizeFilename(targetFile);
+        }
 
-            return FileHelper.NormalizeFilename(refPath);
+        protected override string CreateRefPath(string targetFile)
+        {
+            return GKData.GKStoreTypes[(int)MediaStoreType.mstRelativeReference].Sign + targetFile;
         }
     }
 }
