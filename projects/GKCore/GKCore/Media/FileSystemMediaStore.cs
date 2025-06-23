@@ -5,7 +5,7 @@ using GKCore.Options;
 
 namespace GKCore.Types
 {
-    public abstract class FileSystemMediaStore
+    public abstract class FileSystemMediaStore : MediaStore
     {
         protected readonly string BasePath;
         protected readonly string FileName;
@@ -18,7 +18,7 @@ namespace GKCore.Types
             fAllowDelete = allowDelete;
         }
 
-        public Stream MediaLoad(bool throwException)
+        public override Stream MediaLoad(bool throwException)
         {
             string targetFn = BasePath + FileName;
             if (!File.Exists(targetFn)) {
@@ -33,7 +33,7 @@ namespace GKCore.Types
             return File.OpenRead(targetFn);
         }
 
-        public string MediaLoad()
+        public override string MediaLoad()
         {
             try {
                 var storeStatus = VerifyMediaFile(out var fileName);
@@ -43,9 +43,6 @@ namespace GKCore.Types
                 return string.Empty;
             }
         }
-
-
-        public abstract MediaStoreStatus VerifyMediaFile(out string fileName);
 
         private static string FileExists(MediaStoreStatus storeStatus, string fileName)
         {
@@ -66,54 +63,56 @@ namespace GKCore.Types
             return string.Empty;
         }
 
-        public async Task<bool> MediaDelete()
+        public override async Task<bool> MediaDelete()
         {
+            if (!fAllowDelete) {
+                return true;
+            }
+
             try {
                 var storeStatus = VerifyMediaFile(out var fileName);
-                var result = false;
 
                 switch (storeStatus) {
                     case MediaStoreStatus.mssExists:
-                        if (!fAllowDelete) {
-                            return true;
+                        if (!await ConfirmDelete()) {
+                            return false;
                         }
 
-                        if (!GlobalOptions.Instance.DeleteMediaFileWithoutConfirm) {
-                            string msg = string.Format(LangMan.LS(LSID.MediaFileDeleteQuery));
-                            // TODO: may be Yes/No/Cancel?
-                            var res = await AppHost.StdDialogs.ShowQuestion(msg);
-                            if (!res) {
-                                return false;
-                            }
-                        }
-
-                        File.Delete(fileName);
-                        result = true;
-                        break;
+                        return DeleteCore(fileName);
 
                     case MediaStoreStatus.mssFileNotFound:
-                        result = await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.FileNotFound, fileName)));
-                        break;
+                        return await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.FileNotFound, fileName)));
 
                     case MediaStoreStatus.mssStgNotFound:
-                        result = await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.StgNotFound)));
-                        break;
+                        return await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.StgNotFound)));
 
                     case MediaStoreStatus.mssArcNotFound:
-                        result = await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.ArcNotFound)));
-                        break;
-
+                        return await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.ContinueQuestion, LangMan.LS(LSID.ArcNotFound)));
                     case MediaStoreStatus.mssBadData:
-                        // can be deleted
-                        result = true;
-                        break;
+                        return true;
                 }
 
-                return result;
+                return false;
             } catch (Exception ex) {
                 Logger.WriteError("BaseContext.MediaDelete()", ex);
                 return false;
             }
+        }
+
+        protected virtual bool DeleteCore(string fileName)
+        {
+            File.Delete(fileName);
+            return true;
+        }
+
+        private static async Task<bool> ConfirmDelete()
+        {
+            if (GlobalOptions.Instance.DeleteMediaFileWithoutConfirm) {
+                return true;
+            }
+
+            // TODO: may be Yes/No/Cancel?
+            return await AppHost.StdDialogs.ShowQuestion(LangMan.LS(LSID.MediaFileDeleteQuery));
         }
     }
 }

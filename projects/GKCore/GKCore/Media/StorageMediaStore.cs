@@ -5,7 +5,7 @@ using GDModel;
 
 namespace GKCore.Types
 {
-    public sealed class StorageMediaStore : FileSystemMediaStore, IMediaStore
+    public sealed class StorageMediaStore : FileSystemMediaStore
     {
         public StorageMediaStore(BaseContext baseContext, string fileName, bool allowDelete) :
             base(baseContext.GetStgFolder(), fileName, allowDelete)
@@ -38,7 +38,7 @@ namespace GKCore.Types
             return result;
         }
 
-        public bool MediaSave(BaseContext baseContext, out string refPath)
+        public override bool MediaSave(BaseContext baseContext, out string refPath)
         {
             string storeFile = Path.GetFileName(FileName);
             string storePath = GKUtils.GetStoreFolder(GKUtils.GetMultimediaKind(GDMFileReference.RecognizeFormat(FileName)));

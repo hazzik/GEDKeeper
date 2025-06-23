@@ -25,12 +25,12 @@ using System.Threading.Tasks;
 namespace GKCore.Types
 {
     /// <summary />
-    public interface IMediaStore
+    public abstract class MediaStore
     {
-        Stream MediaLoad(bool throwException);
-        string MediaLoad();
-        Task<bool> MediaDelete();
-        MediaStoreStatus VerifyMediaFile(out string fileName);
-        bool MediaSave(BaseContext baseContext, out string refPath);
+        public abstract Stream MediaLoad(bool throwException);
+        public abstract string MediaLoad();
+        public abstract Task<bool> MediaDelete();
+        public abstract MediaStoreStatus VerifyMediaFile(out string fileName);
+        public abstract bool MediaSave(BaseContext baseContext, out string refPath);
     }
 }

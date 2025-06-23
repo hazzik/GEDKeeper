@@ -6,7 +6,7 @@ using GKCore.Options;
 
 namespace GKCore.Types
 {
-    public sealed class RelativeReferenceMediaStore :FileSystemMediaStore,IMediaStore
+    public sealed class RelativeReferenceMediaStore :FileSystemMediaStore
     {
         public RelativeReferenceMediaStore(BaseContext baseContext, string fileName, bool allowDelete)
             : base(BaseContext.GetTreePath(baseContext.FileName), fileName, allowDelete)
@@ -38,7 +38,7 @@ namespace GKCore.Types
             return result;
         }
 
-        public bool MediaSave(BaseContext baseContext, out string refPath)
+        public override bool MediaSave(BaseContext baseContext, out string refPath)
         {
             refPath = string.Empty;
 

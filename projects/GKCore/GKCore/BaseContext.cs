@@ -804,7 +804,7 @@ namespace GKCore
             return true;
         }
 
-        public IMediaStore GetMediaStore(GDMFileReference fileReference)
+        public MediaStore GetMediaStore(GDMFileReference fileReference)
         {
             if (fileReference == null)
                 throw new ArgumentNullException("fileReference");
@@ -812,7 +812,7 @@ namespace GKCore
             return GetMediaStore(fileReference.StringValue);
         }
 
-        public IMediaStore GetMediaStore(string fileName)
+        public MediaStore GetMediaStore(string fileName)
         {
             var storeType = GKUtils.GetStoreTypeEx(fileName);
 
@@ -823,7 +823,7 @@ namespace GKCore
             return CreateMediaStore(storeType, fileName);
         }
 
-        private IMediaStore CreateMediaStore(MediaStoreType storeType, string fileName)
+        private MediaStore CreateMediaStore(MediaStoreType storeType, string fileName)
         {
             switch (storeType) {
                 case MediaStoreType.mstURL:

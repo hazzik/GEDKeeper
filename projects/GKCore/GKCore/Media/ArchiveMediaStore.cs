@@ -9,7 +9,7 @@ using GKCore.Options;
 
 namespace GKCore.Types
 {
-    public sealed class ArchiveMediaStore : IMediaStore
+    public sealed class ArchiveMediaStore : MediaStore
     {
         private readonly string fArcFileName;
         private readonly string fFileName;
@@ -22,7 +22,7 @@ namespace GKCore.Types
             fArcFileName = baseContext.GetArcFileName();
         }
 
-        public Stream MediaLoad(bool throwException)
+        public override Stream MediaLoad(bool throwException)
         {
             Stream stream = new MemoryStream();
             if (!File.Exists(fArcFileName)) {
@@ -39,7 +39,7 @@ namespace GKCore.Types
             return stream;
         }
 
-        public string MediaLoad()
+        public override string MediaLoad()
         {
             string fileName;
             try {
@@ -63,17 +63,19 @@ namespace GKCore.Types
             return fileName;
         }
 
-        public async Task<bool> MediaDelete()
+        public override async Task<bool> MediaDelete()
         {
+            if (!fAllowDelete) {
+                return true;
+            }
+
             try {
                 MediaStoreStatus storeStatus = VerifyMediaFile(out var fileName);
                 bool result = false;
 
                 switch (storeStatus) {
                     case MediaStoreStatus.mssExists:
-                        if (!fAllowDelete) {
-                            return true;
-                        }
+
 
                         if (!GlobalOptions.Instance.DeleteMediaFileWithoutConfirm) {
                             string msg = string.Format(LangMan.LS(LSID.MediaFileDeleteQuery));
@@ -114,7 +116,7 @@ namespace GKCore.Types
             }
         }
 
-        public MediaStoreStatus VerifyMediaFile(out string fileName)
+        public override MediaStoreStatus VerifyMediaFile(out string fileName)
         {
             MediaStoreStatus result = MediaStoreStatus.mssBadData;
 
@@ -138,7 +140,7 @@ namespace GKCore.Types
             return result;
         }
 
-        public bool MediaSave(BaseContext baseContext, out string refPath)
+        public override bool MediaSave(BaseContext baseContext, out string refPath)
         {
             string storeFile = Path.GetFileName(fFileName);
             string storePath =

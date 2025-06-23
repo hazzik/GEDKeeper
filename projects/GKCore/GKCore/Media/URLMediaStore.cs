@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace GKCore.Types
 {
-    public sealed class URLMediaStore : IMediaStore
+    public sealed class URLMediaStore : MediaStore
     {
         private readonly string fUrl;
 
@@ -14,7 +14,7 @@ namespace GKCore.Types
             fUrl = fileName;
         }
 
-        public Stream MediaLoad(bool throwException)
+        public override Stream MediaLoad(bool throwException)
         {
             using (var webClient = CreateWebClient()) {
                 var dataBytes = webClient.DownloadData(fUrl);
@@ -22,7 +22,7 @@ namespace GKCore.Types
             }
         }
 
-        public string MediaLoad()
+        public override string MediaLoad()
         {
             string fileName;
             try {
@@ -38,12 +38,12 @@ namespace GKCore.Types
             return fileName;
         }
 
-        public Task<bool> MediaDelete()
+        public override Task<bool> MediaDelete()
         {
             return Task.FromResult(true);
         }
 
-        public MediaStoreStatus VerifyMediaFile(out string fileName)
+        public override MediaStoreStatus VerifyMediaFile(out string fileName)
         {
             fileName = fUrl;
             return MediaStoreStatus.mssBadData;
@@ -63,7 +63,7 @@ namespace GKCore.Types
             }
         }
 
-        public bool MediaSave(BaseContext baseContext, out string refPath)
+        public override bool MediaSave(BaseContext baseContext, out string refPath)
         {
             // set paths and links
             refPath = fUrl;
