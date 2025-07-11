@@ -275,7 +275,9 @@ namespace GKUI.Forms
             spl.Panel2 = summary;
             spl.RelativePosition = 300;
             spl.Orientation = Orientation.Horizontal;
+#if !OS_MACOS
             spl.FixedPanel = SplitterFixedPanel.Panel2;
+#endif
             spl.Panel1MinimumSize = 200;
             spl.Panel2MinimumSize = 300;
             spl.PositionChanged += Spl_PositionChanged;
