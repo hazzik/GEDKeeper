@@ -139,8 +139,9 @@ namespace GKUI.Forms
             spl.Panel2 = summary;
             spl.RelativePosition = 300;
             spl.Orientation = Orientation.Horizontal;
+#if !OS_MACOS
             spl.FixedPanel = SplitterFixedPanel.Panel2;
-
+#endif
             panel.Content = spl;
 
             fController.SetTabPart(recType, recView, spl.ID, summary);
