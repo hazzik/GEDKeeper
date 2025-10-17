@@ -64,7 +64,7 @@
 
     <PropertyGroup Condition=" $(DefineConstants.Contains('OS_MSWIN_ARM64')) ">
         <PlatformTarget>x64</PlatformTarget>
-        <RuntimeIdentifier>linux-x64</RuntimeIdentifier>
+        <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     </PropertyGroup>
 
     <PropertyGroup Condition=" $(DefineConstants.Contains('OS_LINUX')) ">
