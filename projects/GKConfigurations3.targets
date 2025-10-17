@@ -35,6 +35,11 @@
         <DefineConstants>$(DefineConstants);OS_MSWIN</DefineConstants>
     </PropertyGroup>
 
+    <PropertyGroup Condition=" '$(Platform)' == 'MSWin_ARM64' ">
+        <PlatformTarget>x64</PlatformTarget>
+        <DefineConstants>$(DefineConstants);OS_MSWIN_ARM64</DefineConstants>
+    </PropertyGroup>
+
     <PropertyGroup Condition=" '$(Platform)' == 'Linux' ">
         <PlatformTarget>x64</PlatformTarget>
         <DefineConstants>$(DefineConstants);OS_LINUX;OS_LINUX_AMD64;MONO</DefineConstants>

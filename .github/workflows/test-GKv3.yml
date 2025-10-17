@@ -25,6 +25,8 @@ jobs:
             platform: Linux_ARM
           - os: windows-latest
             platform: MSWin64
+          - os: windows-11-arm
+            platform: MSWin_ARM64
           - os: macos-latest
             platform: MacOS
 
