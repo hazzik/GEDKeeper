@@ -36,7 +36,7 @@
     </PropertyGroup>
 
     <PropertyGroup Condition=" '$(Platform)' == 'MSWin_ARM64' ">
-        <PlatformTarget>x64</PlatformTarget>
+        <PlatformTarget>arm64</PlatformTarget>
         <DefineConstants>$(DefineConstants);OS_MSWIN;OS_MSWIN_ARM64</DefineConstants>
     </PropertyGroup>
 
@@ -105,3 +105,4 @@
     <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|iPhoneSimulator'" />
 
 </Project>
+
