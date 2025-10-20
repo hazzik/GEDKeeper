@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, macos-latest]
+        os: [ubuntu-latest, ubuntu-24.04-arm, windows-latest, windows-11-arm, macos-latest]
         include:
           - os: ubuntu-latest
             platform: Linux
@@ -25,6 +25,8 @@ jobs:
             platform: Linux_ARM
           - os: windows-latest
             platform: MSWin64
+          - os: windows-11-arm
+            platform: MSWin_ARM64
           - os: macos-latest
             platform: MacOS
 
