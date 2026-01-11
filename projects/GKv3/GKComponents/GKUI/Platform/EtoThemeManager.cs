@@ -60,7 +60,7 @@ namespace GKUI.Themes
                 { ThemeElement.MenuBorder, SystemColors.Control },
                 { ThemeElement.MenuItemSelected, SystemColors.Control },
 
-                { ThemeElement.Link, Colors.Blue },
+                { ThemeElement.Link, SystemColors.LinkText },
 
                 { ThemeElement.Grid, SystemColors.ControlBackground },
                 { ThemeElement.GridHeader, SystemColors.WindowBackground },
