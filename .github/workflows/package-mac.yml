@@ -31,7 +31,7 @@ jobs:
         p12-password: ${{ secrets.CERTIFICATES_PASSWORD }}
 
     - name: Build
-      run: dotnet build GEDKeeper3.sln -c=Release -p:Platform=MacOS -p:EnableDmgBuild=true --self-contained -p:GKEnableCodeSigning=true -p:GKMacCodeSigninKey=GEDKeeper2
+      run: dotnet build GEDKeeper3.sln -c=Release -p:Platform=MacOS -p:EnableDmgBuild=true -p:MacSelfContained=true -p:GKEnableCodeSigning=true -p:GKMacCodeSigninKey=GEDKeeper2
       working-directory: projects/GKv3
 
     - name: Upload DMG file
