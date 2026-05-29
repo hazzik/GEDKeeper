@@ -104,8 +104,8 @@
         <TargetFramework>net8.0</TargetFramework>
         <OutputType>exe</OutputType>
         <PublishTrimmed>false</PublishTrimmed>
+        <PublishSingleFile>true</PublishSingleFile>
         <SelfContained>false</SelfContained>
-        <MacSelfContained>true</MacSelfContained>
         <RuntimeIdentifiers>osx-x64;osx-arm64</RuntimeIdentifiers>
     </PropertyGroup>
 
